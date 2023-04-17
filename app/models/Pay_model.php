@@ -33,6 +33,11 @@ class Pay_model extends CI_Model
         return $this->db->get_where('payments', ['id' => $id])->row();
     }
 
+    public function getDirectPaySettings()
+    {
+        return $this->db->get_where('sma_directpay', ['id' => 1])->row();
+    }
+
     public function getPaypalSettings()
     {
         return $this->db->get_where('paypal', ['id' => 1])->row();

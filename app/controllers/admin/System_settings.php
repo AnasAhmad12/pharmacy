@@ -2595,6 +2595,8 @@ class system_settings extends MY_Controller
                 'authentication_token'         => $this->input->post('authentication_token'),
                 'payment_link'       => $this->input->post('payment_link'),
                 'refund_link'       => $this->input->post('refund_link'),
+                'test_Merchant_id'  => $this->input->post('test_merchant_id'),
+                'test_auth_token'   => $this->input->post('test_auth_token'),
                 'test_payment_link'    => $this->input->post('test_payment_link'),
                 'test_refund_link' => $this->input->post('test_refund_link'),
                  'activation' => $this->input->post('activation'),

@@ -72,21 +72,43 @@ class Pay extends MY_Shop_Controller
             
     public function directpayRefund($id,$refund_id)
     {
+         $dp = $this->pay_model->getDirectPaySettings();
+
+            if($dp->activation == 1)
+            {
+                $refundLink = $dp->refund_link;
+                $auth_token = $dp->authentication_token;
+                $mId = $dp->merchant_id;
+                
+
+
+            }else
+            {
+                $refundLink = $dp->test_refund_link;
+                $auth_token = $dp->test_auth_token;
+                $mId = $dp->test_Merchant_id;
+              
+            }
+
+            $ver = $dp->version;
+            $currencyCode = $dp->currencyISOCode;
+            $refundMsg = $dp->refund_message_id;
+
         if ($inv = $this->pay_model->getSaleByID($id)) 
         {
             if ($inv->sale_status == 'completed' && $inv->payment_status == 'paid' )
             {
                  $inquiry = [];
                  
-                 $messageId = 4;
-                 $merchantId = 'DP00000017';
-                 $authenticationToken = 'MGQ5YjY4NWRhYjA5ZmQyYjBmZjAzYzE3' ;//'NDc5NGZiMjk2ODJlOGIyZTNlOGFkOGM2';
-                 $inquiryURL = 'https://paytest.directpay.sa/SmartRoutePaymentWeb/SRMsgHandler'; //'https://pay.directpay.sa/SmartRoutePaymentWeb/SRMsgHandler';
-                 $version = '1.0';
+                 $messageId = $refundMsg;//4;
+                 $merchantId = $mId;//'DP00000017';
+                 $authenticationToken = $auth_token;//'MGQ5YjY4NWRhYjA5ZmQyYjBmZjAzYzE3' ;//'NDc5NGZiMjk2ODJlOGIyZTNlOGFkOGM2';
+                 $inquiryURL = $refundLink;//'https://paytest.directpay.sa/SmartRoutePaymentWeb/SRMsgHandler'; //'https://pay.directpay.sa/SmartRoutePaymentWeb/SRMsgHandler';
+                 $version = $ver;//'1.0';
                  $transactionId = (int)(microtime(true) * 1000) ;
                  $OriginalTransactionID = $id;
                  $totalAmount = intval(number_format($inv->grand_total, 2,'',''));
-                 $currencyCode = '682';
+                 $currencyCode = $currencyCode;//'682';
                  
                  $inquiry['MessageID'] = $messageId;
                  $inquiry['OriginalTransactionID'] = $OriginalTransactionID;
@@ -186,6 +208,28 @@ class Pay extends MY_Shop_Controller
 
     public function directpay($id)
     {
+        $dp = $this->pay_model->getDirectPaySettings();
+
+            if($dp->activation == 1)
+            {
+                $paymentLink = $dp->payment_link;
+                $auth_token = $dp->authentication_token;
+                $merchantId = $dp->merchant_id;
+                
+
+
+            }else
+            {
+                $paymentLink = $dp->test_payment_link;
+                $auth_token = $dp->test_auth_token;
+                $merchantId = $dp->test_Merchant_id;
+              
+            }
+
+            $ver = $dp->version;
+            $currencyCode = $dp->currencyISOCode;
+            $paymentMsg = $dp->payment_message_id;
+
         if ($inv = $this->pay_model->getSaleByID($id)) {
             //$paypal = $this->pay_model->getPaypalSettings();
             if ((($inv->grand_total - $inv->paid) > 0)) {
@@ -198,21 +242,22 @@ class Pay extends MY_Shop_Controller
                 
                 
                 //Get data from the configyration page
-                $version = '1.0';//$this->getVersion();
-                $redirectURL = 'https://paytest.directpay.sa/SmartRoutePaymentWeb/SRPayMsgHandler';//'https://pay.directpay.sa/SmartRoutePaymentWeb/SRPayMsgHandler';
+                $version = $ver;//'1.0';
+                $redirectURL = $paymentLink;
+                //'https://paytest.directpay.sa/SmartRoutePaymentWeb/SRPayMsgHandler';//'https://pay.directpay.sa/SmartRoutePaymentWeb/SRPayMsgHandler';
                 //$directURL = $this->getPaymentURL();
-                $authenticationToken = 'MGQ5YjY4NWRhYjA5ZmQyYjBmZjAzYzE3';//$this->getAuthenticationToken();'NDc5NGZiMjk2ODJlOGIyZTNlOGFkOGM2';
+                $authenticationToken = $auth_token;//'MGQ5YjY4NWRhYjA5ZmQyYjBmZjAzYzE3';//$this->getAuthenticationToken();'NDc5NGZiMjk2ODJlOGIyZTNlOGFkOGM2';
                 $transactionId = $trasnid;
-                $MerchantID = 'DP00000017';//'DP00000018';//$this->getMerchantId();
+                $MerchantID = $merchantId;//'DP00000017';//'DP00000018';//$this->getMerchantId();
                 $itemId = $id;//$this->getItemId();
                 $responseBackURL =urldecode(site_url('pay/RedirectPaymentResponsePage'));
                 
                 $quantity =$inv->total_items;
                 $themeId = '1000000001';
-                $currencyCode = '682';
+                $currencyCode = $currencyCode;//'682';
                 $totalAmount = intval(number_format($inv->grand_total, 2,'',''));
                 $channel = 0; //E-Commerce channel in STS
-                $messageId = '1'; 
+                $messageId = $paymentMsg;//'1'; 
                 
                 $clientIp = $this->getclientIP();
                 $generateToken = "yes";
