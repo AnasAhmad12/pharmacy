@@ -1390,6 +1390,10 @@ function loadItems() {
                 item_name +
                 '"><input name="product_option[]" type="hidden" class="roption" value="' +
                 item_option +
+                '"><input name="totalbeforevat[]" type="hidden" class="totalbeforevat" value="' +
+                total_after_dis2 +
+                '"><input name="main_net[]" type="hidden" class="main_net" value="' +
+                main_net +
                 '"><span class="sname" id="name_' +
                 row_no +
                 '">' +
@@ -1532,7 +1536,8 @@ function loadItems() {
                 '" title="Remove" style="cursor:pointer;"></i></td>';
             newTr.html(tr_html);
             newTr.prependTo('#slTable');
-            total += formatDecimal((parseFloat(item_price) + parseFloat(pr_tax_val)) * parseFloat(item_qty), 4);
+            total += formatDecimal(main_net, 4);
+            //formatDecimal((parseFloat(item_price) + parseFloat(pr_tax_val)) * parseFloat(item_qty), 4);
             count += parseFloat(item_qty);
             an++;
 

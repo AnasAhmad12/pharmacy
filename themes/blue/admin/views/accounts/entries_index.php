@@ -11,7 +11,7 @@
                         <i class="icon fa fa-tasks tip" data-placement="left" title="<?= lang('actions') ?>"></i>
                     </a>
                     <ul class="dropdown-menu pull-right tasks-menus" role="menu" aria-labelledby="dLabel">
-                        <li><a href="<?= admin_url(); ?>entries/add/journal">Journal</a></li>
+                        <li><a href="<?= admin_url(); ?>entries/add/journal">Add Journal</a></li>
                          <?php 
                     /*foreach($this->db->get('sma_accounts_entrytypes')->result_array() as $entrytype): ?>
                         <li><a href="<?= admin_url(); ?>entries/add/<?=$entrytype['label']?>"><?= $entrytype['name']; ?></a></li>
