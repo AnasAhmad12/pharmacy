@@ -11,3 +11,18 @@ CREATE TABLE IF NOT EXISTS `sma_deals` (
   `discount_purchase_order` varchar(300) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT ;
+
+
+CREATE TABLE IF NOT EXISTS `sma_rsd` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `OperationType` varchar(300) DEFAULT NULL,
+  `TransactionNumber` varchar(300) DEFAULT NULL,
+  `FromID` varchar(300) DEFAULT NULL,
+  `ToID` varchar(300) DEFAULT NULL,
+  `GTIN` varchar(300) DEFAULT NULL,
+  `BatchNumber` varchar(300) DEFAULT NULL,
+  `ExpiryDate` varchar(300) DEFAULT NULL,
+  `SerialNo` varchar(300) DEFAULT NULL,
+  `Error` varchar(300) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT ;

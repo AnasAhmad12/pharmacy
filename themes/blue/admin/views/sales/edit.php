@@ -271,18 +271,25 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                                             <th class="col-md-1"><?= lang('net_unit_price'); ?></th>
                                             <th class="col-md-1"><?= lang('quantity'); ?></th>
                                             <?php
-                                            if ($Settings->product_discount && $allow_discount) {
-                                                echo '<th class="col-md-1">' . lang('discount') . '</th>';
-                                            }
+                                            //if ($Settings->product_discount && $allow_discount) {
+                                               // echo '<th class="col-md-1">' . lang('discount') . '</th>';
+                                           // }
                                             ?>
                                             <?php
-                                            if ($Settings->tax1) {
-                                                echo '<th class="col-md-1">' . lang('product_tax') . '</th>';
-                                            }
+                                            //if ($Settings->tax1) {
+                                             //   echo '<th class="col-md-1">' . lang('product_tax') . '</th>';
+                                           // }
                                             ?>
                                             <th><?= lang('subtotal'); ?> (<span
                                                     class="currency"><?= $default_currency->code ?></span>)
                                             </th>
+                                            <th class="col-md-1">Bonus</th>
+                                            <th class="col-md-1">Dis 1</th>
+                                            <th class="col-md-1">After Dis 1</th>
+                                            <th class="col-md-1">Dis 2</th>
+                                            <th class="col-md-1">Total b. Vat</th>
+                                            <th class="col-md-1">Vat</th>
+                                            <th class="col-md-1">Net</th>
                                             <th style="width: 30px !important; text-align: center;"><i
                                                     class="fa fa-trash-o"
                                                     style="opacity:0.5; filter:alpha(opacity=50);"></i></th>

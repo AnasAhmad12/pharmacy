@@ -627,12 +627,39 @@
                                             <i class="fa fa-sitemap"></i><span class="text"> <?= lang('Chart of Accounts'); ?></span>
                                         </a>
                                     </li>
-                                    <li id="accounts_index">
+                                    <li id="accounts_entries">
                                         <a class="submenu" href="<?= admin_url('entries'); ?>">
                                             <i class="fa fa-plus-square-o"></i><span class="text"> <?= lang('Entries'); ?></span>
                                         </a>
                                     </li>
-                                    
+                                    <li id="accounts_search">
+                                        <a class="submenu" href="<?= admin_url('search'); ?>">
+                                            <i class="fa fa-star-o"></i><span class="text"> <?= lang('Search'); ?></span>
+                                        </a>
+                                    </li>
+                                    <li class="mm_accounts_reports">
+                                        <a class="dropmenu" href="#">
+                                            <i class="fa fa-bar-chart-o"></i>
+                                            <span class="text"> <?= lang('Accounts Reports'); ?> </span>
+                                            <span class="chevron closed"></span>
+                                        </a>
+                                   
+
+                                    <ul>
+                                        <li id="reports_ledger_statement_report">
+                                            <a href="<?= admin_url('areports/ledgerstatement') ?>">
+                                                <i class="fa fa-users"></i><span class="text"> <?= lang('Ledger Statement'); ?></span>
+                                            </a>
+                                        </li>
+                                        <li id="reports_balancesheet_report">
+                                            <a href="<?= admin_url('areports/balancesheet') ?>">
+                                                <i class="fa fa-users"></i><span class="text"> <?= lang('Balance Sheet'); ?></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                     </li>
+
                                 </ul>
 
                             </li>
@@ -977,11 +1004,7 @@
                                             <i class="fa fa-users"></i><span class="text"> <?= lang('staff_report'); ?></span>
                                         </a>
                                     </li>
-                                    <li id="reports_ledger_statement_report">
-                                        <a href="<?= admin_url('areports/ledgerstatement') ?>">
-                                            <i class="fa fa-users"></i><span class="text"> <?= lang('Ledger Statement'); ?></span>
-                                        </a>
-                                    </li>
+                                    
                                 </ul>
                             </li>
                           

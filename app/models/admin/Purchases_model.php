@@ -686,4 +686,36 @@ class Purchases_model extends CI_Model
         }
         return false;
     }
+
+    public function getThreeMonthSale($product, $start_date, $end_date)
+    {
+        $pp = "( SELECT product_id, p.date as date, p.created_by as created_by, SUM(CASE WHEN pi.purchase_id IS NOT NULL THEN quantity ELSE 0 END) as purchasedQty, SUM(quantity_balance) as balacneQty, SUM( unit_cost * quantity_balance ) balacneValue, SUM( (CASE WHEN pi.purchase_id IS NOT NULL THEN (pi.subtotal) ELSE 0 END) ) totalPurchase from {$this->db->dbprefix('purchase_items')} pi LEFT JOIN {$this->db->dbprefix('purchases')} p on p.id = pi.purchase_id WHERE pi.status = 'received' ";
+
+        $sp = '( SELECT si.product_id, s.date as date, s.created_by as created_by, SUM( si.quantity ) soldQty, SUM( si.quantity * si.sale_unit_price ) totalSale from ' . $this->db->dbprefix('costing') . ' si JOIN ' . $this->db->dbprefix('sales') . ' s on s.id = si.sale_id ';
+
+         $start_date = $this->sma->fld($start_date);
+         $end_date   = $end_date ? $this->sma->fld($end_date) : date('Y-m-d');
+         $pp .= " AND p.date >= '{$start_date}' AND p.date <= '{$end_date}' ";
+         $sp .= " s.date >= '{$start_date}' AND s.date <= '{$end_date}' ";
+         $pp .= ' GROUP BY pi.product_id ) PCosts';
+         $sp .= ' GROUP BY si.product_id ) PSales';
+         
+        $this->db
+                ->select('COALESCE( PSales.soldQty, 0 ) as sold', false)
+                ->from('products')
+                ->join($sp, 'products.id = PSales.product_id', 'left')
+                ->join($pp, 'products.id = PCosts.product_id', 'left')
+                ->where('products.type !=', 'combo');
+
+        $this->db->where($this->db->dbprefix('products') . '.id', $product);   
+        return $this->db->get()->row()->sold;
+           /* if ($q->num_rows() > 0) {
+                foreach (($q->result()) as $row) {
+                    return $row->sold;
+                }
+            } else {
+                return 0;
+            }*/
+                     
+    }
 }
