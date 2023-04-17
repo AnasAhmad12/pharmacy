@@ -1,7 +1,7 @@
 {
     "name": "tecdiary/sma",
     "version": "3.4.54",
-    "description": "Avenzur Pharmacy",
+    "description": "Stock Manager Advance",
     "type": "project",
     "require": {
         "php": "^7.3|^8.0",
