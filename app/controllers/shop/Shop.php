@@ -383,30 +383,62 @@ class Shop extends MY_Shop_Controller
     
    public function aramexshipment($sale_id, $data, $products, $customer, $address, $pro_weight)
     {
-        $soapClient = new SoapClient('https://ws.dev.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc?wsdl');
-            	echo '<pre>';
-            	print_r($soapClient->__getFunctions());
+        $dp = $this->shop_model->getAramexSettings();
+
+        if($dp->activation == 1)
+        {
+            $p_accountnumber = $dp->account_number ; //'71449672';
+                $p_line1 = $dp->line1 ; //"Al kharaj";
+                $p_city = $dp->city ; //"Riyadh";
+                $p_postcode = $dp->postal_code ; //"11663";
+                $p_countrycode = $dp->country_code ; //"SA";
+                $p_personname = $dp->person_name ; //"Amr";
+                $p_companyname = $dp->company_name ; //"Pharma drug store";
+                $p_phonenumber = $dp->landline_number ; //"966568241418";
+                $p_cellnumber = $dp->cell_number ; //"966568241418";
+                $p_shipper_email    = $dp->Email ; //"ama@pharma.com.sa";
+                
+                $p_AccountEntity = $dp->account_entity ; //'RUH';
+                $p_AccountNumber  = $dp->account_number ; //'71449672';
+                $p_AccountPin = $dp->account_pin ; //'107806';
+                $p_UserName = $dp->user_name ; //'testingapi@aramex.com';
+                $p_Password = $dp->password ; //'R123456789$r';
+                $p_Version = $dp->version ; //'1.0';
+
+                $p_soapLink = $dp->shippment_url;
+
+        }else
+        {
+            $p_accountnumber = '71449672';
+                $p_line1 = "Al kharaj";
+                $p_city = "Riyadh";
+                $p_postcode = "11663";
+                $p_countrycode = "SA";
+                $p_personname = "Amr";
+                $p_companyname = "Pharma drug store";
+                $p_phonenumber = "966568241418";
+                $p_cellnumber = "966568241418";
+                $p_shipper_email    = "ama@pharma.com.sa";
+                
+                $p_AccountEntity = 'RUH';
+                $p_AccountNumber  = '71449672';
+                $p_AccountPin = '107806';
+                $p_UserName = 'testingapi@aramex.com';
+                $p_Password = 'R123456789$r';
+                $p_Version = '1.0';
+
+                $p_soapLink = 'https://ws.dev.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc?wsdl';
+        }
+
+
+        $soapClient = new SoapClient($p_soapLink);
+            	//echo '<pre>';
+            	//print_r($soapClient->__getFunctions());
             	
             	
             	$p_sale_id = $sale_id;
             	$p_transaction = (int)(microtime(true) * 1000);
-            	$p_accountnumber = '71449672';
-            	$p_line1 = "Al kharaj";
-            	$p_city = "Riyadh";
-            	$p_postcode = "11663";
-            	$p_countrycode = "SA";
-            	$p_personname = "Amr";
-            	$p_companyname = "Pharma drug store";
-            	$p_phonenumber = "966568241418";
-            	$p_cellnumber = "966568241418";
-            	$p_shipper_email    = "ama@pharma.com.sa";
             	
-            	$p_AccountEntity = 'RUH';
-            	$p_AccountNumber  = '71449672';
-            	$p_AccountPin = '107806';
-            	$p_UserName = 'testingapi@aramex.com';
-            	$p_Password = 'R123456789$r';
-            	$p_Version = '1.0';
             	
             	$cutomer_array  = (array)$customer;
                  
@@ -544,7 +576,7 @@ class Shop extends MY_Shop_Controller
         						'Reference1' 				=> $p_transaction ,
         						'Reference2' 				=> $p_sale_id,
         						'Reference3' 				=> '',
-        						'ForeignHAWB'				=> 'SA 11663',
+        						'ForeignHAWB'				=> $p_transaction,
         						'TransportType'				=> 0,
         						'ShippingDateTime' 			=> time(),
         						'DueDate'					=> time(),
@@ -664,7 +696,7 @@ class Shop extends MY_Shop_Controller
         		$data = json_decode(json_encode($auth_call), true);//(array)$auth_call;
         		
         		
-        		var_dump($data);
+        		//var_dump($data);
         		
         		$record = array(
         		        "salesid" => $data["Transaction"]["Reference2"],

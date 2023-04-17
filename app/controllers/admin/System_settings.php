@@ -2662,6 +2662,7 @@ public function aramex()
                 'user_name'       => $this->input->post('user_name'),
                 'password'    => $this->input->post('password'),
                 'version' => $this->input->post('version'),
+                'activation' => $this->input->post('activation'),
                  'shippment_url' => $this->input->post('shippment_url'),
                    'pickup_url' => $this->input->post('pickup_url'),
                      'cell_number' => $this->input->post('cell_number'),

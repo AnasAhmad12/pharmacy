@@ -904,5 +904,10 @@ public function saveRefundRecord($data)
     {
         return $this->db->update('sales', $data, ['id' => $id]);
     }
+
+    public function getAramexSettings()
+    {
+         return $this->db->get_where('sma_aramex', ['id' => 1])->row();
+    }
  
 }
