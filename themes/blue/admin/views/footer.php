@@ -33,11 +33,7 @@ foreach (lang('select2_lang') as $s2_key => $s2_line) {
 $s2_file_date = $this->parser->parse_string($s2_lang_file, $s2_data, true);
 ?>
 <script type="text/javascript" src="<?= $assets ?>js/bootstrap.min.js"></script>
-<?php if($m == 'accounts'){ ?>
-<script type="text/javascript" src="<?= $assets ?>js/jquery.dataTables.js"></script>
-<?php }else{ ?>
-  <script type="text/javascript" src="<?= $assets ?>js/jquery.dataTables.min.js"></script>
-<?php } ?>
+<script type="text/javascript" src="<?= $assets ?>js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?= $assets ?>js/jquery.dataTables.dtFilter.min.js"></script>
 <?php if($m != 'entries'){ ?>
 <script type="text/javascript" src="<?= $assets ?>js/select2.min.js"></script>
@@ -123,25 +119,18 @@ if($m == 'areports'){
 <?php
 }
  if($m == 'accounts'){?>
-  <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-<script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
     <script type="text/javascript">
 
-$(document).ready(function(){
+/*
 
   
   $.fn.dataTable.ext.buttons.excel =
   {
     extend: 'excelHtml5',
-    text: '<i class="fa fa-upload" style="margin-right: 5px; color: #428BCA;"></i><?= lang('export_xls'); ?>',
+    text: '<i class="glyphicon glyphicon-export" style="margin-right: 5px; color: #428BCA;"></i><?= lang('export_xls'); ?>',
     className: 'btn btn-link',
     titleAttr: '<?= lang('export_xls'); ?>',
-    title: "Avenzur-<?php echo date("Y-m-d-h-i");?>",
+    title: "Avenzur",
     exportOptions: {
       columns: ':not(:last-child)',
 
@@ -152,109 +141,21 @@ $(document).ready(function(){
   {
     className: 'btn btn-link',
     id: 'ImportToCSV',
-    text: "<i class='fa fa-download' style='margin-right: 5px; color: #428BCA;'></i><?= lang('accounts_index_import_from_csv_btn'); ?>",
+    text: "<i class='glyphicon glyphicon-import' style='margin-right: 5px; color: #428BCA;'></i><?= lang('accounts_index_import_from_csv_btn'); ?>",
     action: function (e, dt, node, config)
     {
       //This will send the page to the location specified
-      window.location.href = '<?= admin_url(); ?>accounts/uploader';
+      window.location.href = '<?= base_url(); ?>accounts/uploader';
     }
   };
- var ledgertable = $('#ledgertable').DataTable({
-    "paging": false,
-    "lengthChange": true,
-    "searching": false,
-    "ordering": false,
-    "info": false,
-    "autoWidth": true,
-    dom: 'Bfrtip',
-    buttons: 
-    [
-      'import',
-      'excel',
-    ],
-    columnDefs: [
-      { targets: [0], ordering: true},
-    ],
-    "order": [[ 0, "desc" ]]
-  });
-});
+*/
+
 
     </script>
 
 <?php
-} 
-
-if($m == 'search')
-{
-  echo '<link rel="stylesheet" src="' . $assets . 'js/plugins/datepicker/datepicker3.css">'; 
-  echo '<script type="text/javascript" src="' . $assets . 'js/plugins/datepicker/bootstrap-datepicker.js"></script>'; 
-  //echo '<link rel="stylesheet" src="' . $assets . 'js/plugins/select2/select2.min.css">'; plugins/select2/
-  echo '<script type="text/javascript" src="' . $assets . 'js/select2.full.min.js"></script>';
-?>
-<script type="text/javascript">
-$(document).ready(function() {
-
-  /* Calculate date range in javascript */
-  fromDate = new Date(<?php echo strtotime($this->mAccountSettings->fy_start) * 1000; ?>  + (new Date().getTimezoneOffset() * 60 * 1000));
-  toDate = new Date(<?php echo strtotime($this->mAccountSettings->fy_end) * 1000; ?>  + (new Date().getTimezoneOffset() * 60 * 1000));
-
-  /* Setup jQuery datepicker ui */
-  $('#SearchFromdate').datepicker({
-    minDate: fromDate,
-    maxDate: toDate,
-    dateFormat: '<?php echo $this->mDateArray[1]; ?>',
-    numberOfMonths: 1,
-    onClose: function(selectedDate) {
-      if (selectedDate) {
-        $("#SearchTodate").datepicker("option", "minDate", selectedDate);
-      } else {
-        $("#SearchTodate").datepicker("option", "minDate", fromDate);
-      }
-    }
-  });
-  $('#SearchTodate').datepicker({
-    minDate: fromDate,
-    maxDate: toDate,
-    dateFormat: '<?php echo $this->mDateArray[1]; ?>',
-    numberOfMonths: 1,
-    onClose: function(selectedDate) {
-      if (selectedDate) {
-        $("#SearchFromdate").datepicker("option", "maxDate", selectedDate);
-      } else {
-        $("#SearchFromdate").datepicker("option", "maxDate", toDate);
-      }
-    }
-  });
-
-    $('#SearchEntrynumberRestriction').on('change', function() {
-            if (this.value == 4) {
-                    $('.entrynumber-in-between').show();
-            } else {
-                    $('.entrynumber-in-between').hide();
-            }
-    });
-
-    $('#SearchAmountRestriction').on('change', function() {
-            if (this.value == 4) {
-                    $('.amount-in-between').show();
-            } else {
-                    $('.amount-in-between').hide();
-            }
-    });
-
-  /* On page load initiate all triggers */
-    $('#SearchEntrynumberRestriction').trigger('change');
-  $('#SearchAmountRestriction').trigger('change');
-
-  $(".ledger-dropdown").select2({width:'100%'});
-  $(".entrytype-dropdown").select2({width:'100%'});
-  $(".tag-dropdown").select2({width:'100%'});
-});
-</script>
-<?php
 }
 ?>
-
 
 <script type="text/javascript" charset="UTF-8">
 

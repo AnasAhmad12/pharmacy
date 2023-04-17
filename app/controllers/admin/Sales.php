@@ -92,15 +92,6 @@ class Sales extends MY_Controller
                 $item_unit          = $_POST['product_unit'][$r];
                 $item_quantity      = $_POST['product_base_quantity'][$r];
 
-
-                $item_bonus = $_POST['bonus'][$r];
-                $item_dis1 = $_POST['dis1'][$r];
-                $item_dis2 = $_POST['dis2'][$r];
-                $totalbeforevat = $_POST['totalbeforevat'][$r];
-                $main_net = $_POST['main_net'][$r];
-
-
-
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details = $item_type != 'manual' ? $this->sales_model->getProductByCode($item_code) : null;
                     // $unit_price = $real_unit_price;
@@ -132,8 +123,7 @@ class Sales extends MY_Controller
                     }
 
                     $product_tax += $pr_item_tax;
-                    $subtotal = $main_net;//(($item_net_price * $item_unit_quantity) + $pr_item_tax);
-                    $subtotal2 = (($item_net_price * $item_unit_quantity));// + $pr_item_tax);
+                    $subtotal = (($item_net_price * $item_unit_quantity) + $pr_item_tax);
                     $unit     = $this->site->getUnitByID($item_unit);
 
                     $product = [
@@ -157,16 +147,10 @@ class Sales extends MY_Controller
                         'subtotal'          => $this->sma->formatDecimal($subtotal),
                         'serial_no'         => $item_serial,
                         'real_unit_price'   => $real_unit_price,
-                        'subtotal2'         => $this->sma->formatDecimal($subtotal2),
-                        'bonus'             => $item_bonus,
-                        'discount1'         => $item_dis1,
-                        'discount2'         => $item_dis2,
-                        'totalbeforevat'    => $totalbeforevat,
-                        'main_net'          => $main_net,
                     ];
 
                     $products[] = ($product + $gst_data);
-                    $total += $this->sma->formatDecimal($main_net, 4);//$this->sma->formatDecimal(($item_net_price * $item_unit_quantity), 4);
+                    $total += $this->sma->formatDecimal(($item_net_price * $item_unit_quantity), 4);
                 }
             }
             if (empty($products)) {
@@ -175,10 +159,10 @@ class Sales extends MY_Controller
                 krsort($products);
             }
 
-            $order_discount = $this->site->calculateDiscount($this->input->post('order_discount'), $total, true);//$this->site->calculateDiscount($this->input->post('order_discount'), ($total + $product_tax), true);
+            $order_discount = $this->site->calculateDiscount($this->input->post('order_discount'), ($total + $product_tax), true);
             $total_discount = $this->sma->formatDecimal(($order_discount + $product_discount), 4);
             $order_tax      = $this->site->calculateOrderTax($this->input->post('order_tax'), ($total + $product_tax - $order_discount));
-            $total_tax      = $this->sma->formatDecimal($order_tax, 4);//$this->sma->formatDecimal(($product_tax + $order_tax), 4);
+            $total_tax      = $this->sma->formatDecimal(($product_tax + $order_tax), 4);
             // $grand_total    = $this->sma->formatDecimal(($this->sma->formatDecimal($total) + $this->sma->formatDecimal($total_tax) + $this->sma->formatDecimal($shipping) - $this->sma->formatDecimal($order_discount)), 4);
             $grand_total = $this->sma->formatDecimal(($total + $total_tax + $this->sma->formatDecimal($shipping) - $this->sma->formatDecimal($order_discount)), 4);
             $data        = ['date'  => $date,
@@ -860,13 +844,6 @@ class Sales extends MY_Controller
                 $item_unit          = $_POST['product_unit'][$r];
                 $item_quantity      = $_POST['product_base_quantity'][$r];
 
-
-                $item_bonus = $_POST['bonus'][$r];
-                $item_dis1 = $_POST['dis1'][$r];
-                $item_dis2 = $_POST['dis2'][$r];
-                $totalbeforevat = $_POST['totalbeforevat'][$r];
-                $main_net = $_POST['main_net'][$r];
-
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details = $item_type != 'manual' ? $this->sales_model->getProductByCode($item_code) : null;
 
@@ -895,8 +872,7 @@ class Sales extends MY_Controller
                     }
 
                     $product_tax += $pr_item_tax;
-                    $subtotal = $main_net;//(($item_net_price * $item_unit_quantity) + $pr_item_tax);
-                    $subtotal2 = (($item_net_price * $item_unit_quantity));
+                    $subtotal = (($item_net_price * $item_unit_quantity) + $pr_item_tax);
                     $unit     = $this->site->getUnitByID($item_unit);
 
                     $product = [
@@ -920,17 +896,10 @@ class Sales extends MY_Controller
                         'subtotal'          => $this->sma->formatDecimal($subtotal),
                         'serial_no'         => $item_serial,
                         'real_unit_price'   => $real_unit_price,
-                        'subtotal2'         => $this->sma->formatDecimal($subtotal2),
-                        'batchno'           => $item_batchno,
-                        'bonus'             => $item_bonus,
-                        'discount1'         => $item_dis1,
-                        'discount2'         => $item_dis2,
-                        'totalbeforevat'    => $totalbeforevat,
-                        'main_net'          => $main_net,
                     ];
 
                     $products[] = ($product + $gst_data);
-                    $total += $this->sma->formatDecimal($main_net, 4);//$this->sma->formatDecimal(($item_net_price * $item_unit_quantity), 4);
+                    $total += $this->sma->formatDecimal(($item_net_price * $item_unit_quantity), 4);
                 }
             }
             if (empty($products)) {
@@ -939,7 +908,7 @@ class Sales extends MY_Controller
                 krsort($products);
             }
 
-            $order_discount = $this->site->calculateDiscount($this->input->post('order_discount'),$total , true);//$this->site->calculateDiscount($this->input->post('order_discount'), ($total + $product_tax), true);
+            $order_discount = $this->site->calculateDiscount($this->input->post('order_discount'), ($total + $product_tax), true);
             $total_discount = $this->sma->formatDecimal(($order_discount + $product_discount), 4);
             $order_tax      = $this->site->calculateOrderTax($this->input->post('order_tax'), ($total + $product_tax - $order_discount));
             $total_tax      = $this->sma->formatDecimal(($product_tax + $order_tax), 4);
@@ -1037,11 +1006,6 @@ class Sales extends MY_Controller
                 $row->tax_rate        = $item->tax_rate_id;
                 $row->serial          = $item->serial_no;
                 $row->option          = $item->option_id;
-                $row->bonus            = $item->bonus;
-                $row->dis1             = $item->discount1;
-                $row->dis2            = $item->discount2;
-                $row->totalbeforevat   = $item->totalbeforevat;
-                $row->main_net            = $item->main_net;
                 $options              = $this->sales_model->getProductOptions($row->id, $item->warehouse_id, true);
                 if ($options) {
                     foreach ($options as $option) {

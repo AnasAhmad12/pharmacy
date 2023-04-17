@@ -290,7 +290,7 @@
                             <div class="form-group">
                                 <?= lang('status', 'postatus'); ?>
                                 <?php
-                                $post = ['ordered' => lang('ordered'),'approved' => lang('Approved'),'pending' => lang('pending'),'received' => lang('received')];
+                                $post = ['received' => lang('received'), 'pending' => lang('pending'), 'ordered' => lang('ordered')];
                                 echo form_dropdown('status', $post, ($_POST['status'] ?? ''), 'id="postatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" required="required" style="width:100%;" ');
                                 ?>
                             </div>

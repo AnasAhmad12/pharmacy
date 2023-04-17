@@ -2041,9 +2041,6 @@ class Purchases extends MY_Controller
         $bprice    = $strict ? null : $analyzed['price']    ?? null;
 
         $rows = $this->purchases_model->getProductNames($sr);
-        $end_date  = date('d/m/Y h:i');
-        $start_date = date('d/m/Y h:i', strtotime('-3 month'));
-
         if ($rows) {
             $r = 0;
             foreach ($rows as $row) {
@@ -2092,7 +2089,6 @@ class Purchases extends MY_Controller
                 $row->dis1         = 0;
                 $row->dis2         = 0;
                 $row->batchno      = '';
-                //$row->three_month_sale = $this->purchases_model->getThreeMonthSale($row->id,$start_date,$end_date);
                 $row->get_supplier_discount = $this->deals_model->getPurchaseDiscount($supplier_id);
                 unset($row->details, $row->product_details, $row->price, $row->file, $row->supplier1price, $row->supplier2price, $row->supplier3price, $row->supplier4price, $row->supplier5price, $row->supplier1_part_no, $row->supplier2_part_no, $row->supplier3_part_no, $row->supplier4_part_no, $row->supplier5_part_no);
                 if ($qty) {
