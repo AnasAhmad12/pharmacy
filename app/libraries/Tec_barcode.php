@@ -15,9 +15,7 @@ use Laminas\Barcode\Barcode;
 
 class Tec_barcode
 {
-    public function __construct()
-    {
-    }
+    public function __construct() { require_once 'vendor/autoload.php'; }
 
     public function __get($var)
     {
