@@ -17,6 +17,8 @@ use chillerlan\QRCode\QROptions;
 
 class Tec_qrcode
 {
+	public function __construct() { require_once 'vendor/autoload.php'; }
+
     public function generate($params = [])
     {
         return (new QRCode(new QROptions(['imageBase64' => false, 'outputType' => QRCode::OUTPUT_MARKUP_SVG])))->render($params['data']);
