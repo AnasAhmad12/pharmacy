@@ -427,7 +427,7 @@ class Shop extends MY_Shop_Controller
                 $p_Password = 'R123456789$r';
                 $p_Version = '1.0';
 
-                $p_soapLink = 'https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc?wsdl';
+                $p_soapLink = $dp->test_shippment_url;//'https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc?wsdl';
         }
 
 
