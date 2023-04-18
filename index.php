@@ -18,7 +18,7 @@
  * --------------------------------------------------------------------
  *
  * DEMO should always be set to 0 for production
- * To restrict the instillation as demo set DEMO to 1
+ * To restrict the instllation as demo set DEMO to 1
  */
 	define('DEMO', 0);
 
@@ -40,7 +40,7 @@
  * NOTE: If you change these, also change the error_reporting() code below
  */
 	// define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
-	define('ENVIRONMENT', 'development');
+	define('ENVIRONMENT', 'production');
 
 /*
  *---------------------------------------------------------------

@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS `sma_rsd` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT ;
 
+ALTER TABLE `sma_purchase_items` ADD `subtotal2` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `base_unit_cost`, ADD `batchno` VARCHAR(50) NOT NULL DEFAULT '0' AFTER `subtotal2`, ADD `bonus` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `batchno`, ADD `discount1` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `bonus`, ADD `discount2` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `discount1`, ADD `totalbeforevat` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `discount2`, ADD `main_net` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `totalbeforevat`;
+
 ALTER TABLE `sma_sale_items` ADD `subtotal2` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `igst`, ADD `bonus` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `subtotal2`, ADD `discount1` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `bonus`, ADD `discount2` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `discount1`, ADD `totalbeforevat` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `discount2`, ADD `main_net` DECIMAL(24,4) NOT NULL DEFAULT '0' AFTER `totalbeforevat`;
 
 ALTER TABLE `sma_directpay` ADD `test_Merchant_id` VARCHAR(150) NULL DEFAULT NULL AFTER `refund_link`, ADD `test_auth_token` VARCHAR(150) NULL DEFAULT NULL AFTER `test_Merchant_id`;

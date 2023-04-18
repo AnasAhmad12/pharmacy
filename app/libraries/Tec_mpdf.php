@@ -18,6 +18,7 @@ class Tec_mpdf
 {
     public function __construct()
     {
+        require_once 'vendor/autoload.php';
     }
 
     public function __get($var)

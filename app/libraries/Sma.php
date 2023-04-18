@@ -15,6 +15,7 @@ class Sma
 {
     public function __construct()
     {
+        require_once 'vendor/autoload.php';
     }
 
     public function __get($var)

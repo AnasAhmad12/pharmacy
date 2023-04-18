@@ -21,6 +21,7 @@ class Tec_dompdf extends DOMPDF
     public function __construct()
     {
         parent::__construct();
+        require_once 'vendor/autoload.php';
     }
 
     public function generate($content, $name = 'download.pdf', $output_type = null, $footer = null, $margin_bottom = null, $header = null, $margin_top = null, $orientation = 'P')
