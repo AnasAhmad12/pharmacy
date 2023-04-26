@@ -552,6 +552,12 @@
                                             <span class="text"> <?= lang('add_purchase_by_csv'); ?></span>
                                         </a>
                                     </li>
+                                     <li id="purchase_check_status">
+                                        <a class="submenu" href="<?= admin_url('purchases/check_status'); ?>">
+                                            <i class="fa fa-plus-circle"></i>
+                                            <span class="text"> <?= lang('Purchase_Check_Status'); ?></span>
+                                        </a>
+                                    </li>
                                     <li id="purchases_expenses">
                                         <a class="submenu" href="<?= admin_url('purchases/expenses'); ?>">
                                             <i class="fa fa-dollar"></i>
@@ -562,6 +568,65 @@
                                         <a class="submenu" href="<?= admin_url('purchases/add_expense'); ?>" data-toggle="modal" data-target="#myModal">
                                             <i class="fa fa-plus-circle"></i>
                                             <span class="text"> <?= lang('add_expense'); ?></span>
+                                        </a>
+                                    </li>
+
+                                    <li class="mm_purchases_status">
+                                        <a class="dropmenu" href="#">
+                                            <i class="fa fa-star"></i>
+                                            <span class="text"> <?= lang('Status List'); ?>
+                                            </span> <span class="chevron closed"></span>
+                                        </a>
+                                        <ul>
+                                            <li id="status_pending">
+                                                <a class="submenu" href="<?= admin_url('purchases/status/pending'); ?>">
+                                                    <i class="fa fa-star"></i>
+                                                    <span class="text"> <?= lang('Pending'); ?></span>
+                                                </a>
+                                            </li>
+                                            <li id="status_ordered">
+                                                <a class="submenu" href="<?= admin_url('purchases/status/ordered'); ?>">
+                                                    <i class="fa fa-star"></i>
+                                                    <span class="text"> <?= lang('Ordered'); ?></span>
+                                                </a>
+                                            </li>
+                                            <li id="status_arrived">
+                                                <a class="submenu" href="<?= admin_url('purchases/status/arrived'); ?>">
+                                                    <i class="fa fa-star"></i>
+                                                    <span class="text"> <?= lang('Arrived'); ?></span>
+                                                </a>
+                                            </li>
+                                            <li id="status_received">
+                                                <a class="submenu" href="<?= admin_url('purchases/status/received'); ?>">
+                                                    <i class="fa fa-star"></i>
+                                                    <span class="text"> <?= lang('Received'); ?></span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+
+
+                                </ul>
+                            </li>
+
+                             <li class="mm_truck">
+                                <a class="dropmenu" href="#">
+                                    <i class="fa fa-heart-o"></i>
+                                    <span class="text"> <?= lang('Truck Registration'); ?> </span>
+                                    <span class="chevron closed"></span>
+                                </a>
+                                <ul>
+                                    <li id="quotes_index">
+                                        <a class="submenu" href="<?= admin_url('truck_registration'); ?>">
+                                            <i class="fa fa-heart-o"></i>
+                                            <span class="text"> <?= lang('List Truck Registration'); ?></span>
+                                        </a>
+                                    </li>
+                                    <li id="quotes_add">
+                                        <a class="submenu" href="<?= admin_url('truck_registration/add'); ?>">
+                                            <i class="fa fa-plus-circle"></i>
+                                            <span class="text"> <?= lang('Add Truck Registration'); ?></span>
                                         </a>
                                     </li>
                                 </ul>

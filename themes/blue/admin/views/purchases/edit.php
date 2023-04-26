@@ -1,12 +1,12 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <script type="text/javascript">
-    var count = 1, an = 1, po_edit = false, product_variant = 0, DT = <?= $Settings->default_tax_rate ?>, DC = '<?=$default_currency->code?>', shipping = 0,
+    var count = 1, an = 1, po_edit = true, product_variant = 0, DT = <?= $Settings->default_tax_rate ?>, DC = '<?=$default_currency->code?>', shipping = 0,
         product_tax = 0, invoice_tax = 0, total_discount = 0, total = 0,
         tax_rates = <?php echo json_encode($tax_rates); ?>, poitems = {},
         audio_success = new Audio('<?= $assets ?>sounds/sound2.mp3'),
-        audio_error = new Audio('<?= $assets ?>sounds/sound3.mp3');
+        audio_error = new Audio('<?= $assets ?>sounds/sound3.mp3'); 
     $(window).bind("load", function() {
-        <?= ($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show();' : '$(".rec_con").hide();'; ?>
+        <?= ($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show(); $("#temp_lot").show();' : '$(".rec_con").hide(); $("#temp_lot").hide();'; ?>
     });
     $(document).ready(function () {
         <?= ($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show();' : '$(".rec_con").hide();'; ?>
@@ -14,10 +14,12 @@
             var st = $(this).val();
             if (st == 'received' || st == 'partial') {
                 $(".rec_con").show();
+                $("#temp_lot").show();
                 po_edit = true;
                 loadItems();
             } else {
                 $(".rec_con").hide();
+                $("#temp_lot").hide();
                 po_edit = false;
                 loadItems();
             }
@@ -227,7 +229,8 @@
                             <div class="form-group">
                                 <?= lang('status', 'postatus'); ?>
                                 <?php
-                                $post = ['approved' => lang('Approved'),'received' => lang('received'), 'partial' => lang('partial'), 'pending' => lang('pending'), 'ordered' => lang('ordered')];
+                                //$post = ['received' => lang('received'), 'partial' => lang('partial'), 'pending' => lang('pending'), 'ordered' => lang('ordered')];
+                                $post = ['received' => lang('received'), 'partial' => lang('partial'),'rejected' => lang('rejected'), 'pending' => lang('pending'), 'ordered' => lang('ordered'), 'arrived' => lang('arrived')];
                                 echo form_dropdown('status', $post, ($_POST['status'] ?? $purchase->status), 'id="postatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" required="required" style="width:100%;" ');
                                 ?>
                             </div>
@@ -238,6 +241,27 @@
                                 <?= lang('attachments', 'document') ?>
                                 <input id="document" type="file" data-browse-label="<?= lang('browse'); ?>" name="attachments[]" multiple data-show-upload="false" data-show-preview="false" class="form-control file">
                             </div>
+                        </div>
+                        <div class="row" id="temp_lot">
+                        <div class="col-lg-12">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <?= lang('Temperature', 'Temperature'); ?>
+                                    <?php 
+
+                                        $temp = ['accepted' => lang('Accepted'), 'rejected' => lang('Rejected')];
+                                        echo form_dropdown('tempstatus', $temp, ($_POST['temp'] ?? ''), 'id="tempstatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('temperature') . '"  style="width:100%;" ');
+                                    ?>
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <?= lang('Lot Number', 'Lot Number'); ?>
+                                    <?php echo form_input('lotnumber', ($_POST['lotnumber'] ?? $purchase->lotnumber), 'class="form-control input-tip" id="lotnumber"'); ?>
+                                </div>
+                           </div>
+                        </div>
                         </div>
 
                         <div class="col-md-12">

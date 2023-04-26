@@ -718,4 +718,34 @@ class Purchases_model extends CI_Model
             }*/
                      
     }
+
+    public function searchByReference($referenceNo)
+    {
+        $q = $this->db->get_where('purchases',['reference_no' => $referenceNo]);
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data; 
+        }else{
+        $data =420;
+        return $data;
+        }
+    }
+
+    public function searchByDate($start_date,$end_date)
+    {
+        $this->db
+        ->select('reference_no,date,supplier,status')
+        ->where('date >=', $start_date)
+        ->where('date <=', $end_date);
+        $q = $this->db->get('purchases');
+        if ($q->num_rows() > 0) {
+        foreach (($q->result()) as $row) {
+        $data[] = $row;
+        }
+        return $data;
+        }
+        return false;
+    }
 }

@@ -139,7 +139,7 @@ class Groups extends MY_Controller {
 
 			$this->db->where('id', $id);
 			$this->db->update('sma_accounts_groups', $data);
-			$this->settings_model->add_log(lang('groups_cntrler_edit_label_add_log') . $this->input->post('name'), 1);
+			//$this->settings_model->add_log(lang('groups_cntrler_edit_label_add_log') . $this->input->post('name'), 1);
 			$this->session->set_flashdata('message', sprintf(lang('groups_cntrler_edit_group_updated_successfully'), $this->input->post('name')));
 			admin_redirect('accounts');
         }

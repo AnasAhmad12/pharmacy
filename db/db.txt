@@ -34,3 +34,5 @@ ALTER TABLE `sma_sale_items` ADD `subtotal2` DECIMAL(24,4) NOT NULL DEFAULT '0' 
 ALTER TABLE `sma_directpay` ADD `test_Merchant_id` VARCHAR(150) NULL DEFAULT NULL AFTER `refund_link`, ADD `test_auth_token` VARCHAR(150) NULL DEFAULT NULL AFTER `test_Merchant_id`;
 
 ALTER TABLE `sma_aramex` ADD `activation` INT(10) NOT NULL DEFAULT '0' AFTER `version`;
+
+ALTER TABLE `sma_purchases` ADD `tempstatus` VARCHAR(150) NULL DEFAULT NULL AFTER `igst`, ADD `lotnumber` VARCHAR(150) NULL DEFAULT NULL AFTER `tempstatus`;
