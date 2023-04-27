@@ -122,6 +122,16 @@ if($m == 'areports'){
 
 <?php
 }
+
+if($m == 'truck_registration')
+{
+    echo '<script>
+        $(document).ready(function(){
+        $("#reference_no").select2();
+        });
+    </script>';
+}
+
  if($m == 'accounts'){?>
   <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
