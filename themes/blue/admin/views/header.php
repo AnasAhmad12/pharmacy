@@ -1609,8 +1609,8 @@
                                         </a>
                                     </li>
                                     <li id="accounts_purchase_invoice">
-                                        <a class="submenu" href="<?= admin_url('purchases'); ?>">
-                                            <i class="fa fa-plus-square-o"></i><span class="text"> <?= lang('Entries'); ?></span>
+                                        <a class="submenu" href="<?= admin_url('invoices'); ?>">
+                                            <i class="fa fa-plus-square-o"></i><span class="text"> <?= lang('Invoices'); ?></span>
                                         </a>
                                     </li>
                                     <li id="accounts_search">
