@@ -395,6 +395,9 @@
                                         <thead>
                                         <tr>
                                             <th class="col-md-4"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
+                                            <th class="col-md-1"><?= lang('Expiry Date'); ?></th>
+                                            <th class="col-md-1"><?= lang('Batch_No'); ?></th>
+                                            <th class="col-md-1"><?= lang('Lot_No'); ?></th>
                                             <?php
                                             if ($Settings->product_serial) {
                                                 echo '<th class="col-md-2">' . lang('serial_no') . '</th>';
@@ -460,7 +463,8 @@
                                 </div>
                             </div>
                         <?php
-                                            } ?>
+
+                         } ?>
 
                         <div class="col-md-4">
                             <div class="form-group">
@@ -477,14 +481,27 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <?= lang('sale_status', 'slsale_status'); ?>
-                                <?php $sst = ['completed' => lang('completed'), 'pending' => lang('pending')];
-                                echo form_dropdown('sale_status', $sst, '', 'class="form-control input-tip" required="required" id="slsale_status"'); ?>
 
+                             <?php if ($Owner || $Admin || $GP['sales-coordinator']) { ?>
+                                <?php echo form_input('sale_status', 'pending','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
+                             <?php  } ?>
+
+                           <?php if ($Owner || $Admin || !$GP['sales-coordinator']) { ?>
+                            
+                             <div class="col-sm-4">
+                                <div class="form-group">
+                                <?= lang('sale_status', 'slsale_status'); ?>
+                                <?php $sst = ['pending' => lang('pending')];
+                                echo form_dropdown('sale_status', $sst, '', 'class="form-control input-tip" required="required" id="slsale_status"'); ?>
+                                </div>
                             </div>
-                        </div>
+                            <?php  } ?>
+
+                            <!-- 'completed' => lang('completed') -->
+
+
+                           
+
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <?= lang('payment_term', 'slpayment_term'); ?>

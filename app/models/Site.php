@@ -1172,6 +1172,7 @@ class Site extends CI_Model
     {
         if ($sale_id) {
             $sale_items = $this->getAllSaleItems($sale_id);
+
             foreach ($sale_items as $item) {
                 if ($item->product_type == 'standard') {
                     $this->syncProductQty($item->product_id, $item->warehouse_id);
@@ -1188,6 +1189,8 @@ class Site extends CI_Model
                     }
                 }
             }
+
+
         } elseif ($purchase_id) {
             $purchase_items = $this->getAllPurchaseItems($purchase_id);
             foreach ($purchase_items as $item) {

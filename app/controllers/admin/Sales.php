@@ -87,6 +87,11 @@ class Sales extends MY_Controller
                 $unit_price         = $this->sma->formatDecimal($_POST['unit_price'][$r]);
                 $item_unit_quantity = $_POST['quantity'][$r];
                 $item_serial        = $_POST['serial'][$r]           ?? '';
+                
+                $item_expiry        = (isset($_POST['expiry'][$r]) && !empty($_POST['expiry'][$r])) ? $this->sma->fsd($_POST['expiry'][$r]) : null;
+                $item_batchno       = $_POST['batchno'][$r]          ?? '';
+                $item_lotno         = $_POST['lotno'][$r]            ?? '';
+
                 $item_tax_rate      = $_POST['product_tax'][$r]      ?? null;
                 $item_discount      = $_POST['product_discount'][$r] ?? null;
                 $item_unit          = $_POST['product_unit'][$r];
@@ -156,6 +161,11 @@ class Sales extends MY_Controller
                         'item_discount'     => $pr_item_discount,
                         'subtotal'          => $this->sma->formatDecimal($subtotal),
                         'serial_no'         => $item_serial,
+
+                        'expiry'            => $item_expiry,
+                        'batch_no'           => $item_batchno,
+                        'lot_no'             => $item_lotno,
+
                         'real_unit_price'   => $real_unit_price,
                         'subtotal2'         => $this->sma->formatDecimal($subtotal2),
                         'bonus'             => $item_bonus,
@@ -210,6 +220,7 @@ class Sales extends MY_Controller
                 'created_by'        => $this->session->userdata('user_id'),
                 'hash'              => hash('sha256', microtime() . mt_rand()),
             ];
+
             if ($this->Settings->indian_gst) {
                 $data['cgst'] = $total_cgst;
                 $data['sgst'] = $total_sgst;
@@ -320,6 +331,9 @@ class Sales extends MY_Controller
                     $row->real_unit_price = $item->real_unit_price;
                     $row->tax_rate        = $item->tax_rate_id;
                     $row->serial          = '';
+                    $row->expiry          = '';
+                    $row->batchNo        = '';
+                    $row->lotNo          = '';
                     $row->option          = $item->option_id;
                     $options              = $this->sales_model->getProductOptions($row->id, $item->warehouse_id);
                     if ($options) {
@@ -801,6 +815,7 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
+
         $inv = $this->sales_model->getInvoiceByID($id);
         if ($inv->sale_status == 'returned' || $inv->return_id || $inv->return_sale_ref) {
             $this->session->set_flashdata('error', lang('sale_x_action'));
@@ -809,6 +824,7 @@ class Sales extends MY_Controller
         if (!$this->session->userdata('edit_right')) {
             $this->sma->view_rights($inv->created_by);
         }
+
         $this->form_validation->set_message('is_natural_no_zero', lang('no_zero_required'));
         $this->form_validation->set_rules('reference_no', lang('reference_no'), 'required');
         $this->form_validation->set_rules('customer', lang('customer'), 'required');
@@ -845,6 +861,8 @@ class Sales extends MY_Controller
             $gst_data         = [];
             $total_cgst       = $total_sgst       = $total_igst       = 0;
             $i                = isset($_POST['product_code']) ? sizeof($_POST['product_code']) : 0;
+
+
             for ($r = 0; $r < $i; $r++) {
                 $item_id            = $_POST['product_id'][$r];
                 $item_type          = $_POST['product_type'][$r];
@@ -855,6 +873,11 @@ class Sales extends MY_Controller
                 $unit_price         = $this->sma->formatDecimal($_POST['unit_price'][$r]);
                 $item_unit_quantity = $_POST['quantity'][$r];
                 $item_serial        = $_POST['serial'][$r]           ?? '';
+
+                $item_expiry        = (isset($_POST['expiry'][$r]) && !empty($_POST['expiry'][$r])) ? $this->sma->fsd($_POST['expiry'][$r]) : null;
+                $item_batchno       = $_POST['batchno'][$r]          ?? '';
+                $item_lotno         = $_POST['lotno'][$r]            ?? '';
+
                 $item_tax_rate      = $_POST['product_tax'][$r]      ?? null;
                 $item_discount      = $_POST['product_discount'][$r] ?? null;
                 $item_unit          = $_POST['product_unit'][$r];
@@ -919,9 +942,11 @@ class Sales extends MY_Controller
                         'item_discount'     => $pr_item_discount,
                         'subtotal'          => $this->sma->formatDecimal($subtotal),
                         'serial_no'         => $item_serial,
+                        'expiry'            => $item_expiry,
+                        'batch_no'           => $item_batchno,
+                        'lot_no'             => $item_lotno,
                         'real_unit_price'   => $real_unit_price,
                         'subtotal2'         => $this->sma->formatDecimal($subtotal2),
-                        'batchno'           => $item_batchno,
                         'bonus'             => $item_bonus,
                         'discount1'         => $item_dis1,
                         'discount2'         => $item_dis2,
@@ -999,6 +1024,8 @@ class Sales extends MY_Controller
                 }
             }
             $inv_items = $this->sales_model->getAllInvoiceItems($id);
+
+            
             // krsort($inv_items);
             $c = rand(100000, 9999999);
             foreach ($inv_items as $item) {
@@ -1036,6 +1063,11 @@ class Sales extends MY_Controller
                 $row->real_unit_price = $item->real_unit_price;
                 $row->tax_rate        = $item->tax_rate_id;
                 $row->serial          = $item->serial_no;
+                
+                $row->expiry          = $item->expiry;
+                $row->batch_no        = $item->batch_no;
+                $row->lot_no          = $item->lot_no;
+                
                 $row->option          = $item->option_id;
                 $row->bonus            = $item->bonus;
                 $row->dis1             = $item->discount1;
@@ -2442,6 +2474,9 @@ class Sales extends MY_Controller
                 $row->qty             = 1;
                 $row->discount        = '0';
                 $row->serial          = '';
+                $row->expiry          = '';
+                $row->batch_no        = '';
+                $row->lot_no          = '';
                 $options              = $this->sales_model->getProductOptions($row->id, $warehouse_id);
                 if ($options) {
                     $opt = $option_id && $r == 0 ? $this->sales_model->getProductOptionByID($option_id) : $options[0];

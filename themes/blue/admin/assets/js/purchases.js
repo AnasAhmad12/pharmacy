@@ -748,15 +748,16 @@ function loadItems() {
         order_discount = 0;
         total_discount = 0;
         $('#poTable tbody').empty();
+
         poitems = JSON.parse(localStorage.getItem('poitems'));
-        sortedItems =
-            site.settings.item_addition == 1
+        sortedItems = site.settings.item_addition == 1
                 ? _.sortBy(poitems, function (o) {
                       return [parseInt(o.order)];
                   })
                 : poitems;
 
         var order_no = new Date().getTime();
+
         $.each(sortedItems, function () {
             var item = this;
             var item_id = site.settings.item_addition == 1 ? item.item_id : item.id;
@@ -913,6 +914,7 @@ function loadItems() {
                 '" data-item="' +
                 item_id +
                 '" title="Edit" style="cursor:pointer;"></i></td>';
+
             if (site.settings.product_expiry == 1) {
                 tr_html +=
                     '<td><input class="form-control date rexpiry" name="expiry[]" type="text" value="' +
@@ -935,6 +937,7 @@ function loadItems() {
                     '" id="batchno_' +
                     row_no +
                     '"></td>';
+                    
             tr_html +=
                 '<td class="text-right"><input class="form-control input-sm text-right rcost" name="net_cost[]" type="hidden" id="cost_' +
                 row_no +

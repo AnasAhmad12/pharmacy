@@ -168,6 +168,7 @@ $(document).ready(function (e) {
     if ((amount_1 = localStorage.getItem('amount_1'))) {
         $('#amount_1').val(amount_1);
     }
+
     $('#amount_1').change(function (e) {
         localStorage.setItem('amount_1', $(this).val());
     });
@@ -625,6 +626,8 @@ $(document).ready(function (e) {
         $('#net_price').text(formatMoney(net_price));
         $('#pro_tax').text(formatMoney(pr_tax_val));
         $('#prModal').appendTo('body').modal('show');
+
+        
     });
 
     $('#prModal').on('shown.bs.modal', function (e) {
@@ -787,6 +790,8 @@ $(document).ready(function (e) {
         loadItems();
         return;
     });
+
+
     $(document).on('change', '#padiscount', function () {
         if (site.settings.product_discount == 1 && $(this).val()) {
             var row = $('#' + $('#row_id').val());
@@ -930,6 +935,9 @@ $(document).ready(function (e) {
                             type: 'manual',
                             discount: '0',
                             serial: '',
+                            expiry: '',
+                            batch_no: '',
+                            lot_no: '',
                             option: '',
                         },
                         tax_rate: false,
@@ -1010,6 +1018,9 @@ $(document).ready(function (e) {
                     type: 'manual',
                     discount: mdiscount,
                     serial: '',
+                    expiry: '',
+                    batch_no: '',
+                    lot_no: '',
                     option: '',
                 },
                 tax_rate: mtax_rate,
@@ -1237,7 +1248,6 @@ function loadItems() {
         product_discount = 0;
         order_discount = 0;
         total_discount = 0;
-
         $('#slTable tbody').empty();
         slitems = JSON.parse(localStorage.getItem('slitems'));
         sortedItems =
@@ -1263,15 +1273,22 @@ function loadItems() {
                 item_option = item.row.option,
                 item_code = item.row.code,
                 item_serial = item.row.serial,
-
+                item_expiry = item.row.expiry,
+                item_batchno = item.row.batch_no,
+                item_lotno = item.row.lot_no,
                 item_bonus = item.row.bonus,
                 item_dis1 = item.row.dis1,
                 item_dis2 = item.row.dis2,
+            
+            // if(item_expiry == 'undefined'){
+            //     item_expiry = '';
+            //    }
 
+            item_name = item.row.name.replace(/"/g, '&#034;').replace(/'/g, '&#039;');
 
-                item_name = item.row.name.replace(/"/g, '&#034;').replace(/'/g, '&#039;');
             var product_unit = item.row.unit,
                 base_quantity = item.row.base_quantity;
+
             var unit_price = item.row.real_unit_price;
             if (item.units && item.row.fup != 1 && product_unit != item.row.base_unit) {
                 $.each(item.units, function () {
@@ -1377,6 +1394,7 @@ function loadItems() {
 
 
             var row_no = item.id;
+
             var newTr = $('<tr id="row_' + row_no + '" class="row_' + item_id + '" data-item-id="' + item_id + '"></tr>');
 
             tr_html =
@@ -1406,7 +1424,37 @@ function loadItems() {
                 '" data-item="' +
                 item_id +
                 '" title="Edit" style="cursor:pointer;"></i></td>';
-            if (site.settings.product_serial == 1) {
+
+                tr_html +=
+                    '<td><input class="form-control date rexpiry" name="expiry[]" type="text" value="' +
+                    item_expiry +
+                    '" data-id="' +
+                    row_no +
+                    '" data-item="' +
+                    item_id +
+                    '" id="expiry_' +
+                    row_no +
+                    '"></td>';
+
+                    tr_html +=
+                    '<td><input class="form-control rbatchno" name="batchno[]" type="text" value="' +
+                    item_batchno +
+                    '" id="batchno_' +
+                    row_no +
+                    '"></td>';
+
+
+                    tr_html +=
+                    '<td><input class="form-control rbatchno" name="lotno[]" type="text" value="' +
+                    item_lotno +
+                    '" id="lotno_' +
+                    row_no +
+                    '"></td>';
+
+
+                    
+
+              if (site.settings.product_serial == 1) {
                 tr_html +=
                     '<td class="text-right"><input class="form-control input-sm rserial" name="serial[]" type="text" id="serial_' +
                     row_no +
@@ -1414,6 +1462,9 @@ function loadItems() {
                     item_serial +
                     '"></td>';
             }
+
+
+
             tr_html +=
                 '<td class="text-right"><input class="form-control input-sm text-right rprice" name="net_price[]" type="hidden" id="price_' +
                 row_no +
@@ -1428,6 +1479,8 @@ function loadItems() {
                 '">' +
                 formatMoney(item_price) +
                 '</span></td>';
+
+
             tr_html +=
                 '<td><input class="form-control text-center rquantity" tabindex="' +
                 (site.settings.set_focus == 1 ? an : an + 1) +

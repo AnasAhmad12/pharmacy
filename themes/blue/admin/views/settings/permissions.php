@@ -120,6 +120,39 @@
                                             <input type="checkbox" value="1" id="sales-return_sales" class="checkbox" name="sales-return_sales" <?php echo $p->{'sales-return_sales'} ? 'checked' : ''; ?>>
                                             <label for="sales-return_sales" class="padding05"><?= lang('return_sales') ?></label>
                                         </span>
+
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="sales-coordinator" class="checkbox" name="sales-coordinator" <?php echo $p->{'sales-coordinator'} ? 'checked' : ''; ?>>
+                                            <label for="sales-coordinator" class="padding05"><?= lang('Sales Coordinator') ?></label>
+                                        </span>
+
+
+
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="sales-warehouse_supervisor" class="checkbox" name="sales-warehouse_supervisor" <?php echo $p->{'sales-warehouse_supervisor'} ? 'checked' : ''; ?>>
+                                            <label for="sales-warehouse_supervisor" class="padding05"><?= lang('Warehouse Supervisor') ?></label>
+                                        </span>
+
+
+
+
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="sales-warehouse_supervisor_shipping" class="checkbox" name="sales-warehouse_supervisor_shipping" <?php echo $p->{'sales-warehouse_supervisor_shipping'} ? 'checked' : ''; ?>>
+                                            <label for="sales-warehouse_supervisor_shipping" class="padding05"><?= lang('Warehouse Supervisor Shipping') ?></label>
+                                        </span>
+
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="sales-accountant" class="checkbox" name="sales-accountant" <?php echo $p->{'sales-accountant'} ? 'checked' : ''; ?>>
+                                            <label for="sales-accountant" class="padding05"><?= lang('Accountant') ?></label>
+                                        </span>
+
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="sales-quality_supervisor" class="quality_supervisor" name="sales-quality_supervisor" <?php echo $p->{'sales-quality_supervisor'} ? 'checked' : ''; ?>>
+                                            <label for="sales-quality_supervisor" class="padding05"><?= lang('Quality Supervisor') ?></label>
+                                        </span>
+
+
+
                                     </td>
                                 </tr>
 
