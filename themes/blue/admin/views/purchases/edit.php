@@ -8,7 +8,7 @@
     $(window).bind("load", function() {
         <?php //($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show(); $("#temp_lot").show();' : '$(".rec_con").hide(); $("#temp_lot").hide();'; 
         ?>
-        <?php if($GP["purchase_receiving_supervisor"] || ($inv->status == 'arrived' || $inv->status == 'received' || $inv->status == 'partial' || $inv->status == 'rejected') ){ ?>
+        <?php if(isset($GP) && $GP["purchase_receiving_supervisor"] || ($inv->status == 'arrived' || $inv->status == 'received' || $inv->status == 'partial' || $inv->status == 'rejected') ){ ?>
 
             $(".rec_con").show();
             $("#temp_lot").show();
@@ -22,7 +22,7 @@
              loadItems();
         <?php } ?>
 
-        <?php if($GP["purchase_warehouse_supervisor"] || $GP["purchase_supervisor"]){ ?>
+        <?php if(isset($GP) && ($GP["purchase_warehouse_supervisor"] || $GP["purchase_supervisor"])){ ?>
                 ws_edit = true;
                 $('input, textbox, select:not(#warehouse_shelf)').attr('readonly','readonly');
                 $('[title=Remove]').removeClass('podel');
@@ -509,13 +509,13 @@
                             <div class="from-group">
 
                             <?php 
-                            if($GP["purchase_manager"] && ( $purchase->status == 'pending' || $purchase->status == 'ordered' || $purchase->status == 'rejected'))
+                            if(isset($GP) && $GP["purchase_manager"] && ( $purchase->status == 'pending' || $purchase->status == 'ordered' || $purchase->status == 'rejected'))
                             {
                             echo '<input type="submit" class="btn btn-primary" id="postatus1" name="status" value="ordered" style="margin:15px 0;"/>
                                <input type="submit" class="btn btn-warning" id="postatus2" name="status" value="rejected" style="margin:15px 0;"/>';
                                
 
-                            }else if($GP["purchase_receiving_supervisor"]  ){
+                            }else if(isset($GP) && $GP["purchase_receiving_supervisor"]  ){
 
                                 if($inv->status == 'received' || $inv->status == 'partial' )
                                 {
@@ -528,11 +528,11 @@
 
                                 }
 
-                            }else if($GP["purchase_warehouse_supervisor"] && ($inv->status == 'received' || $inv->status == 'partial')){
+                            }else if(isset($GP) && $GP["purchase_warehouse_supervisor"] && ($inv->status == 'received' || $inv->status == 'partial')){
                            
                                 echo form_submit('shelf_status','Shelves Added', 'id="edit_pruchase" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"');    
                             
-                            }else if($GP["purchase_supervisor"] && ($inv->shelf_status != NULL)){
+                            }else if(isset($GP) && $GP["purchase_supervisor"] && ($inv->shelf_status != NULL)){
 
                                 if($inv->validate != NULL){
 
