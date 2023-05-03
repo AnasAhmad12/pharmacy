@@ -361,7 +361,7 @@ if ( ! function_exists('form_dropdown'))
 	 * @param	mixed	$extra
 	 * @return	string
 	 */
-	function form_dropdown($data = '', $options = array(), $selected = array(), $extra = '')
+	function form_dropdown($data = '', $options = array(), $selected = array(), $extra = '', $disabled = array())
 	{
 		$defaults = array();
 
@@ -378,6 +378,14 @@ if ( ! function_exists('form_dropdown'))
 				$options = $data['options'];
 				unset($data['options']); // select tags don't use an options attribute
 			}
+
+			if (isset($data['disabled']))
+			{
+				$disabled = $data['disabled'];
+				unset($data['disabled']); // select tags don't have a selected attribute
+			}
+
+
 		}
 		else
 		{
@@ -386,6 +394,7 @@ if ( ! function_exists('form_dropdown'))
 
 		is_array($selected) OR $selected = array($selected);
 		is_array($options) OR $options = array($options);
+		is_array($disabled) OR $disabled = array($disabled);
 
 		// If no selected state was submitted we will attempt to set it automatically
 		if (empty($selected))
@@ -400,6 +409,21 @@ if ( ! function_exists('form_dropdown'))
 			elseif (isset($_POST[$data]))
 			{
 				$selected = array($_POST[$data]);
+			}
+		}
+
+		if (empty($disabled))
+		{
+			if (is_array($data))
+			{
+				if (isset($data['name'], $_POST[$data['name']]))
+				{
+					$disabled = array($_POST[$data['name']]);
+				}
+			}
+			elseif (isset($_POST[$data]))
+			{
+				$disabled = array($_POST[$data]);
 			}
 		}
 
@@ -425,7 +449,8 @@ if ( ! function_exists('form_dropdown'))
 				foreach ($val as $optgroup_key => $optgroup_val)
 				{
 					$sel = in_array($optgroup_key, $selected) ? ' selected="selected"' : '';
-					$form .= '<option value="'.html_escape($optgroup_key).'"'.$sel.'>'
+					$dis = in_array($optgroup_key, $disabled) ? ' disabled="disabled"' : '';
+					$form .= '<option value="'.html_escape($optgroup_key).'"'.$sel.' '.$dis.'>'
 						.(string) $optgroup_val."</option>\n";
 				}
 
@@ -434,7 +459,7 @@ if ( ! function_exists('form_dropdown'))
 			else
 			{
 				$form .= '<option value="'.html_escape($key).'"'
-					.(in_array($key, $selected) ? ' selected="selected"' : '').'>'
+					.(in_array($key, $selected) ? ' selected="selected"' : '').' '.(in_array($key, $disabled) ? ' disabled="disabled"' : '').'>'
 					.(string) $val."</option>\n";
 			}
 		}

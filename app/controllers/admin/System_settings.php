@@ -1759,10 +1759,63 @@ class system_settings extends MY_Controller
             ->select("{$this->db->dbprefix('warehouses')}.id as id, map, code, {$this->db->dbprefix('warehouses')}.name as name, {$this->db->dbprefix('price_groups')}.name as price_group, phone, email, address")
             ->from('warehouses')
             ->join('price_groups', 'price_groups.id=warehouses.price_group_id', 'left')
-            ->add_column('Actions', "<div class=\"text-center\"><a href='" . admin_url('system_settings/edit_warehouse/$1') . "' class='tip' title='" . lang('edit_warehouse') . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-edit\"></i></a> <a href='#' class='tip po' title='<b>" . lang('delete_warehouse') . "</b>' data-content=\"<p>" . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . admin_url('system_settings/delete_warehouse/$1') . "'>" . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i></a></div>", 'id');
+            ->add_column('Actions', "<div class=\"text-center\"><a href='" . admin_url('system_settings/add_shelf/$1') . "' class='tip' title='" . lang('Add Shelf') . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-plus\"></i></a>&nbsp;<a href='" . admin_url('system_settings/view_shelf/$1') . "' class='tip' title='" . lang('View Shelf') . "'><i class=\"fa fa-file-text-o\"></i></a>&nbsp;<a href='" . admin_url('system_settings/edit_warehouse/$1') . "' class='tip' title='" . lang('edit_warehouse') . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-edit\"></i></a> <a href='#' class='tip po' title='<b>" . lang('delete_warehouse') . "</b>' data-content=\"<p>" . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . admin_url('system_settings/delete_warehouse/$1') . "'>" . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i></a></div>", 'id');
 
         echo $this->datatables->generate();
     }
+
+    public function add_shelf($warehouse = null)
+    {
+        $this->form_validation->set_rules('warehouse_id','Warehouse', 'required');
+
+        if ($this->form_validation->run() == true) {
+        $warehouse_id = $this->input->post('warehouse_id');
+        $i = sizeof($_POST['shelf_name']);
+        for ($r = 0; $r < $i; $r++) 
+        {
+            $shelf_name = $_POST['shelf_name'][$r];
+            $shelf = [
+                'warehouse_id' => $warehouse_id,
+                'shelf_name'   => $shelf_name
+            ];
+            $shelves[] = $shelf;
+        }
+        if ($this->settings_model->addShelf($shelves)) {
+            $this->session->set_flashdata('message', $this->lang->line('Shelf Added into Warehouse'));
+            admin_redirect('system_settings/warehouses');
+        }
+
+        }else{
+
+            $this->data['warehouse_id'] = $warehouse;
+            $this->load->view($this->theme . 'settings/add_shelf', $this->data);
+        }
+
+           
+    }
+
+    public function view_shelf($warehouse = null)
+    {
+        $this->data['shelves'] = $this->settings_model->getAllShelf($warehouse);
+        $this->data['warehouse'] = $this->settings_model->getWarehouseByID($warehouse);
+
+        $bc   = [['link' => base_url(), 'page' => lang('home')], ['link' => admin_url('system_settings'), 'page' => lang('system_settings')], ['link' => '#', 'page' => lang('Warehouse Shelves')]];
+        $meta = ['page_title' => lang('Warehouse Shelves'), 'bc' => $bc];
+        $this->page_construct('settings/warehouse_shelf', $meta, $this->data);
+
+    }
+
+    public function delete_warehouse_shelf($id = null,$warehouse = null)
+    {
+        
+        if ($this->settings_model->deletewarehouseShelf($id)) {
+            
+            $this->session->set_flashdata('message', lang('Country_deleted'));
+                 admin_redirect('system_settings/view_shelf/'.$warehouse);
+        }
+    }
+
+
 
     public function group_product_prices($group_id = null)
     {
@@ -2408,6 +2461,12 @@ class system_settings extends MY_Controller
                 'reports-tax'                => $this->input->post('reports-tax'),
                 'stock_request_view'         => $this->input->post('stock_request_view'),
                 'stock_request_approval'     => $this->input->post('stock_request_approval'),
+                'truck_registration_view'    => $this->input->post('truck_registration_view'),
+                'purchase_manager'           => $this->input->post('purchase_manager'),
+                'purchase_receiving_supervisor' => $this->input->post('purchase_receiving_supervisor'),
+                'purchase_warehouse_supervisor' => $this->input->post('purchase_warehouse_supervisor'),
+                'purchase_supervisor'        => $this->input->post('purchase_supervisor'),
+                'accountant'        => $this->input->post('accountant'),
             ];
 
             if (POS) {

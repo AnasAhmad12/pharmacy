@@ -32,7 +32,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <?= lang('date', 'podate'); ?>
-                                <?php echo form_input('truck_date', (isset($_POST['truck_date']) ? : $truck->truck_date), 'class="form-control input-tip date" id="truckdate" required="required"'); ?>
+                                <?php echo form_input('truck_date', (isset($_POST['truck_date']) ? : $this->sma->hrsd($truck->truck_date)), 'class="form-control input-tip date" id="truckdate" required="required"'); ?>
                             </div>
                         </div>
                        
@@ -58,7 +58,7 @@
                                 foreach ($purchase as $purchase) {
                                 $purchaseId = $purchase->reference_no.'@/'.$purchase->id;
                                 $reference_no = $purchase->reference_no;
-                                   echo "<option value='$purchaseId'>$reference_no</option>";
+                                   echo "<option value='$purchaseId'>$reference_no / $purchase->supplier / $purchase->date</option>";
                               
                                 }
                                 ?>

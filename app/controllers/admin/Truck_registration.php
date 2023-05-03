@@ -29,7 +29,7 @@ class Truck_registration extends MY_Controller
     public function save()
     {
         $data['truck_no'] = $this->input->post('truck_no');
-        $data['truck_date'] = $this->input->post('ddate');
+        $data['truck_date'] =  $this->sma->fld(trim($this->input->post('ddate')));
         $data['truck_time'] = $this->input->post('truck_time');   
         $referenceNo = $this->input->post('reference_no');   
         $purchase =explode("@/",$referenceNo);
@@ -103,14 +103,14 @@ class Truck_registration extends MY_Controller
 
     		 $data     = [
                 'truck_no'            	  => $this->input->post('truck_no'),
-                'truck_date' 			  => $this->input->post('truck_date'),
+                'truck_date' 			  => $this->sma->fld(trim($this->input->post('truck_date'))),
                 'truck_time'              => $this->input->post('truck_time'),
                 'reference_no' 			  => $reference_no,
                 'purchase_id' 			  => $purchase_id
             ];
 
             $this->truck_model->updateTruck($id,$data,$purchaseIdOld,$purchase_id);
-            $this->session->set_flashdata('message', lang('Truck Updated'));
+            $this->session->set_flashdata('message', lang('Truck Registration Data Updated'));
             admin_redirect('truck_registration');
     }
 

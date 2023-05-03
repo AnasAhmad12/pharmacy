@@ -360,6 +360,13 @@ $(document).ready(function () {
             }
         });
 
+        // Three Month average Sale
+         var threeMonthSale = item.row.three_month_sale;
+         $('#three_month_sale').text(threeMonthSale);
+        // warehouse shelf 
+        $('#warehouse_shelf').select2('val', item.row.warehouse_shelf); 
+
+
         $('#poptions-div').html(opt);
         $('#punits-div').html(uopt);
         $('select.select').select2({ minimumResultsForSearch: 7 });
@@ -513,9 +520,13 @@ $(document).ready(function () {
             (poitems[item_id].row.discount = $('#pdiscount').val() ? $('#pdiscount').val() : '0'),
             (poitems[item_id].row.option = $('#poption').val()),
             (poitems[item_id].row.expiry = $('#pexpiry').val() ? $('#pexpiry').val() : '');
+            (poitems[item_id].row.warehouse_shelf = $('#warehouse_shelf').val() ? $('#warehouse_shelf').val() : '');
         localStorage.setItem('poitems', JSON.stringify(poitems));
         $('#prModal').modal('hide');
         loadItems();
+        if(ws_edit){
+            $('#poTable input').attr('readonly','readonly');
+        }
         return;
     });
 
@@ -778,7 +789,8 @@ function loadItems() {
                 item_bonus = item.row.bonus,
                 item_dis1 = item.row.dis1,
                 item_dis2 = item.row.dis2,
-                item_supplier_dis = item.row.get_supplier_discount;
+                item_supplier_dis = item.row.get_supplier_discount,
+                warehouse_shelf = item.row.warehouse_shelf ? item.row.warehouse_shelf: '',
                 item_name = item.row.name.replace(/"/g, '&#034;').replace(/'/g, '&#039;');
 
             var qty_received = item.row.received >= 0 ? item.row.received : item.row.qty;
@@ -899,6 +911,8 @@ function loadItems() {
                 total_after_dis2 +
                 '"><input name="main_net[]" type="hidden" class="main_net" value="' +
                 main_net +
+                '"><input name="warehouse_shelf[]" type="hidden" class="warehouse_shelf" value="' +
+                warehouse_shelf +
                 '"><span class="sname" id="name_' +
                 row_no +
                 '">' +

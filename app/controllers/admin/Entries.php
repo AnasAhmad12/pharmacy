@@ -262,7 +262,7 @@ class Entries extends MY_Controller
 			// pass tag_options array to view
 			$this->data['tag_options'] = $this->db->select('id, title')->get('sma_accounts_tags')->result_array();
 			
-			$this->load->library('LedgerTree');
+			//$this->load->library('LedgerTree');
 			/* Ledger selection */
 			$ledgers = new LedgerTree(); // initilize ledgers array - LedgerTree Lib
 			$ledgers->Group = &$this->Group; // initilize selected ledger groups in ledgers array

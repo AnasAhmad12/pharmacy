@@ -63,6 +63,7 @@ Class Entry_model extends CI_Model {
 	 * Calculate the next number for a entry based on entry type
 	 */
 		public function nextNumber($id)	{
+
 			$this->db->where('entrytype_id', $id);
 			$max = $this->db->select('MAX(number) AS max')->get('sma_accounts_entries')->row_array();
 			if (empty($max['max'])) {
@@ -70,7 +71,7 @@ Class Entry_model extends CI_Model {
 			} else {
 				$maxNumber = $max['max'];
 			}
-			return $maxNumber + 1;
+			return (int)$maxNumber + 1;
 		}
 
 }

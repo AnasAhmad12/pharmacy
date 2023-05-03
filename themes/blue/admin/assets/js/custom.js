@@ -437,6 +437,20 @@ jQuery.fn.dataTableExt.oApi.fnSetFilteringDelay = function ( oSettings, iDelay )
 }).call(this);
 
 
+
+//$(document).ready(function(){
+    $(document).on('click',"#more_shelf",function(e){
+        e.preventDefault();
+        var html = '<tr><td><input type="text" name="shelf_name[]" class="form-control shelf_name" required="required" placeholder="Enter Shelf Name*"></td><td class="text-center"><i class="fa fa-times tip shelf_del" title="Remove" style="cursor:pointer;"></i></td></tr>';
+        $("#shelf_body").append(html);
+    });
+
+    $(document).on('click', '.shelf_del', function () {
+        var row = $(this).closest('tr');
+        row.remove();
+        
+    });
+//  });
 /*!
  * iCheck v1.0.1, http://git.io/arlzeA
  * ===================================

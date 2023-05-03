@@ -560,6 +560,46 @@ if (!empty($variants)) {
 
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group all">
+                                <label for="Purchase Account">Purchase Account</lable>
+                               
+                                    <?php 
+
+                                echo form_dropdown('purchase_account', $LO, (isset($_POST['purchase_account'])) ? $_POST['purchase_account']: ($product ? $product->purchase_account : ''), 'id="purchase_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+
+                               ?>
+                                    
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group all">
+                                <label for="Sales Account">Sales Account</lable>
+                                   <?php 
+
+                                echo form_dropdown('sale_account', $LO, (isset($_POST['sale_account'])) ? $_POST['sale_account']: ($product ? $product->sale_account : ''), 'id="sale_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+
+                               ?>
+                                    
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group all">
+                                <label for="Inventory Account">Inventory Account</lable>
+                                 <?php 
+
+            echo form_dropdown('inventory_account', $LO, (isset($_POST['inventory_account'])) ? $_POST['inventory_account']: ($product ? $product->purchase_account : ''), 'id="inventory_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+
+                               ?>
+                                    
+                                
+                            </div>
+                        </div>
+                    </div>
+
 
                     <div class="form-group all">
                         <?= lang('product_details', 'product_details') ?>

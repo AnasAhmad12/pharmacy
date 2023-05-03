@@ -109,6 +109,32 @@ class MY_Controller extends CI_Controller
             $this->mSettings = $this->db->get('sma_accounts_settings_main')->row();
             $this->mDateArray = explode('|', $this->mAccountSettings->date_format);
 
+            /* Ledger selection */
+            $ledgers = new LedgerTree(); // initilize ledgers array - LedgerTree Lib
+            $ledgers->Group = &$this->Group; // initilize selected ledger groups in ledgers array
+            $ledgers->Ledger = &$this->Ledger; // initilize selected ledgers in ledgers array
+            $ledgers->current_id = -1; // initilize current group id
+            // set restriction_bankcash from entrytype
+            //$ledgers->restriction_bankcash = $entrytype['restriction_bankcash'];
+            $ledgers->build(0); // set ledger id to [NULL] and ledger name to [None] 
+            $ledgers->toList($ledgers, -1); // create a list of ledgers array
+            $this->ledger_options= $ledgers->ledgerList; // pass ledger list to view
+
+            foreach ($this->ledger_options as $id => $ledger)
+            {
+                $this->LO[$id] = $ledger;
+                if($id < 0 )
+                {
+                   $this->DIS[] = $id;
+                }
+            } 
+            $this->data['LO'] = $this->LO;
+            $this->data['DIS'] = $this->DIS;
+            //var_dump($dis);
+
+            $this->vat_on_purchase = 129;
+            $this->data['vat_on_purchase'] = $this->vat_on_purchase; 
+
 
         }
     }

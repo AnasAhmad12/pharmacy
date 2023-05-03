@@ -1,15 +1,42 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <script type="text/javascript">
-    var count = 1, an = 1, po_edit = true, product_variant = 0, DT = <?= $Settings->default_tax_rate ?>, DC = '<?=$default_currency->code?>', shipping = 0,
+    var count = 1, an = 1, po_edit = true,ws_edit=false,product_variant = 0, DT = <?= $Settings->default_tax_rate ?>, DC = '<?=$default_currency->code?>', shipping = 0,
         product_tax = 0, invoice_tax = 0, total_discount = 0, total = 0,
         tax_rates = <?php echo json_encode($tax_rates); ?>, poitems = {},
         audio_success = new Audio('<?= $assets ?>sounds/sound2.mp3'),
         audio_error = new Audio('<?= $assets ?>sounds/sound3.mp3'); 
     $(window).bind("load", function() {
-        <?= ($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show(); $("#temp_lot").show();' : '$(".rec_con").hide(); $("#temp_lot").hide();'; ?>
+        <?php //($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show(); $("#temp_lot").show();' : '$(".rec_con").hide(); $("#temp_lot").hide();'; 
+        ?>
+        <?php if($GP["purchase_receiving_supervisor"] || ($inv->status == 'arrived' || $inv->status == 'received' || $inv->status == 'partial' || $inv->status == 'rejected') ){ ?>
+
+            $(".rec_con").show();
+            $("#temp_lot").show();
+            po_edit = true;
+            loadItems();
+        <?php }else{ ?>
+
+             $(".rec_con").hide();
+             $("#temp_lot").hide();
+             po_edit = false;
+             loadItems();
+        <?php } ?>
+
+        <?php if($GP["purchase_warehouse_supervisor"] || $GP["purchase_supervisor"]){ ?>
+                ws_edit = true;
+                $('input, textbox, select:not(#warehouse_shelf)').attr('readonly','readonly');
+                $('[title=Remove]').removeClass('podel');
+                $('#postatus').prop("disabled", false);
+                //$('#warehouse_shelf').prop("disabled", false);
+                $('#postatus').attr('readonly','readonly');
+
+        <?php } ?>
     });
     $(document).ready(function () {
-        <?= ($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show();' : '$(".rec_con").hide();'; ?>
+        <?php // ($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show();' : '$(".rec_con").hide();'; 
+        ?>
+        
+
         $('#postatus').change(function(){
             var st = $(this).val();
             if (st == 'received' || st == 'partial') {
@@ -55,7 +82,22 @@
     } ?>
         ItemnTotals();
         $("#add_item").autocomplete({
-            source: '<?= admin_url('purchases/suggestions'); ?>',
+            //source: '<?= admin_url('purchases/suggestions'); ?>',
+            source: function (request, response) {
+                $.ajax({
+                    type: 'get',
+                    url: '<?= admin_url('purchases/suggestions'); ?>',
+                    dataType: "json",
+                    data: {
+                        term: request.term,
+                        supplier_id: $("#posupplier").val()
+                    },
+                    success: function (data) {
+                        $(this).removeClass('ui-autocomplete-loading');
+                        response(data);
+                    }
+                });
+            },
             minLength: 1,
             autoFocus: false,
             delay: 250,
@@ -173,6 +215,18 @@
             $(window).unbind('beforeunload');
             $('form.edit-po-form').submit();
         });
+        $('#postatus1').click(function () {
+            $(window).unbind('beforeunload');
+            $('form.edit-po-form').submit();
+        });
+        $('#postatus2').click(function () {
+            $(window).unbind('beforeunload');
+            $('form.edit-po-form').submit();
+        });
+        $('#postatus3').click(function () {
+            $(window).unbind('beforeunload');
+            $('form.edit-po-form').submit();
+        });
 
     });
 
@@ -205,6 +259,7 @@
                                     <?php echo form_input('date', ($_POST['date'] ?? $this->sma->hrld($purchase->date)), 'class="form-control input-tip datetime" id="podate" required="required"'); ?>
                                 </div>
                             </div>
+
                         <?php
                 } ?>
                         <div class="col-md-4">
@@ -225,16 +280,33 @@
                                 ?>
                             </div>
                         </div>
+                        <?php if ($Owner || $Admin) {
+                    ?>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <?= lang('status', 'postatus'); ?>
                                 <?php
                                 //$post = ['received' => lang('received'), 'partial' => lang('partial'), 'pending' => lang('pending'), 'ordered' => lang('ordered')];
                                 $post = ['received' => lang('received'), 'partial' => lang('partial'),'rejected' => lang('rejected'), 'pending' => lang('pending'), 'ordered' => lang('ordered'), 'arrived' => lang('arrived')];
-                                echo form_dropdown('status', $post, ($_POST['status'] ?? $purchase->status), 'id="postatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" required="required" style="width:100%;" ');
+
+                                echo form_dropdown('status', $post, ($_POST['status'] ?? $purchase->status), ' class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" id="postatus"  style="width:100%;" ');
                                 ?>
                             </div>
                         </div>
+                    <?php }else{ ?>
+                            <div class="col-md-4">
+                            <div class="form-group">
+                                <?= lang('status', 'postatus'); ?>
+                                <?php
+                                //$post = ['received' => lang('received'), 'partial' => lang('partial'), 'pending' => lang('pending'), 'ordered' => lang('ordered')];
+                                $post = ['received' => lang('received'), 'partial' => lang('partial'),'rejected' => lang('rejected'), 'pending' => lang('pending'), 'ordered' => lang('ordered'), 'arrived' => lang('arrived')];
+
+                                echo form_dropdown('status', $post, ($_POST['status'] ?? $purchase->status), ' class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '"disabled="disabled" id="postatus"  style="width:100%;" ');
+                                ?>
+                            </div>
+                        </div>
+
+                    <?php } ?>
 
                         <div class="col-md-4">
                             <div class="form-group">
@@ -242,6 +314,28 @@
                                 <input id="document" type="file" data-browse-label="<?= lang('browse'); ?>" name="attachments[]" multiple data-show-upload="false" data-show-preview="false" class="form-control file">
                             </div>
                         </div>
+                        <?php //if($inv->shelf_status != NULL || $inv->shelf_status == NULL){ 
+                            if(!is_null($inv->shelf_status)){
+                            ?>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <?= lang('Shelf Status', 'Shelf Status') ?>
+                                <input type="text" name="shelf_status" class="form-control input-tip" readonly="readonly" value="<?= $inv->shelf_status; ?>">
+                            </div>
+                        </div>
+                        <?php } ?>
+
+                        <?php //if($inv->validate != NULL || $inv->validate == NULL){ 
+                            if(!is_null($inv->validate)){
+                            ?>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <?= lang('Validation Status', 'Validation Status') ?>
+                                <input type="text" name="validate" class="form-control input-tip" readonly="readonly"  value="<?= $inv->validate; ?>">
+                            </div>
+                        </div>
+                        <?php } ?>
+
                         <div class="row" id="temp_lot">
                         <div class="col-lg-12">
                             <div class="col-md-4">
@@ -412,9 +506,47 @@
 
                         </div>
                         <div class="col-md-12">
-                            <div
-                                class="from-group"><?php echo form_submit('edit_pruchase', $this->lang->line('submit'), 'id="edit_pruchase" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); ?>
-                                <button type="button" class="btn btn-danger" id="reset"><?= lang('reset') ?></button>
+                            <div class="from-group">
+
+                            <?php 
+                            if($GP["purchase_manager"] && ( $purchase->status == 'pending' || $purchase->status == 'ordered' || $purchase->status == 'rejected'))
+                            {
+                            echo '<input type="submit" class="btn btn-primary" id="postatus1" name="status" value="ordered" style="margin:15px 0;"/>
+                               <input type="submit" class="btn btn-warning" id="postatus2" name="status" value="rejected" style="margin:15px 0;"/>';
+                               
+
+                            }else if($GP["purchase_receiving_supervisor"]  ){
+
+                                if($inv->status == 'received' || $inv->status == 'partial' )
+                                {
+
+                                }else{
+
+                                    echo '<input type="submit" class="btn btn-primary" id="postatus1" name="status" value="received" style="margin:15px 0;"/>
+                               <input type="submit" class="btn btn-warning" id="postatus2" name="status" value="partial" style="margin:15px 0;"/>
+                               <input type="submit" class="btn btn-danger" id="postatus3" name="status" value="rejected" style="margin:15px 0;"/>';
+
+                                }
+
+                            }else if($GP["purchase_warehouse_supervisor"] && ($inv->status == 'received' || $inv->status == 'partial')){
+                           
+                                echo form_submit('shelf_status','Shelves Added', 'id="edit_pruchase" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"');    
+                            
+                            }else if($GP["purchase_supervisor"] && ($inv->shelf_status != NULL)){
+
+                                if($inv->validate != NULL){
+
+                                }else{
+                                
+                                echo form_submit('validate','validate', 'id="edit_pruchase" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); 
+                                }
+                            
+                            }else{
+                                echo form_submit('edit_pruchase', $this->lang->line('submit'), 'id="edit_pruchase" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); 
+                            }
+
+                                 ?>
+                               <!-- <button type="button" class="btn btn-danger" id="reset"><?= lang('reset') ?></button>-->
                             </div>
                         </div>
                     </div>
@@ -454,6 +586,35 @@
             </div>
             <div class="modal-body" id="pr_popover_content">
                 <form class="form-horizontal" role="form">
+
+                    <?php if($GP["purchase_warehouse_supervisor"] || $GP["purchase_supervisor"]){ ?>
+                         <div class="form-group">
+                             <label class="col-sm-4 control-label"><?= lang('Warehouse Shelf') ?></label>
+                             <div class="col-sm-8">
+                            
+                                 
+                             
+                        <?php  if(!empty($shelves))
+                            {
+                                 $sh[''] = '';
+                                foreach ($shelves as $shelf) 
+                                {
+                                    $sh[$shelf['id']] = $shelf['shelf_name'];
+                                }
+                                echo form_dropdown('warehouse_shelf', $sh, '', 'id="warehouse_shelf" class="form-control pos-input-tip" style="width:100%;"');
+                                    ?>
+
+                                  
+                                        
+
+
+                           <?php         
+                                
+                            } ?>
+                            </select>
+                        </div>
+                        </div>
+                    <?php } ?>
                     <?php if ($Settings->tax1) {
                                                 ?>
                         <div class="form-group">
@@ -525,6 +686,12 @@
                             <th style="width:25%;"><?= lang('product_tax'); ?></th>
                             <th style="width:25%;"><span id="pro_tax"></span></th>
                         </tr>
+                        <?php if($GP["purchase_manager"]){ ?>
+                        <tr>
+                            <th style="width:75%;" colspan="2"><?= lang('3 Month Avarege Sale'); ?></th>
+                            <th style="width:25%;" colspan="2"><span id="three_month_sale"></span></th>
+                        </tr>
+                    <?php }?>
                     </table>
                     <div class="panel panel-default">
                         <div class="panel-heading"><?= lang('calculate_unit_cost'); ?></div>

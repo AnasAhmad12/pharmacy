@@ -443,6 +443,15 @@ class Site extends CI_Model
         return false;
     }
 
+    public function getAllShelf($id)
+    {
+        $q = $this->db->get_where('warehouse_shelf', ['warehouse_id' => $id]);
+        if ($q->num_rows() > 0) {
+            return $q->result_array();
+        }
+        return false;
+    }
+
  public function getallWCountry()
     {
         $q = $this->db->get('warehouses_country');

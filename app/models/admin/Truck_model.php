@@ -31,7 +31,11 @@ class Truck_model extends CI_Model
 
     public function deleteDeal($id)
     {
+        $q = $this->db->get_where('truck_registration',['id' => $id]);
+         $purchase_id = $q->row()->purchase_id;
+
         if ($this->db->delete('truck_registration', ['id' => $id])) {
+            $this->db->update('purchases', ['status' => 'ordered'], ['id' => $purchase_id]);
             return true;
         }
         return false;

@@ -75,7 +75,7 @@
                             <th class="col-xs-2"><?= lang('phone'); ?></th>
                             <th class="col-xs-2"><?= lang('email'); ?></th>
                             <th class="col-xs-3"><?= lang('address'); ?></th>
-                            <th style="width:65px;"><?= lang('actions'); ?></th>
+                            <th class="col-xs-2"><?= lang('actions'); ?></th>
                         </tr>
                         </thead>
                         <tbody>

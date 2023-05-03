@@ -143,6 +143,14 @@ class Settings_model extends CI_Model
         return false;
     }
 
+    public function addShelf($data)
+    {
+        if ($this->db->insert_batch('warehouse_shelf', $data)) {
+            return true;
+        }
+        return false;
+    }
+
     public function brandHasProducts($brand_id)
     {
         $q = $this->db->get_where('products', ['brand' => $brand_id], 1);
@@ -263,6 +271,14 @@ class Settings_model extends CI_Model
         if ($this->db->delete('warehouses', ['id' => $id]) && $this->db->delete('warehouses_products', ['warehouse_id' => $id])) {
             $this->db->delete('warehouses_products_variants', ['warehouse_id' => $id]);
             $this->db->update('purchase_items', ['quantity_balance' => 0], ['warehouse_id' => $id]);
+            return true;
+        }
+        return false;
+    }
+
+    public function deletewarehouseShelf($id)
+    {
+        if ($this->db->delete('warehouse_shelf', ['id' => $id])) {
             return true;
         }
         return false;
@@ -570,6 +586,15 @@ class Settings_model extends CI_Model
         $q = $this->db->get_where('warehouses', ['id' => $id], 1);
         if ($q->num_rows() > 0) {
             return $q->row();
+        }
+        return false;
+    }
+
+    public function getAllShelf($id)
+    {
+        $q = $this->db->get_where('warehouse_shelf', ['warehouse_id' => $id]);
+        if ($q->num_rows() > 0) {
+            return $q->result_array();
         }
         return false;
     }

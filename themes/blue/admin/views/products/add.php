@@ -566,6 +566,46 @@ if (!empty($variants)) {
 
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group all">
+                                <label for="Purchase Account">Purchase Account</lable>
+                               
+                                    <?php 
+
+                                echo form_dropdown('purchase_account', $LO, ($_POST['purchase_account'] ?? $purchase->purchase_account), 'id="purchase_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+
+                               ?>
+                                    
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group all">
+                                <label for="Sales Account">Sales Account</lable>
+                                   <?php 
+
+                                echo form_dropdown('sale_account', $LO, ($_POST['sale_account'] ?? $purchase->purchase_account), 'id="sale_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+
+                               ?>
+                                    
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group all">
+                                <label for="Inventory Account">Inventory Account</lable>
+                                 <?php 
+
+                                echo form_dropdown('inventory_account', $LO, ($_POST['inventory_account'] ?? $purchase->purchase_account), 'id="inventory_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+
+                               ?>
+                                    
+                                
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group all">
                         <?= lang('product_details', 'product_details') ?>
                         <?= form_textarea('product_details', ($_POST['product_details'] ?? ($product ? $product->product_details : '')), 'class="form-control" id="product_details"'); ?>

@@ -77,6 +77,15 @@
                         <?= lang('country', 'country'); ?>
                         <?php echo form_input('country', $supplier->country, 'class="form-control" id="country"'); ?>
                     </div>
+
+                    <div class="form-group">
+                        <?= lang('Ledger Account', 'Ledger Account'); ?>
+                        <?php 
+
+                            echo form_dropdown('ledger_account', $LO,$supplier->ledger_account, 'id="ledger_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+                        ?>
+                    </div>
+                    
                     <div class="form-group">
                         <?= lang('scf1', 'cf1'); ?>
                         <?php echo form_input('cf1', $supplier->cf1, 'class="form-control" id="cf1"'); ?>

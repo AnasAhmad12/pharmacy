@@ -1186,6 +1186,22 @@ function row_status(x) {
         return '<div class="text-center"><span class="row_status label label-default">' + x + '</span></div>';
     }
 }
+
+function row_status_p(x) {
+    if (x == null) {
+        return '';
+    } else if (x == 'pending') {
+        return '<div class="text-center"><span class=" label label-warning">' + lang[x] + '</span></div>';
+    } else if (x == 'completed' || x == 'paid' || x == 'sent' || x == 'received') {
+        return '<div class="text-center"><span class=" label label-success">' + lang[x] + '</span></div>';
+    } else if (x == 'partial' || x == 'transferring' || x == 'ordered') {
+        return '<div class="text-center"><span class=" label label-info">' + lang[x] + '</span></div>';
+    } else if (x == 'due' || x == 'returned') {
+        return '<div class="text-center"><span class=" label label-danger">' + lang[x] + '</span></div>';
+    } else {
+        return '<div class="text-center"><span class=" label label-default">' + x + '</span></div>';
+    }
+}
 function pay_status(x) {
     if (x == null) {
         return '';

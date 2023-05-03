@@ -46,7 +46,7 @@ class Sma
         return false;
     }
     
-    public function checkPermissionsForRequest($action = null)
+    public function checkPermissionsForRequest($action = null) // $this->sma->checkPermissionsForRequest('truck_registration')
     {
         if($this->GP[$action] == 1){
              return true;

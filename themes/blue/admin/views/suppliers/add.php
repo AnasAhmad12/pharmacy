@@ -78,6 +78,13 @@
                         <?php echo form_input('country', '', 'class="form-control" id="country"'); ?>
                     </div>
                     <div class="form-group">
+                        <?= lang('Ledger Account', 'Ledger Account'); ?>
+                        <?php 
+
+                            echo form_dropdown('ledger_account', $LO,'', 'id="ledger_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+                        ?>
+                    </div>
+                    <div class="form-group">
                         <?= lang('scf1', 'cf1'); ?>
                         <?php echo form_input('cf1', '', 'class="form-control" id="cf1"'); ?>
                     </div>

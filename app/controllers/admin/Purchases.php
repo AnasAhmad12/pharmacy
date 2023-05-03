@@ -565,7 +565,10 @@ class Purchases extends MY_Controller
             $status           = $this->input->post('status');
             $tempstatus       = $this->input->post('tempstatus');
             $lotnumber       = $this->input->post('lotnumber');
-            
+            $shelf_status = $this->input->post('shelf_status') ? $this->input->post('shelf_status') : "NULL";
+            $validate = $this->input->post('validate') ? $this->input->post('validate') : "NULL";
+
+
             $shipping         = $this->input->post('shipping') ? $this->input->post('shipping') : 0;
             $supplier_details = $this->site->getCompanyByID($supplier_id);
             $supplier         = $supplier_details->company && $supplier_details->company != '-' ? $supplier_details->company : $supplier_details->name;
@@ -603,6 +606,7 @@ class Purchases extends MY_Controller
                 $item_dis2 = $_POST['dis2'][$r];
                 $totalbeforevat = $_POST['totalbeforevat'][$r];
                 $main_net = $_POST['main_net'][$r];
+                $warehouse_shelf = $_POST['warehouse_shelf'][$r];
 
                 if ($status == 'received' || $status == 'partial') {
                     if ($quantity_received < $item_quantity) {
@@ -680,6 +684,7 @@ class Purchases extends MY_Controller
                         'discount2'         => $item_dis2,
                         'totalbeforevat'    => $totalbeforevat,
                         'main_net'          => $main_net,
+                        'warehouse_shelf'   => ($warehouse_shelf ? $warehouse_shelf : '')
                     ];
 
                     if ($unit->id != $product_details->unit) {
@@ -734,7 +739,9 @@ class Purchases extends MY_Controller
                 'payment_term'             => $payment_term,
                 'due_date'                 => $due_date,
                 'tempstatus'               => $tempstatus,
-                'lotnumber'                => $lotnumber
+                'lotnumber'                => $lotnumber,
+                'shelf_status'             => $shelf_status,
+                'validate'                 => $validate
 
 
             ];
@@ -749,12 +756,15 @@ class Purchases extends MY_Controller
 
             $attachments        = $this->attachments->upload();
             $data['attachment'] = !empty($attachments);
-            // $this->sma->print_arrays($data, $products);
+            //$this->sma->print_arrays($data, $products);
         }
 
         if ($this->form_validation->run() == true && $this->purchases_model->updatePurchase($id, $data, $products, $attachments)) {
+
+
             $this->session->set_userdata('remove_pols', 1);
             $this->session->set_flashdata('message', $this->lang->line('purchase_added'));
+
             admin_redirect('purchases');
         } else {
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
@@ -766,6 +776,8 @@ class Purchases extends MY_Controller
                 }
             }
             $inv_items = $this->purchases_model->getAllPurchaseItems($id);
+            $end_date  = date('d/m/Y h:i');
+            $start_date = date('d/m/Y h:i', strtotime('-3 month'));
             // krsort($inv_items);
             $c = rand(100000, 9999999);
             foreach ($inv_items as $item) {
@@ -797,6 +809,8 @@ class Purchases extends MY_Controller
                 $row->main_net            = $item->main_net;
                 $row->batchno            = $item->batchno;
                 $row->get_supplier_discount = $supplier_purchase_discount ;
+                $row->three_month_sale = $this->purchases_model->getThreeMonthSale($item->product_id,$start_date,$end_date);
+                $row->warehouse_shelf = $item->warehouse_shelf;
                 unset($row->details, $row->product_details, $row->price, $row->file, $row->product_group_id);
                 $units    = $this->site->getUnitsByBUID($row->base_unit);
                 $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
@@ -814,6 +828,7 @@ class Purchases extends MY_Controller
             $this->data['categories'] = $this->site->getAllCategories();
             $this->data['tax_rates']  = $this->site->getAllTaxRates();
             $this->data['warehouses'] = $this->site->getAllWarehouses();
+            $this->data['shelves'] = $this->site->getAllShelf($inv->warehouse_id);
             $this->load->helper('string');
             $value = random_string('alnum', 20);
             $this->session->set_userdata('user_csrf', $value);
@@ -1193,6 +1208,79 @@ class Purchases extends MY_Controller
         echo $this->datatables->generate();
     }
 
+    public function convert_purchse_invoice($pid)
+    {
+        if ($this->purchases_model->puchaseToInvoice($pid)) {
+            $inv = $this->purchases_model->getPurchaseByID($pid);
+            $this->load->admin_model('companies_model');
+            $supplier = $this->companies_model->getCompanyByID($inv->supplier_id);
+            $inv_items = $this->purchases_model->getAllPurchaseItems($pid);
+
+             /*Accounts Entries*/
+            $entry = array(
+                    'entrytype_id' => 4,
+                    'number'       => 'PO-'.$inv->reference_no,
+                    'date'         => date('Y-m-d'), 
+                    'dr_total'     => $inv->grand_total,
+                    'cr_total'     => $inv->grand_total,
+                    'notes'        => 'Purchase Reference: '.$inv->reference_no.' Date: '.date('Y-m-d H:i:s'),
+                    'pid'          =>  $inv->id
+                    );
+                $add  = $this->db->insert('sma_accounts_entries', $entry);
+                $insert_id = $this->db->insert_id();
+
+            $entryitemdata = array();
+
+            foreach ($inv_items as $item) 
+            {
+                $proid = $item->product_id;
+                $product  = $this->site->getProductByID($proid);
+                //products
+                $entryitemdata[] = array(
+                        'Entryitem' => array(
+                            'entry_id' => $insert_id,
+                            'dc' => 'D',
+                            'ledger_id' => $product->inventory_account,
+                            'amount' => $item->main_net,
+                            'narration' => ''
+                        )
+                    );
+
+            }
+            //vat on purchase
+            $entryitemdata[] = array(
+                        'Entryitem' => array(
+                            'entry_id' => $insert_id,
+                            'dc' => 'D',
+                            'ledger_id' => $this->vat_on_purchase,
+                            'amount' => $inv->order_tax,
+                            'narration' => ''
+                        )
+                    );
+            //supplier
+            $entryitemdata[] = array(
+                        'Entryitem' => array(
+                            'entry_id' => $insert_id,
+                            'dc' => 'C',
+                            'ledger_id' => $supplier->ledger_account,
+                            'amount' => $inv->grand_total,
+                            'narration' => ''
+                        )
+                    );
+
+            foreach ($entryitemdata as $row => $itemdata)
+            {
+                    $this->db->insert('sma_accounts_entryitems' ,$itemdata['Entryitem']);
+            }
+
+           
+               
+
+            $this->session->set_flashdata('message', lang('Purchase is Converted to invoice Successfully!'));
+            admin_redirect($_SERVER['HTTP_REFERER'] ?? 'purchases');
+        }
+    }
+
     public function getPurchases($warehouse_id = null)
     {
         $this->sma->checkPermissions('index');
@@ -1203,7 +1291,14 @@ class Purchases extends MY_Controller
         }
         $detail_link      = anchor('admin/purchases/view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('purchase_details'));
         $payments_link    = anchor('admin/purchases/payments/$1', '<i class="fa fa-money"></i> ' . lang('view_payments'), 'data-toggle="modal" data-target="#myModal"');
+
+        if($this->GP['accountant'])
+        {
+            $convert_purchase_invoice = anchor('admin/purchases/convert_purchse_invoice/$1', '<i class="fa fa-money"></i> ' . lang('Convert to Invoice'));
+        }
+
         $add_payment_link = anchor('admin/purchases/add_payment/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), 'data-toggle="modal" data-target="#myModal"');
+
         $email_link       = anchor('admin/purchases/email/$1', '<i class="fa fa-envelope"></i> ' . lang('email_purchase'), 'data-toggle="modal" data-target="#myModal"');
         $edit_link        = anchor('admin/purchases/edit/$1', '<i class="fa fa-edit"></i> ' . lang('edit_purchase'));
         $pdf_link         = anchor('admin/purchases/pdf/$1', '<i class="fa fa-file-pdf-o"></i> ' . lang('download_pdf'));
@@ -1213,21 +1308,48 @@ class Purchases extends MY_Controller
         . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . admin_url('purchases/delete/$1') . "'>"
         . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i> "
         . lang('delete_purchase') . '</a>';
-        $action = '<div class="text-center"><div class="btn-group text-left">'
-        . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
-        . lang('actions') . ' <span class="caret"></span></button>
-        <ul class="dropdown-menu pull-right" role="menu">
-            <li>' . $detail_link . '</li>
-            <li>' . $payments_link . '</li>
-            <li>' . $add_payment_link . '</li>
-            <li>' . $edit_link . '</li>
-            <li>' . $pdf_link . '</li>
-            <li>' . $email_link . '</li>
-            <li>' . $print_barcode . '</li>
-            <li>' . $return_link . '</li>
-            <li>' . $delete_link . '</li>
-        </ul>
-        </div></div>';
+
+
+        if($this->GP['accountant'])
+        {
+
+            $action = '<div class="text-center"><div class="btn-group text-left">'
+            . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
+            . lang('actions') . ' <span class="caret"></span></button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li>' . $convert_purchase_invoice . '</li>
+                <li>' . $detail_link . '</li>
+                <li>' . $payments_link . '</li>
+                <li>' . $add_payment_link . '</li>
+                <li>' . $edit_link . '</li>
+                <li>' . $pdf_link . '</li>
+                <li>' . $email_link . '</li>
+                <li>' . $print_barcode . '</li>
+                <li>' . $return_link . '</li>
+                <li>' . $delete_link . '</li>
+            </ul>
+            </div></div>';
+
+        }else{
+
+            $action = '<div class="text-center"><div class="btn-group text-left">'
+            . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
+            . lang('actions') . ' <span class="caret"></span></button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li>' . $detail_link . '</li>
+                <li>' . $payments_link . '</li>
+                <li>' . $add_payment_link . '</li>
+                <li>' . $edit_link . '</li>
+                <li>' . $pdf_link . '</li>
+                <li>' . $email_link . '</li>
+                <li>' . $print_barcode . '</li>
+                <li>' . $return_link . '</li>
+                <li>' . $delete_link . '</li>
+            </ul>
+            </div></div>';
+
+
+        }  
         //$action = '<div class="text-center">' . $detail_link . ' ' . $edit_link . ' ' . $email_link . ' ' . $delete_link . '</div>';
 
         $this->load->library('datatables');
@@ -1247,6 +1369,45 @@ class Purchases extends MY_Controller
        //     $this->datatables->where('status', 'pending');
         //}
         // $this->datatables->where('status !=', 'returned');
+
+        if($this->GP["purchase_supervisor"])
+        {
+            $this->datatables->where('status', 'pending');
+            $this->datatables->or_where('shelf_status', 'Shelves Added');
+
+        }
+
+        if($this->GP["purchase_manager"])
+        {
+            $this->datatables->where('status', 'pending');
+            $this->datatables->or_where('status', 'ordered');
+            $this->datatables->or_where('status', 'rejected');
+        }
+
+        if($this->GP["purchase_receiving_supervisor"])
+        {
+            $this->datatables->where('status', 'arrived');
+            $this->datatables->or_where('status', 'received');
+            $this->datatables->or_where('status', 'partial');
+            $this->datatables->or_where('status', 'rejected');
+            
+        }
+
+        if($this->GP["purchase_warehouse_supervisor"])
+        {
+            $this->datatables->where('status', 'received');
+            $this->datatables->or_where('status', 'partial');
+
+        }
+        if($this->GP["accountant"])
+        {
+            $this->datatables->where('status', 'received');
+            $this->datatables->or_where('status', 'partial');
+            //$this->datatables->or_where('status', 'partial');
+
+        }
+
+       
 
         if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $this->datatables->where('created_by', $this->session->userdata('user_id'));
@@ -2194,6 +2355,7 @@ class Purchases extends MY_Controller
                 $row->dis1         = 0;
                 $row->dis2         = 0;
                 $row->batchno      = '';
+                $row->warehouse_shelf = '';
                 //$row->three_month_sale = $this->purchases_model->getThreeMonthSale($row->id,$start_date,$end_date);
                 $row->get_supplier_discount = $this->deals_model->getPurchaseDiscount($supplier_id);
                 unset($row->details, $row->product_details, $row->price, $row->file, $row->supplier1price, $row->supplier2price, $row->supplier3price, $row->supplier4price, $row->supplier5price, $row->supplier1_part_no, $row->supplier2_part_no, $row->supplier3_part_no, $row->supplier4_part_no, $row->supplier5_part_no);

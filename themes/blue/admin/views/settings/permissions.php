@@ -224,6 +224,22 @@
                                             <input type="checkbox" value="1" id="purchases-return_purchases" class="checkbox" name="purchases-return_purchases" <?php echo $p->{'purchases-return_purchases'} ? 'checked' : ''; ?>>
                                             <label for="purchases-return_purchases" class="padding05"><?= lang('return_purchases') ?></label>
                                         </span>
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="purchase_supervisor" class="checkbox" name="purchase_supervisor" <?php echo $p->{'purchase_supervisor'} ? 'checked' : ''; ?>>
+                                            <label for="purchase_supervisor" class="padding05"><?= lang('Purchase Supervisor') ?></label>
+                                        </span>
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="purchase_manager" class="checkbox" name="purchase_manager" <?php echo $p->{'purchase_manager'} ? 'checked' : ''; ?>>
+                                            <label for="purchase_manager" class="padding05"><?= lang('Purchase Manager') ?></label>
+                                        </span>
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="receiving_supervisor" class="checkbox" name="purchase_receiving_supervisor" <?php echo $p->{'purchase_receiving_supervisor'} ? 'checked' : ''; ?>>
+                                            <label for="receiving_supervisor" class="padding05"><?= lang('Receiving Supervisor') ?></label>
+                                        </span>
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="warehouse_supervisor" class="checkbox" name="purchase_warehouse_supervisor" <?php echo $p->{'purchase_warehouse_supervisor'} ? 'checked' : ''; ?>>
+                                            <label for="warehouse_supervisor" class="padding05"><?= lang('Warehouse Supervisor') ?></label>
+                                        </span>
                                     </td>
                                 </tr>
 
@@ -416,6 +432,27 @@
                                             <input type="checkbox" value="1" class="checkbox" id="edit_price"
                                             name="stock_request_approval" <?php echo $p->stock_request_approval ? 'checked' : ''; ?>>
                                             <label for="edit_price" class="padding05"><?= lang('Approval') ?></label>
+                                    </span>
+                                     </td>
+                                </tr>
+                                <tr>
+                                    <td><?= lang('Truck Registration'); ?></td>
+                                     <td colspan="5">
+                                    <span style="display:inline-block;">
+                                        <input type="checkbox" value="1" class="checkbox" id="bulk_actions"
+                                            name="truck_registration_view" <?php echo $p->truck_registration_view ? 'checked' : ''; ?>>
+                                            <label for="bulk_actions" class="padding05"><?= lang('View') ?></label>
+                                    </span>
+                                     </td>
+                                </tr>
+
+                                <tr>
+                                    <td><?= lang('Accountant'); ?></td>
+                                     <td colspan="5">
+                                    <span style="display:inline-block;">
+                                        <input type="checkbox" value="1" class="checkbox" id="bulk_actions"
+                                            name="accountant" <?php echo $p->accountant ? 'checked' : ''; ?>>
+                                            <label for="bulk_actions" class="padding05"><?= lang('Accounts') ?></label>
                                     </span>
                                      </td>
                                 </tr>

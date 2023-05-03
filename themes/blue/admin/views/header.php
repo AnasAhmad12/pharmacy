@@ -610,27 +610,7 @@
                                 </ul>
                             </li>
 
-                             <li class="mm_truck">
-                                <a class="dropmenu" href="#">
-                                    <i class="fa fa-heart-o"></i>
-                                    <span class="text"> <?= lang('Truck Registration'); ?> </span>
-                                    <span class="chevron closed"></span>
-                                </a>
-                                <ul>
-                                    <li id="quotes_index">
-                                        <a class="submenu" href="<?= admin_url('truck_registration'); ?>">
-                                            <i class="fa fa-heart-o"></i>
-                                            <span class="text"> <?= lang('List Truck Registration'); ?></span>
-                                        </a>
-                                    </li>
-                                    <li id="quotes_add">
-                                        <a class="submenu" href="<?= admin_url('truck_registration/add'); ?>">
-                                            <i class="fa fa-plus-circle"></i>
-                                            <span class="text"> <?= lang('Add Truck Registration'); ?></span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+                            
 
                          <li class="mm_transfers">
                                 <a class="dropmenu" href="#">
@@ -680,54 +660,7 @@
                                 </ul>
                             </li>
 
-                            <li class="mm_accounts">
-                                <a class="dropmenu" href="#">
-                                    <i class="fa fa-sitemap"></i>
-                                    <span class="text"> <?= lang('Accounts'); ?> </span>
-                                    <span class="chevron closed"></span>
-                                </a>
-                                <ul>
-                                    <li id="accounts_index">
-                                        <a class="submenu" href="<?= admin_url('accounts'); ?>">
-                                            <i class="fa fa-sitemap"></i><span class="text"> <?= lang('Chart of Accounts'); ?></span>
-                                        </a>
-                                    </li>
-                                    <li id="accounts_entries">
-                                        <a class="submenu" href="<?= admin_url('entries'); ?>">
-                                            <i class="fa fa-plus-square-o"></i><span class="text"> <?= lang('Entries'); ?></span>
-                                        </a>
-                                    </li>
-                                    <li id="accounts_search">
-                                        <a class="submenu" href="<?= admin_url('search'); ?>">
-                                            <i class="fa fa-star-o"></i><span class="text"> <?= lang('Search'); ?></span>
-                                        </a>
-                                    </li>
-                                    <li class="mm_accounts_reports">
-                                        <a class="dropmenu" href="#">
-                                            <i class="fa fa-bar-chart-o"></i>
-                                            <span class="text"> <?= lang('Accounts Reports'); ?> </span>
-                                            <span class="chevron closed"></span>
-                                        </a>
-                                   
-
-                                    <ul>
-                                        <li id="reports_ledger_statement_report">
-                                            <a href="<?= admin_url('areports/ledgerstatement') ?>">
-                                                <i class="fa fa-users"></i><span class="text"> <?= lang('Ledger Statement'); ?></span>
-                                            </a>
-                                        </li>
-                                        <li id="reports_balancesheet_report">
-                                            <a href="<?= admin_url('areports/balancesheet') ?>">
-                                                <i class="fa fa-users"></i><span class="text"> <?= lang('Balance Sheet'); ?></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-
-                                     </li>
-
-                                </ul>
-
-                            </li>
+                            
 
                           <li class="mm_auth mm_customers mm_suppliers mm_billers">
                                 <a class="dropmenu" href="#">
@@ -1603,16 +1536,14 @@
 
                             <?php
                         } ?>
-                        
+                        <?php if ($Owner || $Admin) { ?>
                         <li class="mm_shop_settings mm_api_settings">
                                 <a class="dropmenu" href="#">
                                     <i class="fa fa-shopping-cart"></i><span class="text"> <?= lang('Blog_Module'); ?> </span>
                                     <span class="chevron closed"></span>
                                 </a>
                                 <ul>
-                                  
-                                    
-                                    <li id="shop_settings_pages">
+                                  <li id="shop_settings_pages">
                                         <a href="<?= admin_url('Blog/allBlogs') ?>">
                                             <i class="fa fa-file"></i><span class="text"> <?= lang('List_blog'); ?></span>
                                         </a>
@@ -1634,6 +1565,7 @@
                                     </li>
                                 </ul>
                             </li>
+                            <?php } ?>
                              <?php if ($Owner || $Admin || $GP['stock_request_view']) { ?>
                              <li class="mm_stock_requests">
                                 <a class="dropmenu" href="#">
@@ -1655,6 +1587,91 @@
                                 </ul>
                              </li>
                              <?php } ?>
+
+                            <?php 
+                             if ($GP['accountant'] || ($Owner || $Admin) ) {
+                             ?>    
+                             <li class="mm_accounts">
+                                <a class="dropmenu" href="#">
+                                    <i class="fa fa-sitemap"></i>
+                                    <span class="text"> <?= lang('Accounts'); ?> </span>
+                                    <span class="chevron closed"></span>
+                                </a>
+                                <ul>
+                                    <li id="accounts_index">
+                                        <a class="submenu" href="<?= admin_url('accounts'); ?>">
+                                            <i class="fa fa-sitemap"></i><span class="text"> <?= lang('Chart of Accounts'); ?></span>
+                                        </a>
+                                    </li>
+                                    <li id="accounts_entries">
+                                        <a class="submenu" href="<?= admin_url('entries'); ?>">
+                                            <i class="fa fa-plus-square-o"></i><span class="text"> <?= lang('Entries'); ?></span>
+                                        </a>
+                                    </li>
+                                    <li id="accounts_purchase_invoice">
+                                        <a class="submenu" href="<?= admin_url('purchases'); ?>">
+                                            <i class="fa fa-plus-square-o"></i><span class="text"> <?= lang('Entries'); ?></span>
+                                        </a>
+                                    </li>
+                                    <li id="accounts_search">
+                                        <a class="submenu" href="<?= admin_url('search'); ?>">
+                                            <i class="fa fa-star-o"></i><span class="text"> <?= lang('Search'); ?></span>
+                                        </a>
+                                    </li>
+                                    <li class="mm_accounts_reports">
+                                        <a class="dropmenu" href="#">
+                                            <i class="fa fa-bar-chart-o"></i>
+                                            <span class="text"> <?= lang('Accounts Reports'); ?> </span>
+                                            <span class="chevron closed"></span>
+                                        </a>
+                                   
+
+                                    <ul>
+                                        <li id="reports_ledger_statement_report">
+                                            <a href="<?= admin_url('areports/ledgerstatement') ?>">
+                                                <i class="fa fa-users"></i><span class="text"> <?= lang('Ledger Statement'); ?></span>
+                                            </a>
+                                        </li>
+                                        <li id="reports_balancesheet_report">
+                                            <a href="<?= admin_url('areports/balancesheet') ?>">
+                                                <i class="fa fa-users"></i><span class="text"> <?= lang('Balance Sheet'); ?></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                     </li>
+
+                                </ul>
+
+                            </li>
+                            <?php } ?>
+                             <?php 
+                             if ($GP['truck_registration_view'] || ($Owner || $Admin) ) {
+                                
+                             ?>
+
+                             <li class="mm_truck">
+                                <a class="dropmenu" href="#">
+                                    <i class="fa fa-heart-o"></i>
+                                    <span class="text"> <?= lang('Truck Registration'); ?> </span>
+                                    <span class="chevron closed"></span>
+                                </a>
+                                <ul>
+                                    <li id="quotes_index">
+                                        <a class="submenu" href="<?= admin_url('truck_registration'); ?>">
+                                            <i class="fa fa-heart-o"></i>
+                                            <span class="text"> <?= lang('List Truck Registration'); ?></span>
+                                        </a>
+                                    </li>
+                                    <li id="quotes_add">
+                                        <a class="submenu" href="<?= admin_url('truck_registration/add'); ?>">
+                                            <i class="fa fa-plus-circle"></i>
+                                            <span class="text"> <?= lang('Add Truck Registration'); ?></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php } ?>
                            
                              
                     </ul>

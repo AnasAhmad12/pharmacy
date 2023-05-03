@@ -98,6 +98,13 @@
                         <?php echo form_input('country', '', 'class="form-control" id="country"'); ?>
                     </div>
                     <div class="form-group">
+                        <?= lang('Ledger Account', 'Ledger Account'); ?>
+                        <?php 
+
+                            echo form_dropdown('ledger_account', $LO,'', 'id="ledger_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+                        ?>
+                    </div>
+                    <div class="form-group">
                         <?= lang('ccf1', 'cf1'); ?>
                         <?php echo form_input('cf1', '', 'class="form-control" id="cf1"'); ?>
                     </div>
@@ -146,6 +153,8 @@
             }, excluded: [':disabled']
         });
         $('select.select').select2({minimumResultsForSearch: 7});
+        $('select.ledger-dropdown').select2({minimumResultsForSearch: 7});
+        
         fields = $('.modal-content').find('.form-control');
         $.each(fields, function () {
             var id = $(this).attr('id');

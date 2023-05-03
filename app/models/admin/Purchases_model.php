@@ -654,6 +654,12 @@ class Purchases_model extends CI_Model
         return false;
     }
 
+    public function puchaseToInvoice($id)
+    {
+        $this->db->update('purchases', ['purchase_invoice' => 1], ['id' => $id]);
+        return true;
+    }
+
     public function updateStatus($id, $status, $note)
     {
         $this->db->trans_start();
@@ -707,15 +713,17 @@ class Purchases_model extends CI_Model
                 ->join($pp, 'products.id = PCosts.product_id', 'left')
                 ->where('products.type !=', 'combo');
 
-        $this->db->where($this->db->dbprefix('products') . '.id', $product);   
-        return $this->db->get()->row()->sold;
-           /* if ($q->num_rows() > 0) {
-                foreach (($q->result()) as $row) {
-                    return $row->sold;
-                }
+        $this->db->where($this->db->dbprefix('products') . '.id', $product); 
+         $q =  $this->db->get();
+
+            if($q !== false)
+            {
+                 return $this->db->get()->row()->sold;
+
             } else {
                 return 0;
-            }*/
+            }
+       
                      
     }
 

@@ -54,6 +54,7 @@ class Customers extends MY_Controller
                 'cf5'                 => $this->input->post('cf5'),
                 'cf6'                 => $this->input->post('cf6'),
                 'gst_no'              => $this->input->post('gst_no'),
+                'ledger_account'      => $this->input->post('ledger_account'),
             ];
         } elseif ($this->input->post('add_customer')) {
             $this->session->set_flashdata('error', validation_errors());
@@ -416,6 +417,7 @@ class Customers extends MY_Controller
                 'cf6'                 => $this->input->post('cf6'),
                 'award_points'        => $this->input->post('award_points'),
                 'gst_no'              => $this->input->post('gst_no'),
+                'ledger_account'      => $this->input->post('ledger_account'),
             ];
         } elseif ($this->input->post('edit_customer')) {
             $this->session->set_flashdata('error', validation_errors());
