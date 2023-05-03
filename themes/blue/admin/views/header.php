@@ -1589,7 +1589,7 @@
                              <?php } ?>
 
                             <?php 
-                             if ($GP['accountant'] || ($Owner || $Admin) ) {
+                             if (isset($GP) && $GP['accountant'] || ($Owner || $Admin) ) {
                              ?>    
                              <li class="mm_accounts">
                                 <a class="dropmenu" href="#">
@@ -1646,7 +1646,7 @@
                             </li>
                             <?php } ?>
                              <?php 
-                             if ($GP['truck_registration_view'] || ($Owner || $Admin) ) {
+                             if (isset($this->GP) && $GP['truck_registration_view'] || ($Owner || $Admin) ) {
                                 
                              ?>
 

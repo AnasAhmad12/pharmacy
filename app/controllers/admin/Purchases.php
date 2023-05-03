@@ -1292,7 +1292,7 @@ class Purchases extends MY_Controller
         $detail_link      = anchor('admin/purchases/view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('purchase_details'));
         $payments_link    = anchor('admin/purchases/payments/$1', '<i class="fa fa-money"></i> ' . lang('view_payments'), 'data-toggle="modal" data-target="#myModal"');
 
-        if($this->GP['accountant'])
+        if(isset($this->GP) && $this->GP['accountant'])
         {
             $convert_purchase_invoice = anchor('admin/purchases/convert_purchse_invoice/$1', '<i class="fa fa-money"></i> ' . lang('Convert to Invoice'));
         }
@@ -1310,7 +1310,7 @@ class Purchases extends MY_Controller
         . lang('delete_purchase') . '</a>';
 
 
-        if($this->GP['accountant'])
+        if(isset($this->GP) && $this->GP['accountant'])
         {
 
             $action = '<div class="text-center"><div class="btn-group text-left">'
@@ -1370,21 +1370,21 @@ class Purchases extends MY_Controller
         //}
         // $this->datatables->where('status !=', 'returned');
 
-        if($this->GP["purchase_supervisor"])
+        if(isset($this->GP) && $this->GP["purchase_supervisor"])
         {
             $this->datatables->where('status', 'pending');
             $this->datatables->or_where('shelf_status', 'Shelves Added');
 
         }
 
-        if($this->GP["purchase_manager"])
+        if(isset($this->GP) && $this->GP["purchase_manager"])
         {
             $this->datatables->where('status', 'pending');
             $this->datatables->or_where('status', 'ordered');
             $this->datatables->or_where('status', 'rejected');
         }
 
-        if($this->GP["purchase_receiving_supervisor"])
+        if(isset($this->GP) && $this->GP["purchase_receiving_supervisor"])
         {
             $this->datatables->where('status', 'arrived');
             $this->datatables->or_where('status', 'received');
@@ -1393,13 +1393,13 @@ class Purchases extends MY_Controller
             
         }
 
-        if($this->GP["purchase_warehouse_supervisor"])
+        if(isset($this->GP) && $this->GP["purchase_warehouse_supervisor"])
         {
             $this->datatables->where('status', 'received');
             $this->datatables->or_where('status', 'partial');
 
         }
-        if($this->GP["accountant"])
+        if(isset($this->GP) && $this->GP["accountant"])
         {
             $this->datatables->where('status', 'received');
             $this->datatables->or_where('status', 'partial');
