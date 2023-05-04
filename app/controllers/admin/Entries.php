@@ -500,9 +500,9 @@ class Entries extends MY_Controller
 		$allowed = $this->mAccountSettings->decimal_places;
 
 		// form validation rules
-		$this->form_validation->set_rules('number', lang('entries_cntrler_edit_form_validarion_number'), 'is_numeric');
+		$this->form_validation->set_rules('number', lang('entries_cntrler_edit_form_validarion_number'), 'required');
 		$this->form_validation->set_rules('date', lang('entries_cntrler_edit_form_validarion_date'), 'required');
-		$this->form_validation->set_rules('tag_id', lang('entries_cntrler_edit_form_validarion_tag'), 'required');
+		//$this->form_validation->set_rules('tag_id', lang('entries_cntrler_edit_form_validarion_tag'), 'required');
 
 		$q = $this->db->get_where('sma_accounts_entries', array('id' => $id))->row();
 		if ($this->input->post('number') != $q->number) {
@@ -935,37 +935,37 @@ class Entries extends MY_Controller
 			// select where id from [entries] table equals passed id
 			$this->db->where('id', $id);
 			// update entries table
-			$update = $this->db->update('entries', $entrydata['Entry']);
+			$update = $this->db->update('sma_accounts_entries', $entrydata['Entry']);
 			
 			// if update successfull
 			if ($update)
 			{
 			   	/* Delete all original entryitems */
 				$this->db->where('entry_id', $id); // select all entry items where entry_id equals passed id
-				$this->db->delete('entryitems'); // delete selected entry items
+				$this->db->delete('sma_accounts_entryitems'); // delete selected entry items
 
 				// loop to insert entry item data to entryitems table
 				foreach ($entryitemdata as $row => $itemdata)
 				{
 					$itemdata['Entryitem']['entry_id'] = $id; // entry_id equals passed id
-					$this->db->insert('entryitems' ,$itemdata['Entryitem']); // insert data to entryitems table
+					$this->db->insert('sma_accounts_entryitems' ,$itemdata['Entryitem']); // insert data to entryitems table
 				}
 
 				// set entry number as per prefix, suffix and zero padding for that entry type for logging
 				$entryNumber = ($this->functionscore->toEntryNumber($entrydata['Entry']['number'], $entrytype['Entrytype']['id']));
 
 				// insert log if logging is enabled
-				$this->settings_model->add_log(sprintf(lang('entries_cntrler_edit_log'),$entrytype['name'], $entryNumber), 1);
+				//$this->settings_model->add_log(sprintf(lang('entries_cntrler_edit_log'),$entrytype['name'], $entryNumber), 1);
 
 				// set success alert message
 				$this->session->set_flashdata('message', sprintf(lang('entries_cntrler_edit_entry_updated_successfully'), $entrytype['name'], $entryNumber));
 				// redirect to index page
-				redirect('entries/index');
+				admin_redirect('entries/index');
 			} else {
 				// set error alert message
 				$this->session->set_flashdata('error', lang('entries_cntrler_edit_entry_not_updated_error'));
 				// redirect to index page
-				redirect('entries/index');
+				admin_redirect('entries/index');
 			}
 		}
 	}

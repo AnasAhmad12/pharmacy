@@ -41,7 +41,7 @@
             <div class="form-group">
                 <?= lang('status', 'status'); ?>
                 <?php
-                $opts = ['completed' => lang('completed'), 'sent' => lang('sent')];
+                $opts = ['delivered' => lang('delivered'), 'sent' => lang('sent'),];
                //$opts = ['pending' => lang('pending'), 'sent' => lang('sent')];
                 ?>
                 <?= form_dropdown('status', $opts, $inv->status, 'class="form-control" id="status" required="required" style="width:100%;"'); ?>

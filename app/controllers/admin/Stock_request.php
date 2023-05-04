@@ -239,7 +239,7 @@ class stock_request extends MY_Controller
             admin_redirect($_SERVER['HTTP_REFERER'] ?? 'transfers');
         }
         $approval = 0;
-        if($status == 'sent'){ $approval = 1;}
+        if(isset($status) && $status == 'sent'){ $approval = 1;}
         if ($this->form_validation->run() == true && $this->transfers_model->updateStatus1($id, $status,$approval, $note)) {
             $this->session->set_flashdata('message', lang('status_updated'));
             admin_redirect($_SERVER['HTTP_REFERER'] ?? 'transfers');

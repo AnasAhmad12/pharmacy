@@ -64,7 +64,16 @@ if($m == 'deals')
     </script>';
 }
   if($m == 'entries'){
-  
+ echo '<link rel="stylesheet" src="' . $assets . 'js/plugins/datepicker/datepicker3.css">'; 
+  echo '<script type="text/javascript" src="' . $assets . 'js/plugins/datepicker/bootstrap-datepicker.js"></script>'; 
+  //echo '<link rel="stylesheet" src="' . $assets . 'js/plugins/select2/select2.min.css">'; plugins/select2/
+  echo '<script type="text/javascript" src="' . $assets . 'js/select2.full.min.js"></script>';
+
+
+  }
+
+
+  if($v == 'add' || $v == 'edit'){
   echo '<link rel="stylesheet" src="' . $assets . 'js/plugins/datepicker/datepicker3.css">'; 
   echo '<script type="text/javascript" src="' . $assets . 'js/plugins/datepicker/bootstrap-datepicker.js"></script>'; 
   //echo '<link rel="stylesheet" src="' . $assets . 'js/plugins/select2/select2.min.css">'; plugins/select2/

@@ -42,7 +42,12 @@
                 <?= lang('status', 'status'); ?>
                 <?php
                // $opts = ['completed' => lang('completed'), 'pending' => lang('pending'), 'sent' => lang('sent')];
-               $opts = ['pending' => lang('pending'), 'sent' => lang('sent')];
+                if($inv->status == 'delivered'){
+                    $opts = ['completed' => lang('completed')];
+                }else{
+                     $opts = ['pending' => lang('pending'), 'sent' => lang('sent'),'completed' => lang('completed')];
+                }
+              
                 ?>
                 <?= form_dropdown('status', $opts, $inv->status, 'class="form-control" id="status" required="required" style="width:100%;"'); ?>
             </div>
