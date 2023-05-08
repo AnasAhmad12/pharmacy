@@ -591,7 +591,7 @@ if (!empty($variants)) {
                                 <label for="Inventory Account">Inventory Account</lable>
                                  <?php 
 
-            echo form_dropdown('inventory_account', $LO, (isset($_POST['inventory_account'])) ? $_POST['inventory_account']: ($product ? $product->purchase_account : ''), 'id="inventory_account" class="ledger-dropdown form-control" required="required"',$DIS);  
+            echo form_dropdown('inventory_account', $LO, (isset($_POST['inventory_account'])) ? $_POST['inventory_account']: ($product ? $product->inventory_account : ''), 'id="inventory_account" class="ledger-dropdown form-control" required="required"',$DIS);  
 
                                ?>
                                     

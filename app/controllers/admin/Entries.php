@@ -506,8 +506,8 @@ class Entries extends MY_Controller
 
 		$q = $this->db->get_where('sma_accounts_entries', array('id' => $id))->row();
 		if ($this->input->post('number') != $q->number) {
-			$this->form_validation->set_rules('number', lang('entries_cntrler_add_form_validation_number_label'), 'is_unique[sma_accounts_entries.number]');
-			$this->form_validation->set_message('is_db_unique', lang('form_validation_is_db_unique'));
+			$this->form_validation->set_rules('number', lang('entries_cntrler_add_form_validation_number_label'), 'is_db1_unique[sma_accounts_entries.number]');
+			$this->form_validation->set_message('is_db1_unique', lang('form_validation_is_db_unique'));
         }
 
 		$dc_valid = false; 	// valid Debit or Credit
