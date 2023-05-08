@@ -8,7 +8,7 @@
     $(window).bind("load", function() {
         <?php //($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show(); $("#temp_lot").show();' : '$(".rec_con").hide(); $("#temp_lot").hide();'; 
         ?>
-        <?php if(isset($GP) && $GP["purchase_receiving_supervisor"] || ($inv->status == 'arrived' || $inv->status == 'received' || $inv->status == 'partial' || $inv->status == 'rejected') ){ ?>
+        <?php if($GP["purchase_receiving_supervisor"] || ($inv->status == 'arrived' || $inv->status == 'received' || $inv->status == 'partial' || $inv->status == 'rejected') ){ ?>
 
             $(".rec_con").show();
             $("#temp_lot").show();
@@ -22,7 +22,7 @@
              loadItems();
         <?php } ?>
 
-        <?php if(isset($GP) && ($GP["purchase_warehouse_supervisor"] || $GP["purchase_supervisor"])){ ?>
+        <?php if($GP["purchase_warehouse_supervisor"] || $GP["purchase_supervisor"]){ ?>
                 ws_edit = true;
                 $('input, textbox, select:not(#warehouse_shelf)').attr('readonly','readonly');
                 $('[title=Remove]').removeClass('podel');
@@ -349,12 +349,12 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <!--<div class="col-md-4">
                                 <div class="form-group">
-                                    <?= lang('Lot Number', 'Lot Number'); ?>
-                                    <?php echo form_input('lotnumber', ($_POST['lotnumber'] ?? $purchase->lotnumber), 'class="form-control input-tip" id="lotnumber"'); ?>
+                                <?php //lang('Lot Number', 'Lot Number'); ?>
+                                    <?php //echo form_input('lotnumber', ($_POST['lotnumber'] ?? $purchase->lotnumber), 'class="form-control input-tip" id="lotnumber"'); ?>
                                 </div>
-                           </div>
+                           </div>-->
                         </div>
                         </div>
 
@@ -412,13 +412,14 @@
                                         <thead>
                                         <tr>
                                             <th class="col-md-2"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
+                                            <th class="col-md-1"><?= lang('net_unit_sale'); ?></th>
+                                            <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
+                                            <th class="col-md-1">Batch No.</th>
                                             <?php
                                             if ($Settings->product_expiry) {
                                                 echo '<th class="col-md-1">' . $this->lang->line('expiry_date') . '</th>';
                                             }
                                             ?>
-                                            <th class="col-md-1">Batch No.</th>
-                                            <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
                                             <th class="col-md-1"><?= lang('quantity'); ?></th>
                                             <th class="col-md-1 rec_con"><?= lang('received'); ?></th>
                                             <?php /*
@@ -509,13 +510,13 @@
                             <div class="from-group">
 
                             <?php 
-                            if(isset($GP) && $GP["purchase_manager"] && ( $purchase->status == 'pending' || $purchase->status == 'ordered' || $purchase->status == 'rejected'))
+                            if($GP["purchase_manager"] && ( $purchase->status == 'pending' || $purchase->status == 'ordered' || $purchase->status == 'rejected'))
                             {
                             echo '<input type="submit" class="btn btn-primary" id="postatus1" name="status" value="ordered" style="margin:15px 0;"/>
                                <input type="submit" class="btn btn-warning" id="postatus2" name="status" value="rejected" style="margin:15px 0;"/>';
                                
 
-                            }else if(isset($GP) && $GP["purchase_receiving_supervisor"]  ){
+                            }else if($GP["purchase_receiving_supervisor"]  ){
 
                                 if($inv->status == 'received' || $inv->status == 'partial' )
                                 {
@@ -528,11 +529,11 @@
 
                                 }
 
-                            }else if(isset($GP) && $GP["purchase_warehouse_supervisor"] && ($inv->status == 'received' || $inv->status == 'partial')){
+                            }else if($GP["purchase_warehouse_supervisor"] && ($inv->status == 'received' || $inv->status == 'partial')){
                            
                                 echo form_submit('shelf_status','Shelves Added', 'id="edit_pruchase" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"');    
                             
-                            }else if(isset($GP) && $GP["purchase_supervisor"] && ($inv->shelf_status != NULL)){
+                            }else if($GP["purchase_supervisor"] && ($inv->shelf_status != NULL)){
 
                                 if($inv->validate != NULL){
 

@@ -391,13 +391,16 @@
                                         <thead>
                                         <tr>
                                             <th class="col-md-2"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
+                                            <th class="col-md-1"><?= lang('net_unit_sale'); ?></th>
+                                            <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
+                                            <th class="col-md-1">Batch No.</th>
                                             <?php
                                             if ($Settings->product_expiry) {
                                                 echo '<th class="col-md-1">' . $this->lang->line('expiry_date') . '</th>';
                                             }
                                             ?>
-                                            <th class="col-md-1">Batch No.</th>
-                                            <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
+                                            
+                                            
                                             <th class="col-md-1"><?= lang('quantity'); ?></th>
                                             <?php
                                             /*if ($Settings->product_discount) {

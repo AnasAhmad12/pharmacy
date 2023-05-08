@@ -564,7 +564,8 @@ class Purchases extends MY_Controller
             $supplier_id      = $this->input->post('supplier');
             $status           = $this->input->post('status');
             $tempstatus       = $this->input->post('tempstatus');
-            $lotnumber       = $this->input->post('lotnumber');
+            //$lotnumber       = $this->input->post('lotnumber');
+            $lotnumber         = '';
             $shelf_status = $this->input->post('shelf_status') ? $this->input->post('shelf_status') : "NULL";
             $validate = $this->input->post('validate') ? $this->input->post('validate') : "NULL";
 
@@ -1292,7 +1293,7 @@ class Purchases extends MY_Controller
         $detail_link      = anchor('admin/purchases/view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('purchase_details'));
         $payments_link    = anchor('admin/purchases/payments/$1', '<i class="fa fa-money"></i> ' . lang('view_payments'), 'data-toggle="modal" data-target="#myModal"');
 
-        if(isset($this->GP) && $this->GP['accountant'])
+        if($this->GP['accountant'])
         {
             $convert_purchase_invoice = anchor('admin/purchases/convert_purchse_invoice/$1', '<i class="fa fa-money"></i> ' . lang('Convert to Invoice'));
         }
@@ -1310,7 +1311,7 @@ class Purchases extends MY_Controller
         . lang('delete_purchase') . '</a>';
 
 
-        if(isset($this->GP) && $this->GP['accountant'])
+        if($this->GP['accountant'])
         {
 
             $action = '<div class="text-center"><div class="btn-group text-left">'
@@ -1370,21 +1371,21 @@ class Purchases extends MY_Controller
         //}
         // $this->datatables->where('status !=', 'returned');
 
-        if(isset($this->GP) && $this->GP["purchase_supervisor"])
+        if($this->GP["purchase_supervisor"])
         {
             $this->datatables->where('status', 'pending');
             $this->datatables->or_where('shelf_status', 'Shelves Added');
 
         }
 
-        if(isset($this->GP) && $this->GP["purchase_manager"])
+        if($this->GP["purchase_manager"])
         {
             $this->datatables->where('status', 'pending');
             $this->datatables->or_where('status', 'ordered');
             $this->datatables->or_where('status', 'rejected');
         }
 
-        if(isset($this->GP) && $this->GP["purchase_receiving_supervisor"])
+        if($this->GP["purchase_receiving_supervisor"])
         {
             $this->datatables->where('status', 'arrived');
             $this->datatables->or_where('status', 'received');
@@ -1393,13 +1394,13 @@ class Purchases extends MY_Controller
             
         }
 
-        if(isset($this->GP) && $this->GP["purchase_warehouse_supervisor"])
+        if($this->GP["purchase_warehouse_supervisor"])
         {
             $this->datatables->where('status', 'received');
             $this->datatables->or_where('status', 'partial');
 
         }
-        if(isset($this->GP) && $this->GP["accountant"])
+        if($this->GP["accountant"])
         {
             $this->datatables->where('status', 'received');
             $this->datatables->or_where('status', 'partial');
@@ -2345,6 +2346,7 @@ class Purchases extends MY_Controller
                 $row->base_quantity    = 1;
                 $row->base_unit        = $row->unit;
                 $row->base_unit_cost   = $row->cost;
+                $row->sale_price       = $row->price;
                 $row->unit             = $row->purchase_unit ? $row->purchase_unit : $row->unit;
                 $row->new_entry        = 1;
                 $row->expiry           = '';
