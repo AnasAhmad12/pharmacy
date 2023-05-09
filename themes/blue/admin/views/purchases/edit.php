@@ -1,4 +1,14 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<style>
+table#poTable td input.form-control {
+    font-size: 10px !important;
+    padding: 5px 2px !important;
+}
+
+.table td {
+    height: 70px !important;
+}
+</style>
 <script type="text/javascript">
     var count = 1, an = 1, po_edit = true,ws_edit=false,product_variant = 0, DT = <?= $Settings->default_tax_rate ?>, DC = '<?=$default_currency->code?>', shipping = 0,
         product_tax = 0, invoice_tax = 0, total_discount = 0, total = 0,
@@ -8,7 +18,7 @@
     $(window).bind("load", function() {
         <?php //($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show(); $("#temp_lot").show();' : '$(".rec_con").hide(); $("#temp_lot").hide();'; 
         ?>
-        <?php if(isset($GP) && $GP["purchase_receiving_supervisor"] || ($inv->status == 'arrived' || $inv->status == 'received' || $inv->status == 'partial' || $inv->status == 'rejected') ){ ?>
+        <?php if($GP["purchase_receiving_supervisor"] || ($inv->status == 'arrived' || $inv->status == 'received' || $inv->status == 'partial' || $inv->status == 'rejected') ){ ?>
 
             $(".rec_con").show();
             $("#temp_lot").show();
@@ -22,7 +32,7 @@
              loadItems();
         <?php } ?>
 
-        <?php if(isset($GP) && ($GP["purchase_warehouse_supervisor"] || $GP["purchase_supervisor"])){ ?>
+        <?php if($GP["purchase_warehouse_supervisor"] || $GP["purchase_supervisor"]){ ?>
                 ws_edit = true;
                 $('input, textbox, select:not(#warehouse_shelf)').attr('readonly','readonly');
                 $('[title=Remove]').removeClass('podel');
@@ -349,12 +359,12 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <!--<div class="col-md-4">
                                 <div class="form-group">
-                                    <?= lang('Lot Number', 'Lot Number'); ?>
-                                    <?php echo form_input('lotnumber', ($_POST['lotnumber'] ?? $purchase->lotnumber), 'class="form-control input-tip" id="lotnumber"'); ?>
+                                <?php //lang('Lot Number', 'Lot Number'); ?>
+                                    <?php //echo form_input('lotnumber', ($_POST['lotnumber'] ?? $purchase->lotnumber), 'class="form-control input-tip" id="lotnumber"'); ?>
                                 </div>
-                           </div>
+                           </div>-->
                         </div>
                         </div>
 
@@ -406,41 +416,29 @@
                             <div class="control-group table-group">
                                 <label class="table-label"><?= lang('order_items'); ?></label>
 
-                                <div class="controls table-controls">
+                                <div class="controls table-controls" style="font-size: 12px;">
                                     <table id="poTable"
                                            class="table items table-striped table-bordered table-condensed table-hover sortable_table">
                                         <thead>
                                         <tr>
-                                            <th class="col-md-2"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
+                                        <th class="col-md-2">item name</th>
+                                            <th class="col-md-1">sale price</th>
+                                            <th class="col-md-1">purchase price</th>
+                                            <th class="col-md-1">Batch</th>
                                             <?php
                                             if ($Settings->product_expiry) {
                                                 echo '<th class="col-md-1">' . $this->lang->line('expiry_date') . '</th>';
                                             }
                                             ?>
-                                            <th class="col-md-1">Batch No.</th>
-                                            <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
-                                            <th class="col-md-1"><?= lang('quantity'); ?></th>
-                                            <th class="col-md-1 rec_con"><?= lang('received'); ?></th>
-                                            <?php /*
-                                            if ($Settings->product_discount) {
-                                                echo '<th class="col-md-1">' . $this->lang->line('discount') . '</th>';
-                                            }*/
-                                            ?>
-                                            <?php
-                                            /*if ($Settings->tax1) {
-                                                echo '<th class="col-md-1">' . $this->lang->line('product_tax') . '</th>';
-                                            }*/
-                                            ?>
-                                            <th><?= lang('subtotal'); ?> (<span
-                                                    class="currency"><?= $default_currency->code ?></span>)
-                                            </th>
-                                            <th class="col-md-1">Bonus</th>
-                                            <th class="col-md-1">Dis 1</th>
-                                            <th class="col-md-1">After Dis 1</th>
-                                            <th class="col-md-1">Dis 2</th>
-                                            <th class="col-md-1">Total b. Vat</th>
-                                            <th class="col-md-1">Vat</th>
-                                            <th class="col-md-1">Net</th>
+                                            <th class="col-md-1">qty</th>
+                                            <th class="col-md-1">bonus</th>
+                                            <th class="col-md-1">dis 1</th>
+                                            <th class="col-md-1">dis 2</th>
+                                            <th class="col-md-1">Vat 15%</th>
+                                            <th class="col-md-1">Total Purchases</th>
+                                            <th class="col-md-1">Total Sales</th>
+                                            <th class="col-md-1">Net Purchases</th>
+                                            <th class="col-md-1">Unit Cost</th>
                                             <th style="width: 30px !important; text-align: center;">
                                                 <i class="fa fa-trash-o" style="opacity:0.5; filter:alpha(opacity=50);"></i>
                                             </th>
@@ -509,13 +507,13 @@
                             <div class="from-group">
 
                             <?php 
-                            if(isset($GP) && $GP["purchase_manager"] && ( $purchase->status == 'pending' || $purchase->status == 'ordered' || $purchase->status == 'rejected'))
+                            if($GP["purchase_manager"] && ( $purchase->status == 'pending' || $purchase->status == 'ordered' || $purchase->status == 'rejected'))
                             {
                             echo '<input type="submit" class="btn btn-primary" id="postatus1" name="status" value="ordered" style="margin:15px 0;"/>
                                <input type="submit" class="btn btn-warning" id="postatus2" name="status" value="rejected" style="margin:15px 0;"/>';
                                
 
-                            }else if(isset($GP) && $GP["purchase_receiving_supervisor"]  ){
+                            }else if($GP["purchase_receiving_supervisor"]  ){
 
                                 if($inv->status == 'received' || $inv->status == 'partial' )
                                 {
@@ -528,11 +526,11 @@
 
                                 }
 
-                            }else if(isset($GP) && $GP["purchase_warehouse_supervisor"] && ($inv->status == 'received' || $inv->status == 'partial')){
+                            }else if($GP["purchase_warehouse_supervisor"] && ($inv->status == 'received' || $inv->status == 'partial')){
                            
                                 echo form_submit('shelf_status','Shelves Added', 'id="edit_pruchase" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"');    
                             
-                            }else if(isset($GP) && $GP["purchase_supervisor"] && ($inv->shelf_status != NULL)){
+                            }else if($GP["purchase_supervisor"] && ($inv->shelf_status != NULL)){
 
                                 if($inv->validate != NULL){
 

@@ -1,4 +1,14 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<style>
+table#poTable td input.form-control {
+    font-size: 10px !important;
+    padding: 5px 2px !important;
+}
+
+.table td {
+    height: 70px !important;
+}
+</style>
 <script type="text/javascript">
     <?php if ($this->session->userdata('remove_pols')) {
     ?>
@@ -385,20 +395,27 @@
                             <div class="control-group table-group">
                                 <label class="table-label"><?= lang('order_items'); ?></label>
 
-                                <div class="controls table-controls">
+                                <div class="controls table-controls" style="font-size: 12px !important;">
                                     <table id="poTable"
                                            class="table items table-striped table-bordered table-condensed table-hover sortable_table">
                                         <thead>
                                         <tr>
-                                            <th class="col-md-2"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
+                                            <th class="col-md-2">item name</th>
+                                            <th class="col-md-1">sale price</th>
+                                            <th class="col-md-1">purchase price</th>
+                                            <th class="col-md-1">Batch</th>
                                             <?php
                                             if ($Settings->product_expiry) {
                                                 echo '<th class="col-md-1">' . $this->lang->line('expiry_date') . '</th>';
                                             }
                                             ?>
-                                            <th class="col-md-1">Batch No.</th>
-                                            <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
-                                            <th class="col-md-1"><?= lang('quantity'); ?></th>
+                                            
+                                            
+                                            <th class="col-md-1">qty</th>
+                                            <th class="col-md-1">bonus</th>
+                                            <th class="col-md-1">dis 1</th>
+                                            <th class="col-md-1">dis 2</th>
+                                            <th class="col-md-1">Vat 15%</th>
                                             <?php
                                             /*if ($Settings->product_discount) {
                                                 echo '<th class="col-md-1">' . $this->lang->line('discount') . '</th>';
@@ -409,16 +426,13 @@
                                                 echo '<th class="col-md-1">' . $this->lang->line('product_tax') . '</th>';
                                             }*/
                                             ?>
-                                            <th><?= lang('subtotal'); ?> (<span
-                                                    class="currency"><?= $default_currency->code ?></span>)
-                                            </th>
-                                            <th class="col-md-1">Bonus</th>
-                                            <th class="col-md-1">Dis 1</th>
-                                            <th class="col-md-1">After Dis 1</th>
-                                            <th class="col-md-1">Dis 2</th>
-                                            <th class="col-md-1">Total b. Vat</th>
-                                            <th class="col-md-1">Vat</th>
-                                            <th class="col-md-1">Net</th>
+                                            
+                                            <th class="col-md-1">Total Purchases</th>
+                                            <th class="col-md-1">Total Sales</th>
+                                            <th class="col-md-1">Net Purchases</th>
+                                            <th class="col-md-1">Unit Cost</th>
+                                            
+                                            
                                             <th style="width: 30px !important; text-align: center;"><i
                                                     class="fa fa-trash-o"
                                                     style="opacity:0.5; filter:alpha(opacity=50);"></i></th>
@@ -517,7 +531,7 @@
     </div>
 </div>
 
-<div class="modal" id="prModal" tabindex="-1" role="dialog" aria-labelledby="prModalLabel" aria-hidden="true">
+<div class="modal" id="prModal" role="dialog" aria-labelledby="prModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -629,7 +643,7 @@
     </div>
 </div>
 
-<div class="modal" id="mModal" tabindex="-1" role="dialog" aria-labelledby="mModalLabel" aria-hidden="true">
+<div class="modal" id="mModal" role="dialog" aria-labelledby="mModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">

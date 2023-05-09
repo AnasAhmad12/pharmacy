@@ -564,7 +564,8 @@ class Purchases extends MY_Controller
             $supplier_id      = $this->input->post('supplier');
             $status           = $this->input->post('status');
             $tempstatus       = $this->input->post('tempstatus');
-            $lotnumber       = $this->input->post('lotnumber');
+            //$lotnumber       = $this->input->post('lotnumber');
+            $lotnumber         = '';
             $shelf_status = $this->input->post('shelf_status') ? $this->input->post('shelf_status') : "NULL";
             $validate = $this->input->post('validate') ? $this->input->post('validate') : "NULL";
 
@@ -2345,6 +2346,7 @@ class Purchases extends MY_Controller
                 $row->base_quantity    = 1;
                 $row->base_unit        = $row->unit;
                 $row->base_unit_cost   = $row->cost;
+                $row->sale_price       = $row->price;
                 $row->unit             = $row->purchase_unit ? $row->purchase_unit : $row->unit;
                 $row->new_entry        = 1;
                 $row->expiry           = '';
