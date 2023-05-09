@@ -213,25 +213,9 @@ $(document).ready(function () {
         $('#extras-con').slideUp();
     });
     $(document).on('change', '.rexpiry', function () {
-        var inputDate = $(this).val();
-        var currentDate = new Date();
-
-        var dateParts = inputDate.split("/");
-        var inputDateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
-
-        var yesterdayDate = new Date();
-        yesterdayDate.setDate(currentDate.getDate() - 1);
-
-        if (inputDateObj.getTime() <= yesterdayDate.getTime()) {
-            $(this).val('');
-            bootbox.alert('Expired product are not allowed');
-            return;
-        }else{
-            var item_id = $(this).closest('tr').attr('data-item-id');
-            poitems[item_id].row.expiry = $(this).val();
-            localStorage.setItem('poitems', JSON.stringify(poitems));
-        }
-        
+        var item_id = $(this).closest('tr').attr('data-item-id');
+        poitems[item_id].row.expiry = $(this).val();
+        localStorage.setItem('poitems', JSON.stringify(poitems));
     });
 
     // prevent default action upon enter
@@ -562,36 +546,18 @@ $(document).ready(function () {
         .on('focus', '.rbatchno', function () {
             old_row_batchno = $(this).val();
         })
-        .on('blur', '.rbatchno', function () {
-            var row = $(this).closest('tr');
-            var new_batchno = $(this).val(),
-            item_id = row.attr('data-item-id');
-            
-            var batchfound = findMatchingItemWithSameBatchNo(new_batchno, item_id, poitems);
-            if(batchfound){
-                $(this).val('');
-                poitems[item_id].row.batchno = '';
-                bootbox.alert("Cannot add same batch number for same product");
-            }else{
-                poitems[item_id].row.batchno = new_batchno;
-                localStorage.setItem('poitems', JSON.stringify(poitems));
-                loadItems();
-            }
-            
-        })
         .on('change', '.rbatchno', function () {
             var row = $(this).closest('tr');
-            /*if (!is_numeric($(this).val()) || parseFloat($(this).val()) < 0) {
+            if (!is_numeric($(this).val()) || parseFloat($(this).val()) < 0) {
                 $(this).val(old_row_batchno);
                 bootbox.alert(lang.unexpected_value);
                 return;
-            }*/
-            //var new_batchno = parseFloat($(this).val()),
-            var new_batchno = $(this).val(),
+            }
+            var new_batchno = parseFloat($(this).val()),
                 item_id = row.attr('data-item-id');
-            /*poitems[item_id].row.batchno = new_batchno;
+            poitems[item_id].row.batchno = new_batchno;
             localStorage.setItem('poitems', JSON.stringify(poitems));
-            loadItems();*/
+            loadItems();
         });
            /* --------------------------
      * Edit Row Discount2 Method rdis2 rbatchno
@@ -794,16 +760,12 @@ function loadItems() {
         total_discount = 0;
         $('#poTable tbody').empty();
         poitems = JSON.parse(localStorage.getItem('poitems'));
-        /*sortedItems =
+        sortedItems =
             site.settings.item_addition == 1
                 ? _.sortBy(poitems, function (o) {
                       return [parseInt(o.order)];
                   })
-                : poitems;*/
-
-        sortedItems = _.sortBy(poitems, function (o) {
-                        return [parseInt(o.order)];
-                    }).reverse();
+                : poitems;
 
         var order_no = new Date().getTime();
         $.each(sortedItems, function () {
@@ -965,14 +927,28 @@ function loadItems() {
                 '" data-item="' +
                 item_id +
                 '" title="Edit" style="cursor:pointer;"></i></td>';
-            
-            tr_html += '<td><span class="text-right scost" id="ssale_' +
-                row_no +
-                '">' +
-                formatMoney(item.row.sale_price) +
-                '</span></td>';
-
-
+            if (site.settings.product_expiry == 1) {
+                tr_html +=
+                    '<td><input class="form-control date rexpiry" name="expiry[]" type="text" value="' +
+                    item_expiry +
+                    '" data-id="' +
+                    row_no +
+                    '" data-item="' +
+                    item_id +
+                    '" id="expiry_' +
+                    row_no +
+                    '"></td>';
+            }
+            tr_html +=
+                    '<td><input class="form-control rbatchno" name="batchno[]" type="text" value="' +
+                    item_batchno +
+                    '" data-id="' +
+                    row_no +
+                    '" data-item="' +
+                    item_id +
+                    '" id="batchno_' +
+                    row_no +
+                    '"></td>';
             tr_html +=
                 '<td class="text-right"><input class="form-control input-sm text-right rcost" name="net_cost[]" type="hidden" id="cost_' +
                 row_no +
@@ -987,40 +963,11 @@ function loadItems() {
                 '">' +
                 formatMoney(item_cost) +
                 '</span></td>';
-
-            tr_html +=
-                '<td><input class="form-control rbatchno" name="batchno[]" type="text" tabindex="' +
-                (site.settings.set_focus == 1 ? an : an++ ) +
-                '" value="' +
-                item_batchno +
-                '" data-id="' +
-                row_no +
-                '" data-item="' +
-                item_id +
-                '" id="batchno_' +
-                row_no +
-                '"></td>';
-
-            if (site.settings.product_expiry == 1) {
-                tr_html +=
-                    '<td><input class="form-control date rexpiry" name="expiry[]" type="text" tabindex="' +
-                    (site.settings.set_focus == 1 ? an : an++ ) +
-                    '" value="' +
-                    item_expiry +
-                    '" data-id="' +
-                    row_no +
-                    '" data-item="' +
-                    item_id +
-                    '" id="expiry_' +
-                    row_no +
-                    '"></td>';
-            }
-            
             tr_html +=
                 '<td><input name="quantity_balance[]" type="hidden" class="rbqty" value="' +
                 item_bqty +
                 '"><input class="form-control text-center rquantity" name="quantity[]" type="text" tabindex="' +
-                (site.settings.set_focus == 1 ? an : an++ ) +
+                (site.settings.set_focus == 1 ? an : an + 1) +
                 '" value="' +
                 formatQuantity2(item_qty) +
                 '" data-id="' +
@@ -1085,7 +1032,7 @@ function loadItems() {
 
              tr_html +=
                 '<td><input class="form-control text-center rbonus" name="bonus[]" type="text" tabindex="' +
-                (site.settings.set_focus == 1 ? an : an++ ) +
+                (site.settings.set_focus == 1 ? an : an + 1) +
                 '" data-id="' +
                 row_no +
                 '" data-item="' +
@@ -1096,7 +1043,7 @@ function loadItems() {
                 +'"onClick="this.select();"></td>';    
             tr_html +=
                 '<td><input class="form-control text-center rdis1" name="dis1[]" type="text" tabindex="' +
-                (site.settings.set_focus == 1 ? an : an++ ) +
+                (site.settings.set_focus == 1 ? an : an + 1) +
                 '" data-id="' +
                 row_no +
                 '" data-item="' +
@@ -1110,7 +1057,7 @@ function loadItems() {
                 '">'+formatMoney(total_after_dis1)+'</span></td>';  
             tr_html +=
                 '<td><input class="form-control text-center rdis2" name="dis2[]" type="text" tabindex="' +
-                (site.settings.set_focus == 1 ? an : an++ ) +
+                (site.settings.set_focus == 1 ? an : an + 1) +
                 '" data-id="' +
                 row_no +
                 '" data-item="' +
@@ -1253,55 +1200,12 @@ function add_purchase_item(item) {
         }
         poitems[item_id].row.qty = new_qty;
     } else {
-        var foundItem = findMatchingPoItem(item, poitems);
-        if(foundItem){
-            if (isBatchNoEmpty(foundItem.item_id, poitems)) {
-                bootbox.alert("No batch number entered for the same product");
-            } else {
-                poitems[item_id] = item;
-            }
-        }else{
-            poitems[item_id] = item;
-        }
+        poitems[item_id] = item;
     }
     poitems[item_id].order = new Date().getTime();
     localStorage.setItem('poitems', JSON.stringify(poitems));
     loadItems();
     return true;
-}
-
-function isBatchNoEmpty(item_id, poitems) {
-    const poitemKeys = Object.keys(poitems);
-    for (const key of poitemKeys) {
-      const poitem = poitems[key];
-      if (poitem.item_id === item_id && poitem.row.batchno === "") {
-        return true;
-      }
-    }
-    return false;
-}
-
-function findMatchingItemWithSameBatchNo(batchno, item_id, poitems) {
-    var iitem_id = poitems[item_id].item_id;
-    const poitemKeys = Object.keys(poitems);
-    for (const key of poitemKeys) {
-      const poitem = poitems[key];
-      if (poitem.item_id === iitem_id && poitem.row.batchno == batchno && poitem.id != item_id) {
-        return poitem;
-      }
-    }
-    return null;
-}
-
-function findMatchingPoItem(item, poitems) {
-    const poitemKeys = Object.keys(poitems);
-    for (const key of poitemKeys) {
-      const poitem = poitems[key];
-      if (poitem.item_id === item.item_id) {
-        return poitem;
-      }
-    }
-    return null;
 }
 
 if (typeof Storage === 'undefined') {
