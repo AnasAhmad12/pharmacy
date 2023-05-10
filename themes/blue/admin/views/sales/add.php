@@ -1,4 +1,14 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<style>
+table#slTable td input.form-control {
+    font-size: 14px !important;
+    padding: 5px 0px !important;
+}
+
+.table td {
+    height: 70px !important;
+}
+</style>
 <script type="text/javascript">
     var count = 1, an = 1, product_variant = 0, DT = <?= $Settings->default_tax_rate ?>,
         product_tax = 0, invoice_tax = 0, product_discount = 0, order_discount = 0, total_discount = 0, total = 0, allow_discount = <?= ($Owner || $Admin || $this->session->userdata('allow_discount')) ? 1 : 0; ?>,
@@ -390,14 +400,16 @@
                             <div class="control-group table-group">
                                 <label class="table-label"><?= lang('order_items'); ?> *</label>
 
-                                <div class="controls table-controls">
+                                <div class="controls table-controls" style="font-size: 12px !important;">
                                     <table id="slTable" class="table items table-striped table-bordered table-condensed table-hover sortable_table">
                                         <thead>
                                         <tr>
-                                            <th class="col-md-4"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
+                                            <th class="col-md-2">item name</th>
                                             <th class="col-md-1"><?= lang('Expiry Date'); ?></th>
                                             <th class="col-md-1"><?= lang('Batch_No'); ?></th>
-                                            <th class="col-md-1"><?= lang('Lot_No'); ?></th>
+                                            <!--<th class="col-md-1">
+                                                <?php //lang('Lot_No'); ?>
+                                            </th>-->
                                             <?php
                                             if ($Settings->product_serial) {
                                                 echo '<th class="col-md-2">' . lang('serial_no') . '</th>';

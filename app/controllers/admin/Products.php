@@ -1952,6 +1952,7 @@ class Products extends MY_Controller
                                 'category'   => $this->input->post('category') ? $product->category : false,
                                 'currencies' => $this->input->post('currencies'),
                                 'variants'   => $this->input->post('variants') ? $variants : false,
+                                'vat_number' => '300212567900003',
                                 'quantity'   => $quantity,
                             ];
                         }
@@ -1971,6 +1972,7 @@ class Products extends MY_Controller
                         'category'   => $this->input->post('category') ? $product->category : false,
                         'currencies' => $this->input->post('currencies'),
                         'variants'   => false,
+                        'vat_number' => '300212567900003',
                         'quantity'   => $quantity,
                     ];
                 }

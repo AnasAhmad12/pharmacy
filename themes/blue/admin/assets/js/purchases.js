@@ -783,7 +783,7 @@ function nsSupplier() {
         },
     });
 }
-
+var first_load = 1;
 function loadItems() {
     if (localStorage.getItem('poitems')) {
         total = 0;
@@ -1235,11 +1235,14 @@ function loadItems() {
             $('html, body').animate({ scrollTop: $('#sticker').offset().top }, 500);
             $(window).scrollTop($(window).scrollTop() + 1);
         }
-        set_page_focus();
+        if(first_load == 1){
+            first_load = 0;
+            set_page_focus();
+        }
     }
 
     // Reset all tabindexes to -1
-    document.querySelectorAll('[tabindex]').forEach(function(el) {
+    /*document.querySelectorAll('[tabindex]').forEach(function(el) {
         el.removeAttribute('tabindex');
     });
   
@@ -1249,7 +1252,7 @@ function loadItems() {
         el.tabIndex = idx + 1;
     });
 
-    currTabIndex = document.activeElement.tabIndex;
+    currTabIndex = document.activeElement.tabIndex;*/
 }
 
 /* -----------------------------

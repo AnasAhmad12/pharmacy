@@ -69,7 +69,7 @@
                 }
                 $.ajax({
                     type: 'get',
-                    url: '<?= admin_url('transfers/suggestions'); ?>',
+                    url: '<?= admin_url('transfers/bch_suggestions'); ?>',
                     dataType: "json",
                     data: {
                         term: request.term,
@@ -281,6 +281,7 @@
                                         <thead>
                                         <tr>
                                             <th class="col-md-4"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
+                                            <th class="col-md-1">Batch </th>
                                             <?php
                                             if ($Settings->product_expiry) {
                                                 echo '<th class="col-md-2">' . $this->lang->line('expiry_date') . '</th>';

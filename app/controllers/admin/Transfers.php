@@ -71,7 +71,9 @@ class Transfers extends MY_Controller
                 $real_unit_cost     = $this->sma->formatDecimal($_POST['real_unit_cost'][$r]);
                 $item_unit_quantity = $_POST['quantity'][$r];
                 $item_tax_rate      = $_POST['product_tax'][$r] ?? null;
+                $item_batchno       = $_POST['batchno'][$r];
                 $item_expiry        = isset($_POST['expiry'][$r]) ? $this->sma->fsd($_POST['expiry'][$r]) : null;
+                
                 $item_option        = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' && $_POST['product_option'][$r] != 'undefined' && $_POST['product_option'][$r] != 'null' ? $_POST['product_option'][$r] : null;
                 $item_unit          = $_POST['product_unit'][$r];
                 $item_quantity      = $_POST['product_base_quantity'][$r];
@@ -130,6 +132,7 @@ class Transfers extends MY_Controller
                         'expiry'            => $item_expiry,
                         'real_unit_cost'    => $real_unit_cost,
                         'date'              => date('Y-m-d', strtotime($date)),
+                        'batchno'           => $item_batchno,
                     ];
 
                     $products[] = ($product + $gst_data);
@@ -463,6 +466,7 @@ class Transfers extends MY_Controller
                 $quantity_balance   = $_POST['quantity_balance'][$r];
                 $ordered_quantity   = $_POST['ordered_quantity'][$r];
                 $item_tax_rate      = $_POST['product_tax'][$r] ?? null;
+                $item_batchno       = $_POST['batchno'][$r];
                 $item_expiry        = isset($_POST['expiry'][$r]) ? $this->sma->fsd($_POST['expiry'][$r]) : null;
                 $item_option        = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' && $_POST['product_option'][$r] != 'undefined' && $_POST['product_option'][$r] != 'null' ? $_POST['product_option'][$r] : null;
                 $item_unit          = $_POST['product_unit'][$r];
@@ -515,6 +519,7 @@ class Transfers extends MY_Controller
                         'expiry'            => $item_expiry,
                         'real_unit_cost'    => $real_unit_cost,
                         'date'              => date('Y-m-d', strtotime($date)),
+                        'batchno'           => $item_batchno,
                     ];
 
                     $products[] = ($product + $gst_data);
@@ -566,6 +571,7 @@ class Transfers extends MY_Controller
             $transfer_items         = $this->transfers_model->getAllTransferItems($id, $this->data['transfer']->status);
             krsort($transfer_items);
             $c = rand(100000, 9999999);
+            
             foreach ($transfer_items as $item) {
                 $row = $this->site->getProductByID($item->product_id);
                 if (!$row) {
@@ -588,6 +594,8 @@ class Transfers extends MY_Controller
                 $row->real_unit_cost = $item->real_unit_cost;
                 $row->tax_rate       = $item->tax_rate_id;
                 $row->option         = $item->option_id;
+                $row->batchno        = $item->batchno;
+                $row->expiry        = $item->expiry;
                 $options             = $this->transfers_model->getProductOptions($row->id, $this->data['transfer']->from_warehouse_id, false);
                 $pis                 = $this->site->getPurchasedItems($item->product_id, $item->warehouse_id, $item->option_id);
                 if ($pis) {
@@ -802,6 +810,96 @@ class Transfers extends MY_Controller
         }
     }
 
+    public function bch_suggestions()
+    {
+        $this->sma->checkPermissions('index', true);
+        $term         = $this->input->get('term', true);
+        $warehouse_id = $this->input->get('warehouse_id', true);
+
+        if (strlen($term) < 1 || !$term) {
+            die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . admin_url('welcome') . "'; }, 10);</script>");
+        }
+
+        $analyzed  = $this->sma->analyze_term($term);
+        $sr        = $analyzed['term'];
+        $option_id = $analyzed['option_id'];
+        $sr        = addslashes($sr);
+        $strict    = $analyzed['strict']                    ?? false;
+        $qty       = $strict ? null : $analyzed['quantity'] ?? null;
+        $bprice    = $strict ? null : $analyzed['price']    ?? null;
+
+        $rows = $this->transfers_model->getProductNamesWithBatches($sr, $warehouse_id);
+        if ($rows) {
+            $r = 0;
+            foreach ($rows as $row) {
+                $c                     = uniqid(mt_rand(), true);
+                $option                = false;
+                $row->quantity         = 0;
+                $row->item_tax_method  = $row->tax_method;
+                $row->base_quantity    = 1;
+                $row->base_unit        = $row->unit;
+                $row->base_unit_cost   = $row->cost;
+                $row->unit             = $row->purchase_unit ? $row->purchase_unit : $row->unit;
+                $row->qty              = 1;
+                $row->discount         = '0';
+                //$row->expiry           = '';
+                $row->quantity_balance = 0;
+                $row->ordered_quantity = 0;
+                $options               = $this->transfers_model->getProductOptions($row->id, $warehouse_id);
+                if ($options) {
+                    $opt = $option_id && $r == 0 ? $this->transfers_model->getProductOptionByID($option_id) : $options[0];
+                    if (!$option_id || $r > 0) {
+                        $option_id = $opt->id;
+                    }
+                } else {
+                    $opt       = json_decode('{}');
+                    $opt->cost = 0;
+                    $option_id = false;
+                }
+                $row->option = $option_id;
+                $pis         = $this->site->getPurchasedItems($row->id, $warehouse_id, $row->option);
+                if ($pis) {
+                    foreach ($pis as $pi) {
+                        $row->quantity += $pi->quantity_balance;
+                    }
+                }
+                if ($options) {
+                    $option_quantity = 0;
+                    foreach ($options as $option) {
+                        $pis = $this->site->getPurchasedItems($row->id, $warehouse_id, $row->option);
+                        if ($pis) {
+                            foreach ($pis as $pi) {
+                                $option_quantity += $pi->quantity_balance;
+                            }
+                        }
+                        if ($option->quantity > $option_quantity) {
+                            $option->quantity = $option_quantity;
+                        }
+                    }
+                }
+                if ($opt->cost != 0) {
+                    $row->cost = $opt->cost;
+                }
+                $row->real_unit_cost = $row->cost;
+                $units               = $this->site->getUnitsByBUID($row->base_unit);
+                $tax_rate            = $this->site->getTaxRateByID($row->tax_rate);
+                if ($qty) {
+                    $row->qty           = $qty;
+                    $row->base_quantity = $qty;
+                } else {
+                    $row->qty = ($bprice ? $bprice / $row->cost : 1);
+                }
+
+                $pr[] = ['id' => sha1($c . $r), 'item_id' => $row->id, 'label' => $row->name . ' (' . $row->code . ') - '.$row->batchno,
+                    'row'     => $row, 'tax_rate' => $tax_rate, 'units' => $units, 'options' => $options, ];
+                $r++;
+            }
+            $this->sma->send_json($pr);
+        } else {
+            $this->sma->send_json([['id' => 0, 'label' => lang('no_match_found'), 'value' => $term]]);
+        }
+    }
+
     public function suggestions()
     {
         $this->sma->checkPermissions('index', true);
@@ -922,6 +1020,7 @@ class Transfers extends MY_Controller
                 $row->base_quantity    = 1;
                 $row->base_unit        = $row->unit;
                 $row->base_unit_cost   = $row->cost;
+                $row->sale_price       = $row->price;
                 $row->unit             = $row->purchase_unit ? $row->purchase_unit : $row->unit;
                 $row->qty              = 1;
                 $row->discount         = '0';

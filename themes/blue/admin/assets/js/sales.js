@@ -1444,12 +1444,12 @@ function loadItems() {
                     '"></td>';
 
 
-                    tr_html +=
+                    /*tr_html +=
                     '<td><input class="form-control rbatchno" name="lotno[]" type="text" value="' +
                     item_lotno +
                     '" id="lotno_' +
                     row_no +
-                    '"></td>';
+                    '"></td>';*/
 
 
                     

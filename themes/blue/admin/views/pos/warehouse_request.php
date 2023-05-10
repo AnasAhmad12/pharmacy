@@ -78,7 +78,7 @@
                                         <thead>
                                         <tr>
                                             <th class="col-md-4"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
-                                            <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
+                                            <th class="col-md-1">sale price</th>
                                             <th class="col-md-1"><?= lang('quantity'); ?></th>
                                             <th><?= lang('subtotal'); ?> (<span
                                                     class="currency"><?= $default_currency->code ?></span>)

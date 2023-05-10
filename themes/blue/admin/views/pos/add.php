@@ -2551,6 +2551,7 @@ var wh_count = 1, wh_an = 1, wh_total = 0, toitems = {};
             var product_id = wh_item.row.id,
                 item_type = wh_item.row.type,
                 item_cost = wh_item.row.cost,
+                item_sale_price = wh_item.row.price,
                 item_qty = wh_item.row.qty,
                 item_bqty = wh_item.row.quantity_balance,
                 item_oqty = wh_item.row.ordered_quantity,
@@ -2635,8 +2636,8 @@ var wh_count = 1, wh_an = 1, wh_total = 0, toitems = {};
                     row_no +
                     '"></td>';
             }*/
-            tr_html +=
-                '<td class="text-right"><input class="form-control input-sm text-right rcost" name="net_cost[]" type="hidden" id="cost_' +
+            /*tr_html +=
+                '<input class="form-control input-sm text-right rcost" name="net_cost[]" type="hidden" id="cost_' +
                 row_no +
                 '" value="' +
                 formatDecimal(item_cost) +
@@ -2644,10 +2645,20 @@ var wh_count = 1, wh_an = 1, wh_total = 0, toitems = {};
                 unit_cost +
                 '"><input class="realucost" name="real_unit_cost[]" type="hidden" value="' +
                 wh_item.row.real_unit_cost +
-                '"><span class="text-right scost" id="scost_' +
+                '">';*/
+            tr_html +=
+                '<td class="text-right"><input class="form-control input-sm text-right rcost" name="net_cost[]" type="hidden" id="cost_' +
+                row_no +
+                '" value="' +
+                formatDecimal(parseFloat(item_sale_price) * parseFloat(item_qty)) +
+                '"><input class="rucost" name="unit_cost[]" type="hidden" value="' +
+                item_sale_price +
+                '"><input class="realucost" name="real_unit_cost[]" type="hidden" value="' +
+                item_sale_price +
+                '"><span class="text-right rsale_price" id="sale_' +
                 row_no +
                 '">' +
-                formatMoney(item_cost) +
+                formatMoney(item_sale_price) +
                 '</span></td>';
             tr_html +=
                 '<td><input name="quantity_balance[]" type="hidden" class="rbqty" value="' +
@@ -2687,7 +2698,8 @@ var wh_count = 1, wh_an = 1, wh_total = 0, toitems = {};
                 '<td class="text-right"><span class="text-right ssubtotal" id="subtotal_' +
                 row_no +
                 '">' +
-                formatMoney((parseFloat(item_cost) - item_discount + parseFloat(pr_tax_val)) * parseFloat(item_qty)) +
+                //formatMoney((parseFloat(item_cost) - item_discount + parseFloat(pr_tax_val)) * parseFloat(item_qty)) +
+                formatMoney(parseFloat(item_sale_price) * parseFloat(item_qty)) +
                 '</span></td>';
             tr_html +=
                 '<td class="text-center"><i class="fa fa-times tip todel" id="' +
@@ -2695,7 +2707,7 @@ var wh_count = 1, wh_an = 1, wh_total = 0, toitems = {};
                 '" title="Remove" style="cursor:pointer;"></i></td>';
             newTr.html(tr_html);
             newTr.prependTo('#toTable');
-            total += formatDecimal((parseFloat(item_cost) + parseFloat(pr_tax_val)) * parseFloat(item_qty), 4);
+            total += formatDecimal(parseFloat(item_sale_price) * parseFloat(item_qty), 4);
             wh_count += parseFloat(item_qty);
             an++;
             if (wh_item.options !== false) {

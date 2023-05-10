@@ -178,6 +178,9 @@
                                         echo '</span> ';
                                     }
                                     echo '<span class="barcode_image"><img src="' . admin_url('products/barcode/' . $item['barcode'] . '/' . $item['bcs'] . '/' . $item['bcis']) . '" alt="' . $item['barcode'] . '" class="bcimg" /></span>';
+                                    if ($item['vat_number']) {
+                                        echo '<span class="barcode_vat">' . 'VAT NO. ' . $item['vat_number'] . '</span> ';
+                                    }
                                     if ($style == 50) {
                                         echo '</div>';
                                     }
@@ -215,6 +218,7 @@
                                             echo '</div><div class="clearfix"></div><div class="barcode">';
                                         }
                                     }
+                                    
                                     $c++;
                                 }
                             }

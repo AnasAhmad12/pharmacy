@@ -30,7 +30,7 @@
     } ?>
         ItemnTotals();
         $("#add_item").autocomplete({
-            //source: '<?= admin_url('transfers/suggestions'); ?>',
+            //source: '<?= admin_url('transfers/bch_suggestions'); ?>',
             source: function (request, response) {
                 if (!$('#from_warehouse').val()) {
                     $('#add_item').val('').removeClass('ui-autocomplete-loading');
@@ -41,7 +41,7 @@
                 }
                 $.ajax({
                     type: 'get',
-                    url: '<?= admin_url('transfers/suggestions'); ?>',
+                    url: '<?= admin_url('transfers/bch_suggestions'); ?>',
                     dataType: "json",
                     data: {
                         term: request.term,
@@ -274,13 +274,15 @@
                                         <thead>
                                         <tr>
                                             <th class="col-md-4"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
-                                            <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
-                                            <th class="col-md-1"><?= lang('quantity'); ?></th>
+                                            <th class="col-md-1">Batch </th>
                                             <?php
                                             if ($Settings->product_expiry) {
                                                 echo '<th class="col-md-2">' . $this->lang->line('expiry_date') . '</th>';
                                             }
                                             ?>
+                                            <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
+                                            <th class="col-md-1"><?= lang('quantity'); ?></th>
+                                            
                                             <?php
                                             if ($Settings->tax1) {
                                                 echo '<th class="col-md-1">' . $this->lang->line('product_tax') . '</th>';

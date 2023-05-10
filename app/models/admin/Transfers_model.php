@@ -147,6 +147,28 @@ class Transfers_model extends CI_Model
         return false;
     }
 
+    public function getProductNamesWithBatches($term, $warehouse_id, $limit = 10)
+    {
+        $this->db->select('products.id, code, name, warehouses_products.quantity, cost, tax_rate, type, unit, purchase_unit, tax_method, purchase_items.batchno, purchase_items.expiry')
+            ->join('warehouses_products', 'warehouses_products.product_id=products.id', 'left')
+            ->join('purchase_items', 'purchase_items.product_id=products.id', 'left')
+            ->group_by('products.id, purchase_items.batchno');
+        if ($this->Settings->overselling) {
+            $this->db->where("type = 'standard' AND (name LIKE '%" . $term . "%' OR code LIKE '%" . $term . "%' OR  concat(name, ' (', code, ')') LIKE '%" . $term . "%')");
+        } else {
+            $this->db->where("type = 'standard' AND warehouses_products.warehouse_id = '" . $warehouse_id . "' AND warehouses_products.quantity > 0 AND "
+                . "(name LIKE '%" . $term . "%' OR code LIKE '%" . $term . "%' OR  concat(name, ' (', code, ')') LIKE '%" . $term . "%')");
+        }
+        $this->db->limit($limit);
+        $q = $this->db->get('products');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+    }
+
     public function getProductNames($term, $warehouse_id, $limit = 5)
     {
         $this->db->select('products.id, code, name, warehouses_products.quantity, cost, tax_rate, type, unit, purchase_unit, tax_method')
@@ -170,7 +192,7 @@ class Transfers_model extends CI_Model
     
     public function wh_getProductNames($term, $warehouse_id, $limit = 5)
     {
-        $this->db->select('products.id, code, name, warehouses_products.quantity, cost, tax_rate, type, unit, purchase_unit, tax_method')
+        $this->db->select('products.id, code, name, warehouses_products.quantity, cost, tax_rate, type, unit, purchase_unit, tax_method, price')
             ->join('warehouses_products', 'warehouses_products.product_id=products.id', 'left')
             ->group_by('products.id');
         

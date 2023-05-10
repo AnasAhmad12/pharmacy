@@ -58,7 +58,7 @@
                             <?php
                     } ?>
                             <th style="text-align:center; vertical-align:middle;"><?= lang('quantity'); ?></th>
-                            <th style="text-align:center; vertical-align:middle;"><?= lang('unit_cost'); ?></th>
+                            <th style="text-align:center; vertical-align:middle;">Sale Price</th>
                             <?php if ($Settings->tax1) {
                         echo '<th style="text-align:center; vertical-align:middle;">' . lang('tax') . '</th>';
                     } ?>

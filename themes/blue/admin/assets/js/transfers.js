@@ -384,7 +384,7 @@ function loadItems() {
                 item_qty = item.row.qty,
                 item_bqty = item.row.quantity_balance,
                 item_oqty = item.row.ordered_quantity,
-                item_expiry = item.row.expiry,
+                item_expiry = new Date(item.row.expiry).toLocaleDateString('en-GB'),
                 item_aqty = item.row.quantity,
                 item_tax_method = item.row.tax_method,
                 item_ds = item.row.discount,
@@ -393,7 +393,8 @@ function loadItems() {
                 item_code = item.row.code,
                 item_serial = item.row.serial,
                 item_name = item.row.name.replace(/"/g, '&#034;').replace(/'/g, '&#039;');
-
+            
+            var batchno = item.row.batchno;
             var unit_cost = item.row.real_unit_cost;
             var product_unit = item.row.unit,
                 base_quantity = item.row.base_quantity;
@@ -453,6 +454,18 @@ function loadItems() {
                 '" data-item="' +
                 item_id +
                 '" title="Edit" style="cursor:pointer;"></i></td>';
+
+            tr_html +=
+                '<td><input class="form-control" name="batchno[]" type="text" value="' +
+                batchno +
+                '" data-id="' +
+                row_no +
+                '" data-item="' +
+                item_id +
+                '" id="batchno_' +
+                row_no +
+                '"></td>';
+
             if (site.settings.product_expiry == 1) {
                 tr_html +=
                     '<td><input class="form-control date rexpiry" name="expiry[]" type="text" value="' +
