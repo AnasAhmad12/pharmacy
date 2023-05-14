@@ -1539,7 +1539,12 @@ class Sales extends MY_Controller
     {
         if ($this->sales_model->saleToInvoice($sid)) {
             
-            $inv = $this->sales_model->getSaleByID($sid);
+        $inv = $this->sales_model->getSaleByID($sid);
+          
+     if($inv->sale_invoice ==0){
+
+     
+            
             $this->load->admin_model('companies_model');
             $customer = $this->companies_model->getCompanyByID($inv->customer_id);
             $inv_items = $this->sales_model->getAllSaleItems($sid);
@@ -1621,8 +1626,6 @@ class Sales extends MY_Controller
                           )
                     );
 
-         
-            print_r($inv->grand_total);
 
             //   /*Accounts Entry Items*/
             foreach ($entryitemdata as $row => $itemdata)
@@ -1634,6 +1637,12 @@ class Sales extends MY_Controller
 
             $this->session->set_flashdata('message', lang('Sale is Converted to invoice Successfully!'));
             admin_redirect($_SERVER['HTTP_REFERER'] ?? 'sales');
+        }else{
+
+            $this->session->set_flashdata('error', lang('Sale Already Converted to invoice!'));
+            admin_redirect($_SERVER['HTTP_REFERER'] ?? 'sales');
+        }
+
         }
     }
 

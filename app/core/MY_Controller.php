@@ -109,9 +109,9 @@ class MY_Controller extends CI_Controller
             $this->mSettings = $this->db->get('sma_accounts_settings_main')->row();
             $this->mDateArray = explode('|', $this->mAccountSettings->date_format);
 
-<<<<<<< Updated upstream
+// <<<<<<< Updated upstream
 
-=======
+// ======
             /* Ledger selection */
             $ledgers = new LedgerTree(); // initilize ledgers array - LedgerTree Lib
             $ledgers->Group = &$this->Group; // initilize selected ledger groups in ledgers array
@@ -141,7 +141,7 @@ class MY_Controller extends CI_Controller
             $this->vat_on_sale = 12;
             $this->data['vat_on_sale'] = $this->vat_on_sale; 
             
->>>>>>> Stashed changes
+// >>>>>>> Stashed changes
         }
     }
 
