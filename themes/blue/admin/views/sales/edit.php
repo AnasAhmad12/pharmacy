@@ -352,22 +352,24 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
 
 
 
-                        <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor_shipping']) { ?>
-                               <?php echo form_input('sale_status', 'approved','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
+                           <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor_shipping'] && $inv->sale_status =="pending") { ?>
+                               <?php echo form_input('sale_status', 'Ready','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
                              <?php  } ?>
 
-                           <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor']) { ?>
-                            <?php echo form_input('sale_status', 'shipped','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
+                             <?php if ($Owner || $Admin || $GP['sales-quality_supervisor'] && $inv->sale_status =="Ready") { ?>
+                               <?php echo form_input('sale_status', 'Approved','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
                              <?php  } ?>
 
-                             <?php if ($Owner || $Admin || $GP['sales-accountant']) { ?>
-                                <?php echo form_input('sale_status', 'completed','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
-                             <?php  } ?> 
+                           <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor'] && $inv->sale_status =="Approved") { ?>
+                            <?php echo form_input('sale_status', 'Shipped','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
+                             <?php  } ?>
 
-                             
+                          
+                              <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor_shipping'] && $inv->sale_status =="Shipped") { ?>
+                               <?php echo form_input('sale_status', 'completed','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
+                             <?php  } ?>
 
-
-                             <?php if ($Owner || $Admin || !$GP['sales-warehouse_supervisor'] && !$GP['sales-warehouse_supervisor_shipping'] && !$GP['sales-accountant'] ) { ?>
+                             <?php if ($Owner || $Admin || !$GP['sales-warehouse_supervisor'] && !$GP['sales-warehouse_supervisor_shipping'] && !$GP['sales-quality_supervisor']) { ?>
                             <div class="col-sm-4">
                             <div class="form-group">
                             <?= lang('sale_status', 'slsale_status'); ?>
@@ -383,9 +385,9 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                             <div class="form-group">
                                 <?= lang('payment_term', 'slpayment_term'); ?>
                                 <?php echo form_input('payment_term', '', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('payment_term_tip') . '" id="slpayment_term"'); ?>
-
                             </div>
                         </div>
+                        
                         <?= form_hidden('payment_status', $inv->payment_status); ?>
                         <div class="clearfix"></div>
 
@@ -416,11 +418,11 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                         
                       
 
-                        <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor_shipping']) { ?>
+                        <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor_shipping'] && $inv->sale_status =="pending") { ?>
                              
                                <div class="col-md-12">
                                 <div class="fprom-group">
-                                <?php echo form_submit('edit_sale', lang('Approved'), 'id="edit_sale" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); ?>
+                                <?php echo form_submit('edit_sale', lang('Ready'), 'id="edit_sale" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); ?>
                                 <button type="button" class="btn btn-danger" id="reset"><?= lang('reset') ?></button>
                                 </div>
                                 </div>
@@ -428,7 +430,23 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                                
                              <?php  } ?>
 
-                              <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor']) { ?>
+
+
+                             <?php if ($Owner || $Admin || $GP['sales-quality_supervisor'] && $inv->sale_status =="Ready") { ?>
+                                <div class="col-md-12">
+                                <div
+                                class="fprom-group">
+                                <?php echo form_submit('edit_sale', lang('Approved'), 'id="edit_sale" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); ?>
+                                <button type="button" class="btn btn-danger" id="reset"><?= lang('reset') ?></button>
+                                </div>
+                                </div>
+
+                             <?php  } ?> 
+
+
+
+
+                              <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor'] && $inv->sale_status =="Approved") { ?>
                             
                                <div class="col-md-12">
                                 <div class="fprom-group">
@@ -439,21 +457,27 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
 
                              <?php  } ?>
 
-                             <?php if ($Owner || $Admin || $GP['sales-accountant']) { ?>
+                           
+
+
+
+                             <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor_shipping'] && $inv->sale_status =="Shipped") { ?>
+                             
                                 <div class="col-md-12">
-                                <div
-                                class="fprom-group">
-                                <?php echo form_submit('edit_sale', lang('Completed'), 'id="edit_sale" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); ?>
+                                <div class="fprom-group">
+                                <?php echo form_submit('edit_sale', lang('Complete'), 'id="edit_sale" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); ?>
                                 <button type="button" class="btn btn-danger" id="reset"><?= lang('reset') ?></button>
                                 </div>
                                 </div>
 
-                             <?php  } ?> 
+                             
+                           <?php  } ?>
+                          
 
                              
 
 
-                        <?php if ($Owner || $Admin || !$GP['sales-warehouse_supervisor'] && !$GP['sales-warehouse_supervisor_shipping'] && !$GP['sales-accountant'] ) { ?>
+                        <?php if ($Owner || $Admin || !$GP['sales-warehouse_supervisor'] && !$GP['sales-warehouse_supervisor_shipping'] && !$GP['sales-quality_supervisor'] ) { ?>
 
                         <div class="col-md-12">
                         <div
