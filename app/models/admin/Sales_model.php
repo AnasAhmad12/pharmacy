@@ -897,6 +897,43 @@ class Sales_model extends CI_Model
         return false;
     }
 
+
+    public function saleToInvoice($id)
+    {
+        $this->db->update('sales', ['sale_invoice' => 1], ['id' => $id]);
+        return true;
+    }
+    public function getSaleByID($id)
+    {
+        $q = $this->db->get_where('sales', ['id' => $id], 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+
+
+    public function getAllSaleItems($sale_id)
+    {
+        $this->db->select('sale_items.*, tax_rates.code as tax_code, tax_rates.name as tax_name, tax_rates.rate as tax_rate, products.unit, products.details as details, product_variants.name as variant, products.hsn_code as hsn_code, products.second_name as second_name')
+            ->join('products', 'products.id=sale_items.product_id', 'left')
+            ->join('product_variants', 'product_variants.id=sale_items.option_id', 'left')
+            ->join('tax_rates', 'tax_rates.id=sale_items.tax_rate_id', 'left')
+            ->group_by('sale_items.id')
+            ->order_by('id', 'asc');
+
+        $q = $this->db->get_where('sale_items', ['sale_id' => $sale_id]);
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return false;
+    }
+
+
+
     public function updateStatus($id, $status, $note)
     {
         $this->db->trans_start();

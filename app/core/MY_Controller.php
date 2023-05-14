@@ -135,7 +135,8 @@ class MY_Controller extends CI_Controller
             $this->vat_on_purchase = 129;
             $this->data['vat_on_purchase'] = $this->vat_on_purchase; 
 
-
+            $this->vat_on_sale = 12;
+            $this->data['vat_on_sale'] = $this->vat_on_sale; 
         }
     }
 

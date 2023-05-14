@@ -1513,6 +1513,122 @@ class Sales extends MY_Controller
         echo $this->datatables->generate();
     }
 
+<<<<<<< Updated upstream
+=======
+
+
+    public function convert_sale_invoice($sid)
+    {
+        if ($this->sales_model->saleToInvoice($sid)) {
+            
+        $inv = $this->sales_model->getSaleByID($sid);
+          
+         if($inv->sale_invoice ==0){
+
+     
+            
+            $this->load->admin_model('companies_model');
+            $customer = $this->companies_model->getCompanyByID($inv->customer_id);
+            $inv_items = $this->sales_model->getAllSaleItems($sid);
+
+            /*Accounts Entries*/
+            $entry = array(
+                    'entrytype_id' => 4,
+                    'number'       => $inv->id,
+                    'date'         => date('Y-m-d'), 
+                    'dr_total'     => $inv->grand_total,
+                    'cr_total'     => $inv->grand_total,
+                    'notes'        => 'Sale Reference: '.$inv->reference_no.' Date: '.date('Y-m-d H:i:s'),
+                    'sid'          =>  $inv->id
+                    );
+            
+            $add  = $this->db->insert('sma_accounts_entries', $entry);
+            $insert_id = $this->db->insert_id();
+
+             $entryitemdata = array();
+
+           foreach ($inv_items as $item) 
+            {
+                $proid = $item->product_id;
+                $product  = $this->site->getProductByID($proid);
+                //products
+                $entryitemdata[] = array(
+                        'Entryitem' => array(
+                            'entry_id' => $insert_id,
+                            'dc' => 'D',
+                            'ledger_id' => $product->purchase_account,
+                            'amount' => $item->main_net,
+                            'narration' => 'purchase account'
+                        )
+                    );
+
+                    $entryitemdata[] = array(
+                        'Entryitem' => array(
+                            'entry_id' => $insert_id,
+                            'dc' => 'D',
+                            'ledger_id' => $product->sale_account,
+                            'amount' => $item->main_net,
+                            'narration' => 'sale account'
+                        )
+                    );
+
+                    $entryitemdata[] = array(
+                        'Entryitem' => array(
+                            'entry_id' => $insert_id,
+                            'dc' => 'D',
+                            'ledger_id' => $product->inventory_account,
+                            'amount' => $item->main_net,
+                            'narration' => 'inventory account'
+                        )
+                    );
+
+            }
+
+         
+            // //vat on sale
+            $entryitemdata[] = array(
+                        'Entryitem' => array(
+                            'entry_id' => $insert_id,
+                            'dc' => 'D',
+                            'ledger_id' => $this->vat_on_sale,
+                            'amount' => $inv->order_tax,
+                            'narration' => 'vat on sale'
+                        )
+                    );
+
+
+            // //customer
+              $entryitemdata[] = array(
+                        'Entryitem' => array(
+                            'entry_id' => $insert_id,
+                            'dc' => 'C',
+                            'ledger_id' => $customer->ledger_account,
+                            'amount' => $inv->grand_total,
+                            'narration' => 'customer'
+                          )
+                    );
+
+
+            //   /*Accounts Entry Items*/
+            foreach ($entryitemdata as $row => $itemdata)
+            {
+                
+                  $this->db->insert('sma_accounts_entryitems', $itemdata['Entryitem']);
+            }
+
+
+            $this->session->set_flashdata('message', lang('Sale is Converted to invoice Successfully!'));
+            admin_redirect($_SERVER['HTTP_REFERER'] ?? 'sales');
+        }else{
+
+            $this->session->set_flashdata('error', lang('Sale Already Converted to invoice!'));
+            admin_redirect($_SERVER['HTTP_REFERER'] ?? 'sales');
+        }
+
+        }
+    }
+
+>>>>>>> Stashed changes
     public function getSales($warehouse_id = null)
     {
         $this->sma->checkPermissions('index');
@@ -1646,6 +1762,7 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect($_SERVER['HTTP_REFERER']);
         }
+        
     }
 
     /* ------------------------------------ Gift Cards ---------------------------------- */
