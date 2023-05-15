@@ -25,6 +25,7 @@ class MY_Controller extends CI_Controller
         } else {
             $this->Settings->user_rtl = $this->Settings->rtl;
         }
+        
         $this->theme = $this->Settings->theme . '/admin/views/';
         if (is_dir(VIEWPATH . $this->Settings->theme . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR)) {
             $this->data['assets'] = base_url() . 'themes/' . $this->Settings->theme . '/admin/assets/';
@@ -135,7 +136,7 @@ class MY_Controller extends CI_Controller
             $this->vat_on_purchase = 129;
             $this->data['vat_on_purchase'] = $this->vat_on_purchase; 
 
-            $this->vat_on_sale = 12;
+            $this->vat_on_sale = 122;
             $this->data['vat_on_sale'] = $this->vat_on_sale; 
         }
     }
