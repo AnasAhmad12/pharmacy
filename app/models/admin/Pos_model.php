@@ -128,7 +128,7 @@ class Pos_model extends CI_Model
         return false;
     }
 
-    public function addSale($data = [], $items = [], $payments = [], $sid = null)
+    public function addSale($data = [], $items = [], $payments = [],$sid = null)
     {
         $cost = $this->site->costing($items);
         // $this->sma->print_arrays($cost);
@@ -136,10 +136,25 @@ class Pos_model extends CI_Model
         $data['reference_no'] = $this->site->getReference('pos');
         if ($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
-
             foreach ($items as $item) {
+
                 $item['sale_id'] = $sale_id;
                 $this->db->insert('sale_items', $item);
+
+
+                $rsd['OperationType'] = 'DISPATCH';
+                $rsd['TransactionNumber'] = 0;
+                $rsd['FromID'] = $sale_id;
+                $rsd['ToID']   = 0;
+                $rsd['GTIN'] = $item['product_code'];
+                $rsd['BatchNumber'] = 0;
+                $rsd['ExpiryDate'] = 0;
+                $rsd['SerialNo'] = $item['serial_no'];
+                $item_unit_quantity = $item['unit_quantity'];
+                for ($k = 0; $k < $item_unit_quantity; $k++) {
+                   $this->db->insert('sma_rsd' ,$rsd);
+                }
+
                 $sale_item_id = $this->db->insert_id();
                 if ($data['sale_status'] == 'completed' && $this->site->getProductByID($item['product_id'])) {
                     $item_costs = $this->site->item_costing($item);

@@ -897,7 +897,7 @@ class Sales_model extends CI_Model
         return false;
     }
 
-
+//    sale invoice
     public function saleToInvoice($id)
     {
         $this->db->update('sales', ['sale_invoice' => 1], ['id' => $id]);

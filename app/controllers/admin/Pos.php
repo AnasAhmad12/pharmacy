@@ -816,6 +816,7 @@ class Pos extends MY_Controller
             $gst_data         = [];
             $total_cgst       = $total_sgst       = $total_igst       = 0;
             $i                = isset($_POST['product_code']) ? sizeof($_POST['product_code']) : 0;
+            
             for ($r = 0; $r < $i; $r++) {
                 $item_id            = $_POST['product_id'][$r];
                 $item_type          = $_POST['product_type'][$r];
@@ -831,6 +832,7 @@ class Pos extends MY_Controller
                 $item_discount      = $_POST['product_discount'][$r] ?? null;
                 $item_unit          = $_POST['product_unit'][$r];
                 $item_quantity      = $_POST['product_base_quantity'][$r];
+
 
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details = $item_type != 'manual' ? $this->pos_model->getProductByCode($item_code) : null;
@@ -889,6 +891,8 @@ class Pos extends MY_Controller
                         'real_unit_price'   => $real_unit_price,
                         'comment'           => $item_comment,
                     ];
+
+                 
 
                     $products[] = ($product + $gst_data);
                     $total += $this->sma->formatDecimal(($item_net_price * $item_unit_quantity), 4);
@@ -964,7 +968,7 @@ class Pos extends MY_Controller
                             $amount_paying = $_POST['amount'][$r] >= $gc->balance ? $gc->balance : $_POST['amount'][$r];
                             $gc_balance    = $gc->balance - $amount_paying;
                             $payment[]     = [
-                                'date' => $date,
+                                'date'        => $date,
                                 // 'reference_no' => $this->site->getReference('pay'),
                                 'amount'      => $amount,
                                 'paid_by'     => $_POST['paid_by'][$r],
@@ -1020,7 +1024,7 @@ class Pos extends MY_Controller
                     admin_redirect('pos');
                 }
             } else {
-                if ($sale = $this->pos_model->addSale($data, $products, $payment, $did)) {
+                if ($sale = $this->pos_model->addSale($data, $products, $payment,$rsdItems, $did)) {
                     $this->session->set_userdata('remove_posls', 1);
                     $msg = $this->lang->line('sale_added');
                     if (!empty($sale['message'])) {
