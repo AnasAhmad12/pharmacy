@@ -1142,6 +1142,8 @@ class Entries extends MY_Controller
 		// store selected data to $curEntryitemsData
 		$curEntryitemsData = $this->db->get('sma_accounts_entryitems')->result_array();
 
+		$dr_amount_total=0;
+		$cr_amount_total=0;
 		// loop to store selected entry items to current entry items array
 		foreach ($curEntryitemsData as $row => $data)
 		{
@@ -1157,6 +1159,7 @@ class Entries extends MY_Controller
 					'cr_amount' => '',
 					'narration' => $data['narration']
 				);
+				$dr_amount_total =($dr_amount_total)+($data['amount']);
 			}else // if credit entry
 			{
 				$curEntryitems[$row] = array
@@ -1169,6 +1172,8 @@ class Entries extends MY_Controller
 					'narration' => $data['narration']
 
 				);
+			
+                $cr_amount_total =($cr_amount_total)+($data['amount']);
 			}
 		}
 
@@ -1176,6 +1181,8 @@ class Entries extends MY_Controller
 		$this->data['allTags'] = $this->db->get('sma_accounts_tags')->result_array(); // fetch all tags and pass to view
 		$this->data['entry'] = $entry; // pass entry to view
 		
+		$this->data['dr_amount_total'] = $dr_amount_total;
+		$this->data['cr_amount_total'] = $cr_amount_total;
 		// render page
 		$bc  = [['link' => base_url(), 'page' => lang('home')], ['link' => admin_url('entries'), 'page' => lang('Entries')], ['link' => '#', 'page' => lang('Entries')]];
         $meta = ['page_title' => lang('Accounts'), 'bc' => $bc];

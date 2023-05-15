@@ -135,7 +135,9 @@ $(document).ready(function() {
                     }
 
                     /* Total */
-                    echo '<tr class="bold-text">' . '<td></td>' . '<td>' . lang('entries_views_views_td_total') . '</td>' . '<td id="dr-total">' . $this->functionscore->toCurrency('D', $entry['dr_total']) . '</td>' . '<td id="cr-total">' . $this->functionscore->toCurrency('C', $entry['cr_total']) . '</td>' . '<td></td>' . '</tr>';
+                    // echo '<tr class="bold-text">' . '<td></td>' . '<td>' . lang('entries_views_views_td_total') . '</td>' . '<td id="dr-total">' . $this->functionscore->toCurrency('D', $entry['dr_total']) . '</td>' . '<td id="cr-total">' . $this->functionscore->toCurrency('C', $entry['cr_total']) . '</td>' . '<td></td>' . '</tr>';
+
+                    echo '<tr class="bold-text">' . '<td></td>' . '<td>' . lang('entries_views_views_td_total') . '</td>' . '<td id="dr-total">' . $this->functionscore->toCurrency('D', $dr_amount_total) . '</td>' . '<td id="cr-total">' . $this->functionscore->toCurrency('C', $cr_amount_total) . '</td>' . '<td></td>' . '</tr>';
 
                     /* Difference */
                     if ($this->functionscore->calculate($entry['dr_total'], $entry['cr_total'], '==')) {
