@@ -1561,68 +1561,69 @@ class Sales extends MY_Controller
 
              $entryitemdata = array();
 
-           foreach ($inv_items as $item) 
-            {
-                $proid = $item->product_id;
-                $product  = $this->site->getProductByID($proid);
-                //products
-                $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'D',
-                            'ledger_id' => $product->purchase_account,
-                            'amount' => $item->main_net,
-                            'narration' => 'purchase account'
-                        )
-                    );
+             foreach ($inv_items as $item) 
+             {
+                 $proid = $item->product_id;
+                 $product  = $this->site->getProductByID($proid);
+                 //products
+                 $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'D',
+                             'ledger_id' => $product->purchase_account,
+                             'amount' => $item->main_net,
+                             'narration' => 'purchase account'
+                         )
+                     );
+ 
+                     $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'C',
+                             'ledger_id' => $product->sale_account,
+                             'amount' => $item->main_net,
+                             'narration' => 'sale account'
+                         )
+                     );
+ 
+                     $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'C',
+                             'ledger_id' => $product->inventory_account,
+                             'amount' => $item->main_net,
+                             'narration' => 'inventory account'
+                         )
+                     );
+ 
+             }
+ 
+          
+             // //vat on sale
+             $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'C',
+                             'ledger_id' => $this->vat_on_sale,
+                             'amount' => $inv->order_tax,
+                             'narration' => 'vat on sale'
+                         )
+                     );
+ 
+ 
+             // //customer
+               $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'D',
+                             'ledger_id' => $customer->ledger_account,
+                             'amount' => $inv->grand_total,
+                             'narration' => 'customer'
+                           )
+                     );
 
-                    $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'D',
-                            'ledger_id' => $product->sale_account,
-                            'amount' => $item->main_net,
-                            'narration' => 'sale account'
-                        )
-                    );
 
-                    $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'D',
-                            'ledger_id' => $product->inventory_account,
-                            'amount' => $item->main_net,
-                            'narration' => 'inventory account'
-                        )
-                    );
-
-            }
-
-         
-            // //vat on sale
-            $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'D',
-                            'ledger_id' => $this->vat_on_sale,
-                            'amount' => $inv->order_tax,
-                            'narration' => 'vat on sale'
-                        )
-                    );
-
-
-            // //customer
-              $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'C',
-                            'ledger_id' => $customer->ledger_account,
-                            'amount' => $inv->grand_total,
-                            'narration' => 'customer'
-                          )
-                    );
-
-
+                     
             //   /*Accounts Entry Items*/
             foreach ($entryitemdata as $row => $itemdata)
             {
