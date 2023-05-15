@@ -91,13 +91,10 @@ class Sales extends MY_Controller
                 $item_expiry        = (isset($_POST['expiry'][$r]) && !empty($_POST['expiry'][$r])) ? $this->sma->fsd($_POST['expiry'][$r]) : null;
                 $item_batchno       = $_POST['batchno'][$r]          ?? '';
                 $item_lotno         = $_POST['lotno'][$r]            ?? '';
-
                 $item_tax_rate      = $_POST['product_tax'][$r]      ?? null;
                 $item_discount      = $_POST['product_discount'][$r] ?? null;
                 $item_unit          = $_POST['product_unit'][$r];
                 $item_quantity      = $_POST['product_base_quantity'][$r];
-
-
                 $item_bonus = $_POST['bonus'][$r];
                 $item_dis1 = $_POST['dis1'][$r];
                 $item_dis2 = $_POST['dis2'][$r];
@@ -163,8 +160,8 @@ class Sales extends MY_Controller
                         'serial_no'         => $item_serial,
 
                         'expiry'            => $item_expiry,
-                        'batch_no'           => $item_batchno,
-                        'lot_no'             => $item_lotno,
+                        'batch_no'          => $item_batchno,
+                        'lot_no'            => $item_lotno,
 
                         'real_unit_price'   => $real_unit_price,
                         'subtotal2'         => $this->sma->formatDecimal($subtotal2),
@@ -889,6 +886,25 @@ class Sales extends MY_Controller
                 $item_dis2 = $_POST['dis2'][$r];
                 $totalbeforevat = $_POST['totalbeforevat'][$r];
                 $main_net = $_POST['main_net'][$r];
+                
+                
+                $data2['OperationType'] = 'DRUG SALE';
+                $data2['TransactionNumber']  = $reference;
+                $data2['FromID'] =  $id;
+                $data2['ToID'] = 0; 
+
+                $data2['GTIN']  = $item_code;
+                $data2['BatchNumber'] =  $item_batchno;
+                $data2['ExpiryDate'] = $item_expiry; 
+                $data2['SerialNo'] = $item_serial;      
+                if($sale_status == "completed"){
+                    for ($k = 0; $k < $item_unit_quantity; $k++) {
+ 
+                        $this->db->insert('sma_rsd' ,$data2);
+                        
+                     }
+
+                }
 
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details = $item_type != 'manual' ? $this->sales_model->getProductByCode($item_code) : null;
@@ -1064,7 +1080,7 @@ class Sales extends MY_Controller
                 $row->tax_rate        = $item->tax_rate_id;
                 $row->serial          = $item->serial_no;
                 
-                $row->expiry          = $item->expiry;
+                $row->expiry          = (($item->expiry && $item->expiry != '0000-00-00') ? $this->sma->hrsd($item->expiry) : '');
                 $row->batch_no        = $item->batch_no;
                 $row->lot_no          = $item->lot_no;
                 
@@ -1513,20 +1529,18 @@ class Sales extends MY_Controller
         echo $this->datatables->generate();
     }
 
-<<<<<<< Updated upstream
-=======
+
 
 
     public function convert_sale_invoice($sid)
     {
-        if ($this->sales_model->saleToInvoice($sid)) {
-            
         $inv = $this->sales_model->getSaleByID($sid);
           
-         if($inv->sale_invoice ==0){
-
-     
+         if($inv->sale_invoice == 0){
+             
+          if ($this->sales_model->saleToInvoice($sid)) {
             
+     
             $this->load->admin_model('companies_model');
             $customer = $this->companies_model->getCompanyByID($inv->customer_id);
             $inv_items = $this->sales_model->getAllSaleItems($sid);
@@ -1619,16 +1633,17 @@ class Sales extends MY_Controller
 
             $this->session->set_flashdata('message', lang('Sale is Converted to invoice Successfully!'));
             admin_redirect($_SERVER['HTTP_REFERER'] ?? 'sales');
-        }else{
+       
+
+        }
+         }else{
 
             $this->session->set_flashdata('error', lang('Sale Already Converted to invoice!'));
             admin_redirect($_SERVER['HTTP_REFERER'] ?? 'sales');
         }
-
-        }
     }
 
->>>>>>> Stashed changes
+
     public function getSales($warehouse_id = null)
     {
         $this->sma->checkPermissions('index');
@@ -1640,6 +1655,12 @@ class Sales extends MY_Controller
         $detail_link       = anchor('admin/sales/view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('sale_details'));
         $duplicate_link    = anchor('admin/sales/add?sale_id=$1', '<i class="fa fa-plus-circle"></i> ' . lang('duplicate_sale'));
         $payments_link     = anchor('admin/sales/payments/$1', '<i class="fa fa-money"></i> ' . lang('view_payments'), 'data-toggle="modal" data-target="#myModal"');
+        
+          if(isset($this->GP) && $this->GP['accountant'])
+        {
+            $convert_sale_invoice = anchor('admin/sales/convert_sale_invoice/$1', '<i class="fa fa-money"></i> ' . lang('Convert to Invoice'));
+        }
+        
         $add_payment_link  = anchor('admin/sales/add_payment/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), 'data-toggle="modal" data-target="#myModal"');
         $packagink_link    = anchor('admin/sales/packaging/$1', '<i class="fa fa-archive"></i> ' . lang('packaging'), 'data-toggle="modal" data-target="#myModal"');
         $add_delivery_link = anchor('admin/sales/add_delivery/$1', '<i class="fa fa-truck"></i> ' . lang('add_delivery'), 'data-toggle="modal" data-target="#myModal"');
@@ -1652,6 +1673,31 @@ class Sales extends MY_Controller
         . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . admin_url('sales/delete/$1') . "'>"
         . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i> "
         . lang('delete_sale') . '</a>';
+        
+        
+       if(isset($this->GP) && $this->GP['accountant'])
+        {
+
+        $action = '<div class="text-center"><div class="btn-group text-left">'
+        . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
+        . lang('actions') . ' <span class="caret"></span></button>
+        <ul class="dropdown-menu pull-right" role="menu">
+            <li>' . $convert_sale_invoice . '</li>
+            <li>' . $detail_link . '</li>
+            <li>' . $duplicate_link . '</li>
+            <li>' . $payments_link . '</li>
+            <li>' . $add_payment_link . '</li>
+            <li>' . $packagink_link . '</li>
+            <li>' . $add_delivery_link . '</li>
+            <li>' . $edit_link . '</li>
+            <li>' . $pdf_link . '</li>
+            <li>' . $email_link . '</li>
+            <li>' . $return_link . '</li>
+            <li>' . $delete_link . '</li>
+        </ul>
+    </div></div>';
+    }else{
+
         $action = '<div class="text-center"><div class="btn-group text-left">'
         . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
         . lang('actions') . ' <span class="caret"></span></button>
@@ -1669,6 +1715,7 @@ class Sales extends MY_Controller
             <li>' . $delete_link . '</li>
         </ul>
     </div></div>';
+    }
         //$action = '<div class="text-center">' . $detail_link . ' ' . $edit_link . ' ' . $email_link . ' ' . $delete_link . '</div>';
 
         $this->load->library('datatables');

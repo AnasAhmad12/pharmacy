@@ -264,10 +264,9 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                                         <thead>
                                         <tr>
                                             <th class="col-md-4"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
-                                            
-                                            <th class="col-md-1"><?= lang('Expiry Date'); ?></th>
+                                            <th class="col-md-1"><?= $this->lang->line('expiry_date'); ?></th>
                                             <th class="col-md-1"><?= lang('Batch_No'); ?></th>
-                                            <th class="col-md-1"><?= lang('Lot_No'); ?></th>
+                                            <!-- <th class="col-md-1"><?= lang('Lot_No'); ?></th> -->
 
                                             <?php
                                             if ($Settings->product_serial) {
@@ -351,6 +350,12 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                         </div>
 
 
+
+
+                        <?php if ($Owner || $Admin || $GP['sales-coordinator'] && $inv->sale_status =="pending") { ?>
+                        <?php echo form_input('sale_status', 'pending','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
+                        <?php  } ?>
+
                         <?php if ($Owner || $Admin || $GP['sales-warehouse_supervisor_shipping'] && $inv->sale_status =="pending") { ?>
                                <?php echo form_input('sale_status', 'Ready','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
                              <?php  } ?>
@@ -368,7 +373,7 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                                <?php echo form_input('sale_status', 'completed','hidden', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('sale_status') . '" id="slsale_status"'); ?>
                              <?php  } ?>
 
-                             <?php if ($Owner || $Admin || !$GP['sales-warehouse_supervisor'] && !$GP['sales-warehouse_supervisor_shipping'] && !$GP['sales-quality_supervisor']) { ?>
+                             <?php if ($Owner || $Admin || !$GP['sales-warehouse_supervisor'] && !$GP['sales-warehouse_supervisor_shipping'] && !$GP['sales-quality_supervisor'] && !$GP['sales-coordinator']) { ?>
                             <div class="col-sm-4">
                             <div class="form-group">
                             <?= lang('sale_status', 'slsale_status'); ?>
