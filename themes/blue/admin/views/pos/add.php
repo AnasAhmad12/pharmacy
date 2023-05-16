@@ -2714,12 +2714,12 @@ var wh_count = 1, wh_an = 1, wh_total = 0, toitems = {};
                 $.each(wh_item.options, function () {
                     if (this.id == item_option && base_quantity > this.quantity) {
                         $('#row_' + row_no).addClass('danger');
-                        $('#add_transfer, #edit_transfer').attr('disabled', true);
+                        $('#add_transfer, #edit_transfer').attr('disabled', false);
                     }
                 });
             } else if (base_quantity > item_aqty) {
                 $('#row_' + row_no).addClass('danger');
-                $('#add_transfer, #edit_transfer').attr('disabled', true);
+                $('#add_transfer, #edit_transfer').attr('disabled', false);
             }
         });
 
