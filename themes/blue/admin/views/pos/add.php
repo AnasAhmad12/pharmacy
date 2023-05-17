@@ -300,7 +300,7 @@
                                             <th width="40%"><?=lang('product');?></th>
                                             <th width="15%"><?=lang('price');?></th>
                                             <th width="15%"><?=lang('qty');?></th>
-                                            <th width="20%"><?=lang('Nearest Expiry');?></th>
+                                            <th width="15%"><?=lang('Nearest Expiry');?></th>
                                             <th width="20%"><?=lang('subtotal');?></th>
                                             <th style="width: 5%; text-align: center;">
                                                 <i class="fa fa-trash-o" style="opacity:0.5; filter:alpha(opacity=50);"></i>
@@ -338,14 +338,11 @@
                                         </td>
                                         <td style="padding: 5px 10px;"><?=lang('discount');?>
                                             <?php if ($Owner || $Admin || $this->session->userdata('allow_discount')) {
-
-                                               
                                                 ?>
                                             <a href="#" id="ppdiscount">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                                 <?php
-                                                 echo $this->session->userdata('username');
                                             } ?>
                                         </td>
                                         <td class="text-right" style="padding: 5px 10px;font-weight:bold;">
@@ -2698,7 +2695,6 @@ var wh_count = 1, wh_an = 1, wh_total = 0, toitems = {};
                     formatMoney(pr_tax_val * item_qty) +
                     '</span></td>';
             }*/
-
             tr_html +=
                 '<td class="text-right"><span class="text-right ssubtotal" id="subtotal_' +
                 row_no +
