@@ -221,9 +221,9 @@
                                 style="position: absolute; <?=$Settings->user_rtl ? 'right:-9999px;' : 'left:-9999px;';?>"><?php echo form_input('test', '', 'id="test" class="kb-pad"'); ?></div>
                             <div class="form-group">
                                 <div class="input-group" style="z-index:1;">
-                                <?php
+                                    <?php
                                     echo form_input('customer', ($_POST['customer'] ?? ''), 'id="poscustomer" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('customer') . '" required="required" class="form-control pos-input-tip" style="width:100%;"');
-                                ?>
+                                    ?>
                                     <div class="input-group-addon no-print" style="padding: 2px 8px; border-left: 0;">
                                         <a href="#" id="toogle-customer-read-attr" class="external">
                                             <i class="fa fa-pencil" id="addIcon" style="font-size: 1.2em;"></i>
