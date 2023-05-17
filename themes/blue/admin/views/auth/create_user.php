@@ -140,8 +140,9 @@
                                 </div>
                                 <div class="form-group">
                                     <?= lang('allow_discount', 'allow_discount'); ?>
-                                    <?= form_dropdown('allow_discount', $opts, ($_POST['allow_discount'] ?? 0), 'id="allow_discount" class="form-control select" style="width:100%;"'); ?>
+                                    <?= form_dropdown('allow_discount', $opts, ($_POST['allow_discount'] ?? 0), 'id="allow_discount" class="form-control select" onchange="allowDiscount(this.value)" style="width:100%;"'); ?>
                                 </div>
+                                <div id="allowDiscountInput"></div>
                             </div>
 
                             <div class="row">
@@ -177,4 +178,11 @@
             }
         });
     });
+    function allowDiscount(type){
+        if(type==1){
+        $('#allowDiscountInput').html('<div class="form-group"><?php echo lang('Discount Allow Value', 'Discount'); ?><input class="form-control" type="number" id="allow_discount_value" name="allow_discount_value"></div>');
+        }else{
+            $('#allowDiscountInput').html('');
+        }
+    }
 </script>

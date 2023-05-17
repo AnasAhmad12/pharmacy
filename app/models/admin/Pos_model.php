@@ -1436,4 +1436,17 @@ class Pos_model extends CI_Model
         }
         return false;
     }
+
+    // public function deleteBill($id)
+    // {
+    //     if ($this->db->delete('sma_suspended_bills', ['id' => $id])) {
+    //         $this->db->delete('sma_suspended_items', ['suspend_id' => $id]);
+    //         return true;
+    //     }
+    //     return false;
+    // }
+    
+
+
+
 }

@@ -1295,7 +1295,7 @@ class Pos extends MY_Controller
             $html = '';
             $html .= '<ul class="ob">';
             foreach ($bills as $bill) {
-                $html .= '<li><button type="button" class="btn btn-info sus_sale" id="' . $bill->id . '"><p>' . $bill->suspend_note . '</p><strong>' . $bill->customer . '</strong><br>' . lang('date') . ': ' . $bill->date . '<br>' . lang('items') . ': ' . $bill->count . '<br>' . lang('total') . ': ' . $this->sma->formatMoney($bill->total) . '</button></li>';
+                $html .= '<li><button type="button" class="btn btn-info sus_sale" id="' . $bill->id . '"><p>' . $bill->suspend_note . '</p><strong>' . $bill->customer . '</strong><br>' . lang('date') . ': ' . $bill->date . '<br>' . lang('items') . ': ' . $bill->count . '<br>' . lang('total') . ': ' . $this->sma->formatMoney($bill->total) . '</button><a class="btn btn-danger" href=' . admin_url("pos/delete_bills/$bill->id") . '>Remove</a></li>';
             }
             $html .= '</ul>';
         } else {
@@ -1307,6 +1307,18 @@ class Pos extends MY_Controller
 
         $data['page'] = $this->pagination->create_links();
         echo $this->load->view($this->theme . 'pos/opened', $data, true);
+    }
+
+    
+
+    public function delete_bills($id)
+    {
+        if ($this->pos_model->deleteBill($id)) {
+            admin_redirect('pos');
+        } else {
+            admin_redirect('pos');
+        }
+
     }
 
     public function p()
