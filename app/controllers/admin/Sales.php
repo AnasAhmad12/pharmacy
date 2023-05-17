@@ -2639,9 +2639,14 @@ class Sales extends MY_Controller
                 $row->qty             = 1;
                 $row->discount        = '0';
                 $row->serial          = '';
-                $row->expiry          = '';
+                // $row->expiry          = '';
                 $row->batch_no        = '';
                 $row->lot_no          = '';
+
+                $query = $this->db->query("SELECT expiry FROM  sma_purchase_items where product_id =$row->id;");
+                $row1 = $query->row();
+                $row->expiry          = $row1->expiry;
+
                 $options              = $this->sales_model->getProductOptions($row->id, $warehouse_id);
                 if ($options) {
                     $opt = $option_id && $r == 0 ? $this->sales_model->getProductOptionByID($option_id) : $options[0];
