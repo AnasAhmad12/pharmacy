@@ -1,4 +1,15 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<style>
+table#slTable td input.form-control {
+    font-size: 10px !important;
+    padding: 5px 0px !important;
+}
+
+.table td {
+    height: 70px !important;
+}
+</style>
+<?php
 $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount') || $inv->order_discount_id);
 
 ?>
@@ -258,23 +269,22 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                             <div class="control-group table-group">
                                 <label class="table-label"><?= lang('order_items'); ?> *</label>
 
-                                <div class="controls table-controls">
+                                <div class="controls table-controls" style="font-size: 12px !important;">
                                     <table id="slTable"
                                            class="table items table-striped table-bordered table-condensed table-hover sortable_table">
                                         <thead>
                                         <tr>
-                                            <th class="col-md-4"><?= lang('product') . ' (' . lang('code') . ' - ' . lang('name') . ')'; ?></th>
-                                            <th class="col-md-1"><?= $this->lang->line('expiry_date'); ?></th>
+                                            <th class="col-md-2">item name</th>
+                                            <th class="col-md-1">sale price</th>
+                                            <th class="col-md-1">purchase price</th>
                                             <th class="col-md-1"><?= lang('Batch_No'); ?></th>
-                                            <!-- <th class="col-md-1"><?= lang('Lot_No'); ?></th> -->
-
+                                            <th class="col-md-1"><?= lang('Expiry Date'); ?></th>
                                             <?php
-                                            if ($Settings->product_serial) {
+                                            /*if ($Settings->product_serial) {
                                                 echo '<th class="col-md-2">' . lang('serial_no') . '</th>';
-                                            }
+                                            }*/
                                             ?>
-                                            <th class="col-md-1"><?= lang('net_unit_price'); ?></th>
-                                            <th class="col-md-1"><?= lang('quantity'); ?></th>
+                                            
                                             <?php
                                             //if ($Settings->product_discount && $allow_discount) {
                                                // echo '<th class="col-md-1">' . lang('discount') . '</th>';
@@ -285,16 +295,15 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                                              //   echo '<th class="col-md-1">' . lang('product_tax') . '</th>';
                                            // }
                                             ?>
-                                            <th><?= lang('subtotal'); ?> (<span
-                                                    class="currency"><?= $default_currency->code ?></span>)
-                                            </th>
-                                            <th class="col-md-1">Bonus</th>
-                                            <th class="col-md-1">Dis 1</th>
-                                            <th class="col-md-1">After Dis 1</th>
-                                            <th class="col-md-1">Dis 2</th>
-                                            <th class="col-md-1">Total b. Vat</th>
-                                            <th class="col-md-1">Vat</th>
-                                            <th class="col-md-1">Net</th>
+                                            <th class="col-md-1">qty</th>
+                                            <th class="col-md-1">bonus</th>
+                                            <th class="col-md-1">dis 1</th>
+                                            <th class="col-md-1">dis 2</th>
+                                            <th class="col-md-1">Vat 15%</th>
+                                            <th class="col-md-1">Total Purchases</th>
+                                            <th class="col-md-1">Total Sales</th>
+                                            <th class="col-md-1">Net Sales</th>
+                                            <th class="col-md-1">Unit Sale</th>
                                             <th style="width: 30px !important; text-align: center;"><i
                                                     class="fa fa-trash-o"
                                                     style="opacity:0.5; filter:alpha(opacity=50);"></i></th>
