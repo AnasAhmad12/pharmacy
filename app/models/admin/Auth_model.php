@@ -783,7 +783,7 @@ class Auth_model extends CI_Model
         $this->trigger_events('extra_where');
         $this->load->helper('email');
         $this->identity_column = valid_email($identity) ? 'email' : 'username';
-        $query                 = $this->db->select($this->identity_column . ', username, email, id, password, active, last_login, last_ip_address, avatar, gender, group_id, warehouse_id, biller_id, company_id, view_right, edit_right, allow_discount, show_cost, show_price')
+        $query                 = $this->db->select($this->identity_column . ', username, email, id, password, active, last_login, last_ip_address, avatar, gender, group_id, warehouse_id, biller_id, company_id, view_right, edit_right, allow_discount, show_cost, show_price,allow_discount_value')
             ->where($this->identity_column, $this->db->escape_str($identity))
             ->limit(1)
             ->get($this->tables['users']);
@@ -800,7 +800,7 @@ class Auth_model extends CI_Model
 
         if ($query->num_rows() === 1) {
             $user = $query->row();
-
+             $allow_discount_value      = $user->allow_discount_value;
             $password = $this->hash_password_db($user->id, $password);
 
             if ($password === true) {
@@ -811,7 +811,7 @@ class Auth_model extends CI_Model
                 }
 
                 $this->set_session($user);
-
+                $this->session->set_userdata('allow_discount_value', $allow_discount_value);
                 $this->update_last_login($user->id);
                 $this->update_last_login_ip($user->id);
                 $ldata = ['user_id' => $user->id, 'ip_address' => $this->input->ip_address(), 'login' => $identity, 'time' => date('Y-m-d H:i:s')];

@@ -345,6 +345,9 @@
                                                 <?php
                                             } ?>
                                         </td>
+                                      
+                                        
+
                                         <td class="text-right" style="padding: 5px 10px;font-weight:bold;">
                                             <span id="tds">0.00</span>
                                         </td>
@@ -1158,9 +1161,14 @@
                 <h4 class="modal-title" id="dsModalLabel"><?=lang('edit_order_discount');?></h4>
             </div>
             <div class="modal-body">
+
+                 <input type="hidden" id="allow_discount_value" value="<?php echo $this->session->userdata('allow_discount_value') ?>">
+                  <center><h3> Max Discount Allowed <?php echo $this->session->userdata('allow_discount_value') ?>%</h3>
+                   <div id="notAllowError"></div>
+                 </center>
                 <div class="form-group">
                     <?=lang('order_discount', 'order_discount_input');?>
-                    <?php echo form_input('order_discount_input', '', 'class="form-control kb-pad" id="order_discount_input"'); ?>
+                    <?php echo form_input('order_discount_input', '', 'class="form-control kb-pad" onkeyup="allowDiscountValue()" id="order_discount_input"'); ?>
                 </div>
 
             </div>
@@ -2794,6 +2802,25 @@ function add_transfer_item(item) {
     wh_loadItems();
     return true;
 }
+
+
+function allowDiscountValue(){
+    $("#notAllowError").html("");
+    var  discount           = $('#order_discount_input').val();
+    discount     = discount.replace(/\%/g,'')
+    discount     = Number(discount)
+    var  allowDiscount     = $('#allow_discount_value').val(); 
+
+    if(discount <= allowDiscount){
+       console.log("allow");
+    }else{
+       
+        document.getElementById("order_discount_input").value="";
+        $("#notAllowError").html('<h4 style="color:red;">Not Allowed Maximum Discount!</h4>')
+    }
+    // allow_discount_value
+}
+
 </script>
 <script type="text/javascript" charset="UTF-8"><?=$s2_file_date?></script>
 <div id="ajaxCall"><i class="fa fa-spinner fa-pulse"></i></div>

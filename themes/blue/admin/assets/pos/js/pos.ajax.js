@@ -1333,6 +1333,8 @@ function loadItems() {
                     total: formatDecimal((parseFloat(item_price) + parseFloat(pr_tax_val)) * parseFloat(item_qty)),
                 };
             }
+
+            
             // new changes
 
             tr_html =
