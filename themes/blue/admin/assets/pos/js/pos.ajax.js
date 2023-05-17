@@ -1235,6 +1235,7 @@ function loadItems() {
                 item_option = item.row.option,
                 item_code = item.row.code,
                 item_serial = item.row.serial,
+                item_expiry = item.row.expiry,
                 item_name = item.row.name.replace(/"/g, '&#034;').replace(/'/g, '&#039;');
             var product_unit = item.row.unit,
                 base_quantity = item.row.base_quantity;
@@ -1327,6 +1328,7 @@ function loadItems() {
                     code: item_code,
                     name: item_name,
                     qty: item_qty,
+                    item_expiry: item_expiry,
                     price: formatDecimal(parseFloat(item_price) + parseFloat(pr_tax_val)),
                     total: formatDecimal((parseFloat(item_price) + parseFloat(pr_tax_val)) * parseFloat(item_qty)),
                 };
@@ -1434,12 +1436,20 @@ function loadItems() {
                 '"><input name="product_base_quantity[]" type="hidden" class="rbase_quantity" value="' +
                 base_quantity +
                 '"><span>AS: '+item_aqty+'</span></td>';
+
+                tr_html +=
+                '<td class="text-right"><span class="text-right item_expiry" id="item_expiry' +
+                row_no +
+                '">' +item_expiry+'</span></td>';
+
             tr_html +=
                 '<td class="text-right"><span class="text-right ssubtotal" id="subtotal_' +
                 row_no +
                 '">' +
                 formatMoney((parseFloat(item_price) + parseFloat(pr_tax_val)) * parseFloat(item_qty)) +
                 '</span></td>';
+
+
             tr_html +=
                 '<td class="text-center"><i class="fa fa-times tip pointer posdel" id="' +
                 row_no +
