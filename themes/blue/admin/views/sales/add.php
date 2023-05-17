@@ -1,8 +1,8 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <style>
 table#slTable td input.form-control {
-    font-size: 14px !important;
-    padding: 5px 0px !important;
+    font-size: 10px !important;
+    padding: 5px 2px !important;
 }
 
 .table td {
@@ -400,7 +400,7 @@ table#slTable td input.form-control {
                             <div class="control-group table-group">
                                 <label class="table-label"><?= lang('order_items'); ?> *</label>
 
-                                <div class="controls table-controls" style="font-size: 12px !important;">
+                                <div class="controls table-controls">
                                     <table id="slTable" class="table items table-striped table-bordered table-condensed table-hover sortable_table">
                                         <thead>
                                         <tr>
