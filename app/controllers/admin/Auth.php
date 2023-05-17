@@ -149,6 +149,8 @@ class Auth extends MY_Controller
                 'view_right'     => $this->input->post('view_right'),
                 'edit_right'     => $this->input->post('edit_right'),
                 'allow_discount' => $this->input->post('allow_discount'),
+                'allow_discount_value' => $this->input->post('allow_discount_value'),
+                
             ];
             $active = $this->input->post('status');
         }
@@ -432,6 +434,7 @@ class Auth extends MY_Controller
         }
 
         if ($this->form_validation->run() == true) {
+            
             $remember = (bool)$this->input->post('remember');
 
             if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember)) {
@@ -457,6 +460,7 @@ class Auth extends MY_Controller
                 admin_redirect('login');
             }
         } else {
+            
             $this->data['error']   = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
             $this->data['message'] = $this->session->flashdata('message');
             if ($this->Settings->captcha) {

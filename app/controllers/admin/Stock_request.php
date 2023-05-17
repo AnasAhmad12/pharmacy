@@ -458,7 +458,7 @@ class stock_request extends MY_Controller
 
             $bc   = [['link' => base_url(), 'page' => lang('home')], ['link' => admin_url('transfers'), 'page' => lang('transfers')], ['link' => '#', 'page' => lang('add_transfer')]];
             $meta = ['page_title' => lang('transfer_quantity'), 'bc' => $bc];
-            //$this->page_construct('transfers/add', $meta, $this->data);
+            $this->page_construct('transfers/add', $meta, $this->data);
         }
     } 
     
