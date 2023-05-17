@@ -1241,6 +1241,9 @@ function nsCustomer() {
 function loadItems() {
     if (localStorage.getItem('slitems')) {
         total = 0;
+        grand_total_vat = 0;
+        grand_total_purchases = 0;
+        grand_total_sales = 0;
         count = 1;
         an = 1;
         product_tax = 0;
@@ -1265,6 +1268,8 @@ function loadItems() {
                 item_type = item.row.type,
                 combo_items = item.combo_items,
                 item_price = item.row.price,
+                item_cost  = item.row.cost,
+                item_sale_price = item.row.base_unit_price,
                 item_qty = item.row.qty,
                 item_aqty = item.row.quantity,
                 item_tax_method = item.row.tax_method,
@@ -1388,8 +1393,13 @@ function loadItems() {
                net_price_b = vat_15_b;*/
 
 
-               main_net = net_price_a;// + net_price_b;
-
+               var total_purchases = (parseFloat(item_cost)) * parseFloat(item_qty);
+               var total_sales = (parseFloat(item_sale_price)) * parseFloat(item_qty + item_bonus);
+               total_after_dis1 = total_sales * parseFloat((item_dis1 / 100));
+               total_after_dis2 = (total_sales - total_after_dis1) * parseFloat((item_dis2 / 100));
+               //main_net = net_price_a;// + net_price_b;
+               main_net = total_sales - (total_after_dis1 + total_after_dis2);
+               var new_unit_cost = parseFloat(main_net) / parseFloat(item_qty + item_bonus);
 
 
 
@@ -1425,7 +1435,7 @@ function loadItems() {
                 item_id +
                 '" title="Edit" style="cursor:pointer;"></i></td>';
 
-                tr_html +=
+                /*tr_html +=
                     '<td><input class="form-control date rexpiry" name="expiry[]" type="text" value="' +
                     item_expiry +
                     '" data-id="' +
@@ -1441,7 +1451,7 @@ function loadItems() {
                     item_batchno +
                     '" id="batchno_' +
                     row_no +
-                    '"></td>';
+                    '"></td>';*/
 
 
                     // tr_html +=
@@ -1451,19 +1461,11 @@ function loadItems() {
                     // row_no +
                     // '"></td>';
 
-
-                    
-
-              if (site.settings.product_serial == 1) {
-                tr_html +=
-                    '<td class="text-right"><input class="form-control input-sm rserial" name="serial[]" type="text" id="serial_' +
-                    row_no +
-                    '" value="' +
-                    item_serial +
-                    '"></td>';
-            }
-
-
+            tr_html += '<td><span class="text-right scost" id="ssale_' +
+                row_no +
+                '">' +
+                formatMoney(item_sale_price) +
+                '</span></td>';
 
             tr_html +=
                 '<td class="text-right"><input class="form-control input-sm text-right rprice" name="net_price[]" type="hidden" id="price_' +
@@ -1477,9 +1479,44 @@ function loadItems() {
                 '"><span class="text-right sprice" id="sprice_' +
                 row_no +
                 '">' +
-                formatMoney(item_price) +
+                formatMoney(item_cost) +
                 '</span></td>';
+                    
 
+            /*if (site.settings.product_serial == 1) {
+                tr_html +=
+                    '<td class="text-right"><input class="form-control input-sm rserial" name="serial[]" type="text" id="serial_' +
+                    row_no +
+                    '" value="' +
+                    item_serial +
+                    '"></td>';
+            }*/
+            
+
+            /*tr_html +=
+                    '<td><input class="form-control rbatchno" name="batchno[]" type="text" value="' +
+                    item_batchno +
+                    '" id="batchno_' +
+                    row_no +
+                    '"></td>';*/
+
+            tr_html +=
+                    '<td><input class="form-control rbatchno" name="batchno[]" type="text" value="' +
+                    item_batchno +
+                    '" id="batchno_' +
+                    row_no +
+                    '"></td>';
+
+            tr_html +=
+                    '<td><input class="form-control date rexpiry" name="expiry[]" type="text" value="' +
+                    item_expiry +
+                    '" data-id="' +
+                    row_no +
+                    '" data-item="' +
+                    item_id +
+                    '" id="expiry_' +
+                    row_no +
+                    '"></td>';
 
             tr_html +=
                 '<td><input class="form-control text-center rquantity" tabindex="' +
@@ -1523,12 +1560,12 @@ function loadItems() {
                     formatMoney(pr_tax_val * item_qty) +
                     '</span></td>';
             }formatMoney((parseFloat(item_price) + parseFloat(pr_tax_val)) * parseFloat(item_qty))*/
-            tr_html +=
+            /*tr_html +=
                 '<td class="text-right"><span class="text-right ssubtotal" id="subtotal_' +
                 row_no +
                 '">' +
                 formatMoney((parseFloat(item_price)) * parseFloat(item_qty)) +
-                '</span></td>';
+                '</span></td>';*/
             tr_html +=
                 '<td><input class="form-control text-center rbonus" name="bonus[]" type="text" tabindex="' +
                 (site.settings.set_focus == 1 ? an : an + 1) +
@@ -1540,7 +1577,8 @@ function loadItems() {
                 row_no +
                 '" value="'+ item_bonus
                 +'"onClick="this.select();"></td>';    
-            tr_html +=
+
+            /*tr_html +=
                 '<td><input class="form-control text-center rdis1" name="dis1[]" type="text" tabindex="' +
                 (site.settings.set_focus == 1 ? an : an + 1) +
                 '" data-id="' +
@@ -1567,7 +1605,30 @@ function loadItems() {
             tr_html +=
                 '<td class="text-right"><span class="text-right rtotalbvat" id="totalbvat_' +
                 row_no +
-                '">'+formatMoney(total_after_dis2)+'</span></td>';     
+                '">'+formatMoney(total_after_dis2)+'</span></td>';  */  
+                
+            tr_html +=
+                '<td><input class="form-control text-center rdis1" name="dis1[]" type="text" data-id="' +
+                row_no +
+                '" data-item="' +
+                item_id +
+                '" id="dis1_' +
+                row_no +
+                '" value="'+item_dis1+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
+                formatMoney(total_after_dis1)
+                '</span></td>';
+
+            tr_html +=
+                '<td><input class="form-control text-center rdis2" name="dis2[]" type="text" data-id="' +
+                row_no +
+                '" data-item="' +
+                item_id +
+                '" id="dis2_' +
+                row_no +
+                '" value="'+item_dis2+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
+                formatMoney(total_after_dis2)
+                '</span></td>';
+
             tr_html +=
                 '<td class="text-right"><input class="form-control input-sm text-right rproduct_tax" name="product_tax[]" type="hidden" id="product_tax_' +
                     row_no +
@@ -1575,13 +1636,46 @@ function loadItems() {
                     pr_tax.id +
                     '"><span class="text-right rvat15" id="vat15_' +
                 row_no +
-                '">'+formatMoney(vat_15_a)+'</span></td>';     
+                '">'+formatMoney(vat_15_a)+'</span></td>';
+
+            /*tr_html +=
+                '<td class="text-right"><input class="form-control input-sm text-right rproduct_tax" name="product_tax[]" type="hidden" id="product_tax_' +
+                    row_no +
+                    '" value="' +
+                    pr_tax.id +
+                    '"><span class="text-right rvat15" id="vat15_' +
+                row_no +
+                '">'+formatMoney(vat_15_a)+'</span></td>';    */ 
+            /*tr_html +=
+                '<td class="text-right"><span class="text-right rnet" id="net_' +
+                row_no +
+                '">'+formatMoney(main_net)+'</span></td>';   */     
+                
+            tr_html +=
+                '<td class="text-right"><span class="text-right ssubtotal" id="subtotal_' +
+                row_no +
+                '">' +
+                formatMoney(total_purchases) +
+                '</span></td>';
+
+            tr_html +=
+                '<td class="text-right"><span class="text-right ssubtotal" id="total_sale_' +
+                row_no +
+                '">' +
+                formatMoney(total_sales) +
+                '</span></td>';
+
             tr_html +=
                 '<td class="text-right"><span class="text-right rnet" id="net_' +
                 row_no +
-                '">'+formatMoney(main_net)+'</span></td>';        
-                
+                '">'+formatMoney(main_net)+'</span></td>';
 
+            tr_html +=
+                '<td class="text-right"><span class="text-right ssubtotal" id="tes2_' +
+                row_no +
+                '">' +
+                formatMoney(new_unit_cost) +
+                '</span></td>'; 
 
             tr_html +=
                 '<td class="text-center"><i class="fa fa-times tip pointer sldel" id="' +
@@ -1590,6 +1684,9 @@ function loadItems() {
             newTr.html(tr_html);
             newTr.prependTo('#slTable');
             total += formatDecimal(main_net, 4);
+            grand_total_vat += formatDecimal(vat_15_a, 4);
+            grand_total_purchases += formatDecimal(total_purchases, 4);
+            grand_total_sales += formatDecimal(total_sales, 4);
             //formatDecimal((parseFloat(item_price) + parseFloat(pr_tax_val)) * parseFloat(item_qty), 4);
             count += parseFloat(item_qty);
             an++;
@@ -1629,7 +1726,7 @@ function loadItems() {
             }
         });
 
-        var col = 2;
+        var col = 8;
         if (site.settings.product_serial == 1) {
             col++;
         }
@@ -1637,18 +1734,17 @@ function loadItems() {
             '<tr id="tfoot" class="tfoot active"><th colspan="' +
             col +
             '">Total</th><th class="text-center">' +
-            formatQty(parseFloat(count) - 1) +
+            formatMoney(grand_total_vat) +
             '</th>';
-        if ((site.settings.product_discount == 1 && allow_discount == 1) || product_discount) {
-            tfoot += '<th class="text-right">' + formatMoney(product_discount) + '</th>';
-        }
-        if (site.settings.tax1 == 1) {
-            tfoot += '<th class="text-right">' + formatMoney(product_tax) + '</th>';
-        }
+        
+        tfoot += '<th class="text-right">' + formatMoney(grand_total_purchases) + '</th>';
+        
+        tfoot += '<th class="text-right">' + formatMoney(grand_total_sales) + '</th>';
+
         tfoot +=
             '<th class="text-right">' +
             formatMoney(total) +
-            '</th><th class="text-center"><i class="fa fa-trash-o" style="opacity:0.5; filter:alpha(opacity=50);"></i></th></tr>';
+            '</th></tr>';
         $('#slTable tfoot').html(tfoot);
 
         // Order level discount calculations
