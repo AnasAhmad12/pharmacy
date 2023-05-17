@@ -1536,7 +1536,7 @@ class Sales extends MY_Controller
     {
         $inv = $this->sales_model->getSaleByID($sid);
           
-        //  if($inv->sale_invoice == 0){
+         if($inv->sale_invoice == 0){
              
           if ($this->sales_model->saleToInvoice($sid)) {
             
@@ -1559,75 +1559,75 @@ class Sales extends MY_Controller
             $add  = $this->db->insert('sma_accounts_entries', $entry);
             $insert_id = $this->db->insert_id();
 
-            $entryitemdata = array();
+             $entryitemdata = array();
 
-            foreach ($inv_items as $item) 
-            {
-                $proid = $item->product_id;
-                $product  = $this->site->getProductByID($proid);
-                //products
-                $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'D',
-                            'ledger_id' => $product->purchase_account,
-                            'amount' => $item->main_net,
-                            'narration' => 'purchase account'
-                        )
-                    );
-
-                    $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'C',
-                            'ledger_id' => $product->sale_account,
-                            'amount' => $item->main_net,
-                            'narration' => 'sale account'
-                        )
-                    );
-
-                    $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'C',
-                            'ledger_id' => $product->inventory_account,
-                            'amount' => $item->main_net,
-                            'narration' => 'inventory account'
-                        )
-                    );
-
-            }
-
-         
-            // //vat on sale
-            $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'C',
-                            'ledger_id' => $this->vat_on_sale,
-                            'amount' => $inv->order_tax,
-                            'narration' => 'vat on sale'
-                        )
-                    );
-
-
-            // //customer
-              $entryitemdata[] = array(
-                        'Entryitem' => array(
-                            'entry_id' => $insert_id,
-                            'dc' => 'D',
-                            'ledger_id' => $customer->ledger_account,
-                            'amount' => $inv->grand_total,
-                            'narration' => 'customer'
-                          )
-                    );
-
-
+             foreach ($inv_items as $item) 
+             {
+                 $proid = $item->product_id;
+                 $product  = $this->site->getProductByID($proid);
+                 //products
+                 $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'D',
+                             'ledger_id' => $product->purchase_account,
+                             'amount' => $item->main_net,
+                             'narration' => 'purchase account'
+                         )
+                     );
+ 
+                     $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'C',
+                             'ledger_id' => $product->sale_account,
+                             'amount' => $item->main_net,
+                             'narration' => 'sale account'
+                         )
+                     );
+ 
+                     $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'C',
+                             'ledger_id' => $product->inventory_account,
+                             'amount' => $item->main_net,
+                             'narration' => 'inventory account'
+                         )
+                     );
+ 
+             }
+ 
+          
+             // //vat on sale
+             $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'C',
+                             'ledger_id' => $this->vat_on_sale,
+                             'amount' => $inv->order_tax,
+                             'narration' => 'vat on sale'
+                         )
+                     );
+ 
+ 
+             // //customer
+               $entryitemdata[] = array(
+                         'Entryitem' => array(
+                             'entry_id' => $insert_id,
+                             'dc' => 'D',
+                             'ledger_id' => $customer->ledger_account,
+                             'amount' => $inv->grand_total,
+                             'narration' => 'customer'
+                           )
+                     );
 
 
-            // //   /*Accounts Entry Items*/
+                     
+            //   /*Accounts Entry Items*/
             foreach ($entryitemdata as $row => $itemdata)
             {
+                
                   $this->db->insert('sma_accounts_entryitems', $itemdata['Entryitem']);
             }
 
@@ -1637,11 +1637,11 @@ class Sales extends MY_Controller
        
 
         }
-        //  }else{
+         }else{
 
-        //     $this->session->set_flashdata('error', lang('Sale Already Converted to invoice!'));
-        //     admin_redirect($_SERVER['HTTP_REFERER'] ?? 'sales');
-        // }
+            $this->session->set_flashdata('error', lang('Sale Already Converted to invoice!'));
+            admin_redirect($_SERVER['HTTP_REFERER'] ?? 'sales');
+        }
     }
 
 
@@ -2632,22 +2632,22 @@ class Sales extends MY_Controller
             $r = 0;
             foreach ($rows as $row) {
                 $c = uniqid(mt_rand(), true);
-                unset($row->cost, $row->details, $row->product_details, $row->image, $row->barcode_symbology, $row->cf1, $row->cf2, $row->cf3, $row->cf5, $row->cf6, $row->supplier1price, $row->supplier2price, $row->cfsupplier3price, $row->supplier4price, $row->supplier5price, $row->supplier1, $row->supplier2, $row->supplier3, $row->supplier4, $row->supplier5, $row->supplier1_part_no, $row->supplier2_part_no, $row->supplier3_part_no, $row->supplier4_part_no, $row->supplier5_part_no);
+                unset($row->details, $row->product_details, $row->image, $row->barcode_symbology, $row->cf1, $row->cf2, $row->cf3, $row->cf5, $row->cf6, $row->supplier1price, $row->supplier2price, $row->cfsupplier3price, $row->supplier4price, $row->supplier5price, $row->supplier1, $row->supplier2, $row->supplier3, $row->supplier4, $row->supplier5, $row->supplier1_part_no, $row->supplier2_part_no, $row->supplier3_part_no, $row->supplier4_part_no, $row->supplier5_part_no);
                 $option               = false;
                 $row->quantity        = 0;
                 $row->item_tax_method = $row->tax_method;
                 $row->qty             = 1;
                 $row->discount        = '0';
                 $row->serial          = '';
-               
+                // $row->expiry          = '';
                 $row->batch_no        = '';
                 $row->lot_no          = '';
-                $options              = $this->sales_model->getProductOptions($row->id, $warehouse_id);
 
                 $query = $this->db->query("SELECT expiry FROM  sma_purchase_items where product_id =$row->id;");
                 $row1 = $query->row();
                 $row->expiry          = $row1->expiry;
 
+                $options              = $this->sales_model->getProductOptions($row->id, $warehouse_id);
                 if ($options) {
                     $opt = $option_id && $r == 0 ? $this->sales_model->getProductOptionByID($option_id) : $options[0];
                     if (!$option_id || $r > 0) {
@@ -2666,7 +2666,6 @@ class Sales extends MY_Controller
                         $row->quantity += $pi->quantity_balance;
                     }
                 }
-
                 if ($options) {
                     $option_quantity = 0;
                     foreach ($options as $option) {
@@ -2681,8 +2680,6 @@ class Sales extends MY_Controller
                         }
                     }
                 }
-
-
                 if ($this->sma->isPromo($row)) {
                     $row->price = $row->promo_price;
                 } elseif ($customer->price_group_id) {
