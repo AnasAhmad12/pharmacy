@@ -977,11 +977,22 @@ function loadItems() {
                 item_id +
                 '" title="Edit" style="cursor:pointer;"></i></td>';
             
-            tr_html += '<td><span class="text-right scost" id="ssale_' +
-                row_no +
-                '">' +
+            //    tr_html += '<td><span class="text-right scost" id="ssale_' +
+            //     row_no +
+            //     '">' +
+            //     formatMoney(item_sale_price) +
+            //     '</span></td>';
+
+                tr_html +=
+                '<td><input class="form-control scost" name="ssale[]" type="text" value="' +
                 formatMoney(item_sale_price) +
-                '</span></td>';
+                '" data-id="' +
+                row_no +
+                '" data-item="' +
+                item_id +
+                '" id="ssale_' +
+                row_no +
+                '"></td>';
 
 
             tr_html +=
@@ -991,13 +1002,15 @@ function loadItems() {
                 item_cost +
                 '"><input class="rucost" name="unit_cost[]" type="hidden" value="' +
                 unit_cost +
-                '"><input class="realucost" name="real_unit_cost[]" type="hidden" value="' +
+                '"><input class="form-control realucost" name="real_unit_cost[]" type="text" value="' +
                 item.row.real_unit_cost +
-                '"><span class="text-right scost" id="scost_' +
+                '"></td>';
+
+{/* <span class="text-right scost" id="scost_' +
                 row_no +
                 '">' +
                 formatMoney(item_cost) +
-                '</span></td>';
+                '</span> */}
 
             tr_html +=
                 '<td><input class="form-control rbatchno" name="batchno[]" type="text" value="' +
