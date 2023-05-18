@@ -2643,10 +2643,6 @@ class Sales extends MY_Controller
                 $row->batch_no        = '';
                 $row->lot_no          = '';
 
-                $query = $this->db->query("SELECT expiry FROM  sma_purchase_items where product_id =$row->id;");
-                $row1 = $query->row();
-                $row->expiry          = $row1->expiry;
-
                 $options              = $this->sales_model->getProductOptions($row->id, $warehouse_id);
                 if ($options) {
                     $opt = $option_id && $r == 0 ? $this->sales_model->getProductOptionByID($option_id) : $options[0];
@@ -2660,12 +2656,18 @@ class Sales extends MY_Controller
                 }
                 $row->option = $option_id;
                 $pis         = $this->site->getPurchasedItems($row->id, $warehouse_id, $row->option);
+
+                
                 if ($pis) {
+                    $row->expiry = "";
                     $row->quantity = 0;
                     foreach ($pis as $pi) {
                         $row->quantity += $pi->quantity_balance;
+                        $row->expiry    = $pi->expiry;
                     }
                 }
+
+
                 if ($options) {
                     $option_quantity = 0;
                     foreach ($options as $option) {
@@ -2680,6 +2682,8 @@ class Sales extends MY_Controller
                         }
                     }
                 }
+
+
                 if ($this->sma->isPromo($row)) {
                     $row->price = $row->promo_price;
                 } elseif ($customer->price_group_id) {
