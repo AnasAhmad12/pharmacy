@@ -289,6 +289,7 @@
                                             ?>
                                             <th class="col-md-1"><?= lang('net_unit_cost'); ?></th>
                                             <th class="col-md-1"><?= lang('quantity'); ?></th>
+                                            <th class="col-md-1"><?= lang('Actual Quantity'); ?></th>
                                             <?php
                                             if ($Settings->tax1) {
                                                 echo '<th class="col-md-1">' . $this->lang->line('product_tax') . '</th>';

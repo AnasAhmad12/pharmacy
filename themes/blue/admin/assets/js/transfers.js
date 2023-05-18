@@ -492,6 +492,8 @@ function loadItems() {
                 '">' +
                 formatMoney(item_cost) +
                 '</span></td>';
+
+                
             tr_html +=
                 '<td><input name="quantity_balance[]" type="hidden" class="rbqty" value="' +
                 formatDecimal(item_bqty, 4) +
@@ -512,6 +514,11 @@ function loadItems() {
                 '"><input name="product_base_quantity[]" type="hidden" class="rbase_quantity" value="' +
                 base_quantity +
                 '"></td>';
+
+                tr_html +=
+                '<td><span>' +
+                formatDecimal(item_aqty, 4)+'</span></td>';
+
             if (site.settings.tax1 == 1) {
                 tr_html +=
                     '<td class="text-right"><input class="form-control input-sm text-right rproduct_tax" name="product_tax[]" type="hidden" id="product_tax_' +
