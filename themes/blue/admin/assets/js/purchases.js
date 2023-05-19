@@ -295,8 +295,19 @@ $(document).ready(function () {
      * Edit Row Modal Hanlder
      ----------------------- */
     $(document).on('click', '.edit', function () {
+
+        var trRowId = localStorage.getItem('trRowId');
+
+        if(trRowId != undefined && trRowId !=""){
+            document.getElementById(trRowId).style.color="black";
+        }
+
         var row = $(this).closest('tr');
         var row_id = row.attr('id');
+        localStorage.setItem('trRowId', row_id);
+        var path= document.getElementById(row_id);
+        path.style.color= "green";
+      
         item_id = row.attr('data-item-id');
         item = poitems[item_id];
         var qty = row.children().children('.rquantity').val(),
@@ -944,6 +955,8 @@ function loadItems() {
                var new_unit_cost = parseFloat(main_net) / parseFloat(item_qty + item_bonus);
 
             var row_no = item.id;
+
+            
             var newTr = $('<tr id="row_' + row_no + '" class="row_' + item_id + '" data-item-id="' + item_id + '"></tr>');
             tr_html =
                 '<td><input name="product_id[]" type="hidden" class="rid" value="' +
@@ -977,6 +990,7 @@ function loadItems() {
                 item_id +
                 '" title="Edit" style="cursor:pointer;"></i></td>';
             
+                
             //    tr_html += '<td><span class="text-right scost" id="ssale_' +
             //     row_no +
             //     '">' +
