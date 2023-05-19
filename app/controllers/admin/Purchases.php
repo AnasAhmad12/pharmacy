@@ -2095,7 +2095,13 @@ class Purchases extends MY_Controller
             // krsort($inv_items);
             $c = rand(100000, 9999999);
             foreach ($inv_items as $item) {
-                $row                   = $this->site->getProductByID($item->product_id);
+                $row                     = $this->site->getProductByID($item->product_id);
+                $row->batchno            = $item->batchno;
+                $row->bonus              = $item->bonus;
+                $row->discount1          = $item->discount1;
+                $row->discount2          = $item->discount2;
+                // $row->discount2          = $item->discount2;
+
                 $row->expiry           = (($item->expiry && $item->expiry != '0000-00-00') ? $this->sma->hrsd($item->expiry) : '');
                 $row->base_quantity    = $item->quantity;
                 $row->base_unit        = $row->unit ? $row->unit : $item->product_unit_id;
@@ -2113,6 +2119,7 @@ class Purchases extends MY_Controller
                 $row->real_unit_cost   = $item->real_unit_cost;
                 $row->cost             = $this->sma->formatDecimal($item->net_unit_cost + ($item->item_discount / $item->quantity));
                 $row->tax_rate         = $item->tax_rate_id;
+                $row->main_net         = $item->main_net;
                 unset($row->details, $row->product_details, $row->price, $row->file, $row->product_group_id);
                 $units    = $this->site->getUnitsByBUID($row->base_unit);
                 $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
