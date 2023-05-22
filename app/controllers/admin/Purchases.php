@@ -362,6 +362,68 @@ class Purchases extends MY_Controller
         }
     }
 
+    public function convert_supplier_payment_invoice($pid, $amount){
+        $inv = $this->purchases_model->getPurchaseByID($pid);
+        $this->load->admin_model('companies_model');
+        $supplier = $this->companies_model->getCompanyByID($inv->supplier_id);
+
+        /*Accounts Entries*/
+        $entry = array(
+            'entrytype_id' => 4,
+            'number'       => 'PO-'.$inv->reference_no,
+            'date'         => date('Y-m-d'),
+            'dr_total'     => $this->sma->formatDecimal($amount + $this->Settings->bank_fees, 4),
+            'cr_total'     => $this->sma->formatDecimal($amount + $this->Settings->bank_fees, 4),
+            'notes'        => 'Return Reference: '.$inv->reference_no.' Date: '.date('Y-m-d H:i:s'),
+            'pid'          =>  $inv->id
+            );
+        $add  = $this->db->insert('sma_accounts_entries', $entry);
+        $insert_id = $this->db->insert_id();
+
+        $entryitemdata = array();
+
+        //supplier
+        $entryitemdata[] = array(
+            'Entryitem' => array(
+                'entry_id' => $insert_id,
+                'dc' => 'D',
+                'ledger_id' => $supplier->ledger_account,
+                'amount' => $amount,
+                'narration' => ''
+            )
+        );
+
+        //bank charges
+        $entryitemdata[] = array(
+            'Entryitem' => array(
+                'entry_id' => $insert_id,
+                'dc' => 'D',
+                'ledger_id' => $this->bank_fees,
+                //'amount' => $inv->order_tax,
+                'amount' => $this->Settings->bank_fees,
+                'narration' => ''
+            )
+        );
+
+        //bank fund cash
+        $entryitemdata[] = array(
+            'Entryitem' => array(
+                'entry_id' => $insert_id,
+                'dc' => 'C',
+                'ledger_id' => $this->bank_fund_cash,
+                //'amount' => $inv->order_tax,
+                'amount' => $this->sma->formatDecimal($amount + $this->Settings->bank_fees, 4),
+                'narration' => ''
+            )
+        );
+
+        foreach ($entryitemdata as $row => $itemdata)
+        {
+                $this->db->insert('sma_accounts_entryitems' ,$itemdata['Entryitem']);
+        }
+
+    }
+
     public function add_payment($id = null)
     {
         $this->sma->checkPermissions('payments', true);
@@ -426,6 +488,9 @@ class Purchases extends MY_Controller
         }
 
         if ($this->form_validation->run() == true && $this->purchases_model->addPayment($payment)) {
+
+            $this->convert_supplier_payment_invoice($this->input->post('purchase_id'), $this->input->post('amount-paid'));
+
             $this->session->set_flashdata('message', lang('payment_added'));
             redirect($_SERVER['HTTP_REFERER']);
         } else {
@@ -1254,7 +1319,8 @@ class Purchases extends MY_Controller
                             'entry_id' => $insert_id,
                             'dc' => 'D',
                             'ledger_id' => $this->vat_on_purchase,
-                            'amount' => $inv->order_tax,
+                            //'amount' => $inv->order_tax,
+                            'amount' => $inv->product_tax,
                             'narration' => ''
                         )
                     );
@@ -1264,7 +1330,7 @@ class Purchases extends MY_Controller
                             'entry_id' => $insert_id,
                             'dc' => 'C',
                             'ledger_id' => $supplier->ledger_account,
-                            'amount' => $inv->grand_total,
+                            'amount' => $inv->grand_total + $inv->product_tax,
                             'narration' => ''
                         )
                     );
@@ -1921,6 +1987,74 @@ class Purchases extends MY_Controller
         }
     }
 
+    public function convert_return_invoice($pid, $oid){
+        $inv = $this->purchases_model->getPurchaseByID($pid);
+        $this->load->admin_model('companies_model');
+        $supplier = $this->companies_model->getCompanyByID($inv->supplier_id);
+        $inv_items = $this->purchases_model->getAllPurchaseItems($oid);
+        //$inv = $this->purchases_model->getReturnByID($rid);
+
+        /*Accounts Entries*/
+        $entry = array(
+            'entrytype_id' => 4,
+            'number'       => 'PO-'.$inv->reference_no,
+            'date'         => date('Y-m-d'), 
+            'dr_total'     => $inv->grand_total,
+            'cr_total'     => $inv->grand_total,
+            'notes'        => 'Return Reference: '.$inv->reference_no.' Date: '.date('Y-m-d H:i:s'),
+            'pid'          =>  $inv->id
+            );
+        $add  = $this->db->insert('sma_accounts_entries', $entry);
+        $insert_id = $this->db->insert_id();
+
+        $entryitemdata = array();
+
+        //$inv_items = $this->purchases_model->getReturnItems($sid);
+        foreach ($inv_items as $item) {
+            $proid = $item->product_id;
+            $product  = $this->site->getProductByID($proid);
+            //products
+            $entryitemdata[] = array(
+                    'Entryitem' => array(
+                        'entry_id' => $insert_id,
+                        'dc' => 'C',
+                        'ledger_id' => $product->inventory_account,
+                        'amount' => $item->main_net,
+                        'narration' => ''
+                    )
+                );
+        }
+
+        //vat on purchase
+        $entryitemdata[] = array(
+            'Entryitem' => array(
+                'entry_id' => $insert_id,
+                'dc' => 'C',
+                'ledger_id' => $this->vat_on_purchase,
+                //'amount' => $inv->order_tax,
+                'amount' => -1*($inv->product_tax),
+                'narration' => ''
+            )
+        );
+
+        //supplier
+        $entryitemdata[] = array(
+            'Entryitem' => array(
+                'entry_id' => $insert_id,
+                'dc' => 'D',
+                'ledger_id' => $supplier->ledger_account,
+                'amount' => -1*($inv->grand_total),
+                'narration' => ''
+            )
+        );
+
+        foreach ($entryitemdata as $row => $itemdata)
+        {
+                $this->db->insert('sma_accounts_entryitems' ,$itemdata['Entryitem']);
+        }
+
+    }
+
     public function return_purchase($id = null)
     {
         $this->sma->checkPermissions('return_purchases');
@@ -2075,6 +2209,11 @@ class Purchases extends MY_Controller
         }
 
         if ($this->form_validation->run() == true && $this->purchases_model->addPurchase($data, $products, $attachments)) {
+            $purchase_after_return = $this->purchases_model->getPurchaseByID($id);
+            if ($purchase_after_return->return_id) {
+                $this->convert_return_invoice($purchase_after_return->return_id, $id);
+            }
+
             $this->session->set_flashdata('message', lang('return_purchase_added'));
             admin_redirect('purchases');
         } else {
