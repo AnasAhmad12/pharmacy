@@ -459,6 +459,16 @@
                                             name="stock_request_approval" <?php echo $p->stock_request_approval ? 'checked' : ''; ?>>
                                             <label for="edit_price" class="padding05"><?= lang('Approval') ?></label>
                                     </span>
+                                    <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" class="checkbox" id="stock_pharmacist"
+                                            name="stock_pharmacist" <?php echo $p->stock_pharmacist ? 'checked' : ''; ?>>
+                                            <label for="stock_pharmacist" class="padding05"><?= lang('Pharmacist') ?></label>
+                                    </span>
+                                    <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" class="checkbox" id="stock_warehouse_supervisor"
+                                            name="stock_warehouse_supervisor" <?php echo $p->stock_warehouse_supervisor ? 'checked' : ''; ?>>
+                                            <label for="stock_warehouse_supervisor" class="padding05"><?= lang('Warehouse Supervisor') ?></label>
+                                    </span>
                                      </td>
                                 </tr>
                                 <tr>

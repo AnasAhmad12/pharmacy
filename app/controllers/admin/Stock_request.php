@@ -297,7 +297,7 @@ class stock_request extends MY_Controller
     
      public function ajax_add()
     {
-        //$this->sma->checkPermissions();
+        //]$this->sma->checkPermissions();
 
         $this->form_validation->set_message('is_natural_no_zero', lang('no_zero_required'));
         $this->form_validation->set_rules('to_warehouse', lang('warehouse') . ' (' . lang('to') . ')', 'required|is_natural_no_zero');
@@ -458,7 +458,7 @@ class stock_request extends MY_Controller
 
             $bc   = [['link' => base_url(), 'page' => lang('home')], ['link' => admin_url('transfers'), 'page' => lang('transfers')], ['link' => '#', 'page' => lang('add_transfer')]];
             $meta = ['page_title' => lang('transfer_quantity'), 'bc' => $bc];
-            $this->page_construct('transfers/add', $meta, $this->data);
+          //  $this->page_construct('transfers/add', $meta, $this->data);
         }
     } 
     
