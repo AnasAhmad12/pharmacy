@@ -38,17 +38,36 @@
                 </div>
             </div>
 
-            <div class="form-group">
+             <div class="form-group">
                 <?= lang('status', 'status'); ?>
                 <?php
                // $opts = ['completed' => lang('completed'), 'pending' => lang('pending'), 'sent' => lang('sent')];
-                if($inv->status == 'delivered'){
-                    $opts = ['completed' => lang('completed')];
-                }else{
-                     $opts = ['pending' => lang('pending'), 'sent' => lang('sent'),'completed' => lang('completed')];
-                }
               
+                
+                if($Owner || $Admin || $GP['stock_warehouse_supervisor'] && $inv->status == 'pending'){
+                    $opts = ['sent' => lang('sent')];
+                }
+
+                if($Owner || $Admin || $GP['stock_pharmacist'] && $inv->status == 'sent'){
+                    $opts = ['approved' => lang('Approved')];
+                }
+
+                if($Owner || $Admin || $GP['stock_pharmacist'] && $inv->status == 'approved'){
+                    $opts = ['completed' => lang('completed')];
+                }
+
+            if($Owner || $Admin && !$GP['stock_warehouse_supervisor']  && !$GP['stock_pharmacist']){
+            if($inv->status == 'delivered'){
+            $opts = ['completed' => lang('completed')];
+            }else{
+            $opts = ['pending' => lang('pending'), 'sent'  => lang('sent'),'approved' => lang('Approved'),'completed' => lang('completed')];
+            }
+
+            }
+
                 ?>
+
+
                 <?= form_dropdown('status', $opts, $inv->status, 'class="form-control" id="status" required="required" style="width:100%;"'); ?>
             </div>
 

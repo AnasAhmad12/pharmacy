@@ -17,9 +17,11 @@ class system_settings extends MY_Controller
             $this->session->set_flashdata('warning', lang('access_denied'));
             redirect('admin');
         }
+
         $this->lang->admin_load('settings', $this->Settings->user_language);
         $this->load->library('form_validation');
         $this->load->admin_model('settings_model');
+
         $this->upload_path        = 'assets/uploads/';
         $this->thumbs_path        = 'assets/uploads/thumbs/';
         $this->image_types        = 'gif|jpg|jpeg|png|tif|webp';
@@ -41,38 +43,42 @@ class system_settings extends MY_Controller
                 'description' => $this->input->post('description'),
             ];
 
-            if ($_FILES['userfile']['size'] > 0) {
-                $this->load->library('upload');
-                $config['upload_path']   = $this->upload_path;
-                $config['allowed_types'] = $this->image_types;
-                $config['max_size']      = $this->allowed_file_size;
-                $config['max_width']     = $this->Settings->iwidth;
-                $config['max_height']    = $this->Settings->iheight;
-                $config['overwrite']     = false;
-                $config['encrypt_name']  = true;
-                $config['max_filename']  = 25;
-                $this->upload->initialize($config);
-                if (!$this->upload->do_upload()) {
-                    $error = $this->upload->display_errors();
-                    $this->session->set_flashdata('error', $error);
-                    redirect($_SERVER['HTTP_REFERER']);
-                }
-                $photo         = $this->upload->file_name;
-                $data['image'] = $photo;
-                $this->load->library('image_lib');
-                $config['image_library']  = 'gd2';
-                $config['source_image']   = $this->upload_path . $photo;
-                $config['new_image']      = $this->thumbs_path . $photo;
-                $config['maintain_ratio'] = true;
-                $config['width']          = $this->Settings->twidth;
-                $config['height']         = $this->Settings->theight;
-                $this->image_lib->clear();
-                $this->image_lib->initialize($config);
-                if (!$this->image_lib->resize()) {
-                    echo $this->image_lib->display_errors();
-                }
-                $this->image_lib->clear();
-            }
+    if ($_FILES['userfile']['size'] > 0) {
+        $this->load->library('upload');
+        $config['upload_path']   = $this->upload_path;
+        $config['allowed_types'] = $this->image_types;
+        $config['max_size']      = $this->allowed_file_size;
+        $config['max_width']     = $this->Settings->iwidth;
+        $config['max_height']    = $this->Settings->iheight;
+        $config['overwrite']     = false;
+        $config['encrypt_name']  = true;
+        $config['max_filename']  = 25;
+        $this->upload->initialize($config);
+        if (!$this->upload->do_upload()) {
+        $error = $this->upload->display_errors();
+        $this->session->set_flashdata('error', $error);
+        redirect($_SERVER['HTTP_REFERER']);
+        }
+        $photo         = $this->upload->file_name;
+        $data['image'] = $photo;
+        $this->load->library('image_lib');
+        $config['image_library']  = 'gd2';
+        $config['source_image']   = $this->upload_path . $photo;
+        $config['new_image']      = $this->thumbs_path . $photo;
+        $config['maintain_ratio'] = true;
+        $config['width']          = $this->Settings->twidth;
+        $config['height']         = $this->Settings->theight;
+        $this->image_lib->clear();
+        $this->image_lib->initialize($config);
+        if (!$this->image_lib->resize()) {
+        echo $this->image_lib->display_errors();
+        }
+        $this->image_lib->clear();
+
+        }
+
+
+
         } elseif ($this->input->post('add_brand')) {
             $this->session->set_flashdata('error', validation_errors());
             admin_redirect('system_settings/brands');
@@ -86,6 +92,7 @@ class system_settings extends MY_Controller
             $this->data['modal_js'] = $this->site->modal_js();
             $this->load->view($this->theme . 'settings/add_brand', $this->data);
         }
+
     }
 
     public function add_category()
@@ -2472,6 +2479,8 @@ class system_settings extends MY_Controller
                 'purchase_warehouse_supervisor' => $this->input->post('purchase_warehouse_supervisor'),
                 'purchase_supervisor'        => $this->input->post('purchase_supervisor'),
                 'accountant'        => $this->input->post('accountant'),
+                'stock_pharmacist'        => $this->input->post('stock_pharmacist'),
+                'stock_warehouse_supervisor'        => $this->input->post('stock_warehouse_supervisor'),
             ];
 
             if (POS) {

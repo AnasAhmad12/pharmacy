@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     //$('body a, body button').attr('tabindex', -1);
     check_add_item_val();
     if (site.settings.set_focus != 1) {
@@ -295,9 +296,19 @@ $(document).ready(function () {
      * Edit Row Modal Hanlder
      ----------------------- */
     $(document).on('click', '.edit', function () {
+
+        var trRowClas = localStorage.getItem('trRowClas');
+        if(trRowClas != undefined && trRowClas !=""){
+            $(".row_"+trRowClas).css("color", "black");
+        }
         var row = $(this).closest('tr');
         var row_id = row.attr('id');
         item_id = row.attr('data-item-id');
+
+        $(".row_"+item_id).css("color", "green");
+        localStorage.setItem('trRowClas',item_id);
+
+       
         item = poitems[item_id];
         var qty = row.children().children('.rquantity').val(),
             product_option = row.children().children('.roption').val(),
@@ -785,6 +796,8 @@ function nsSupplier() {
 }
 var first_load = 1;
 function loadItems() {
+   
+
     if (localStorage.getItem('poitems')) {
         total = 0;
         grand_total_vat = 0;
@@ -944,6 +957,8 @@ function loadItems() {
                var new_unit_cost = parseFloat(main_net) / parseFloat(item_qty + item_bonus);
 
             var row_no = item.id;
+
+            
             var newTr = $('<tr id="row_' + row_no + '" class="row_' + item_id + '" data-item-id="' + item_id + '"></tr>');
             tr_html =
                 '<td><input name="product_id[]" type="hidden" class="rid" value="' +
@@ -977,6 +992,7 @@ function loadItems() {
                 item_id +
                 '" title="Edit" style="cursor:pointer;"></i></td>';
             
+                
             //    tr_html += '<td><span class="text-right scost" id="ssale_' +
             //     row_no +
             //     '">' +
@@ -1176,6 +1192,14 @@ function loadItems() {
             an++;
             if (!belong) $('#row_' + row_no).addClass('warning');
         });
+
+       
+
+        var trRowClas = localStorage.getItem('trRowClas');
+        if(trRowClas != undefined && trRowClas !=""){
+            $(".row_"+trRowClas).css("color", "green"); 
+        }
+
 
         var col = 8;
         if (site.settings.product_expiry == 1) {
