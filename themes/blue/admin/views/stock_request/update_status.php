@@ -52,7 +52,7 @@
                     $opts = ['approved' => lang('Approved')];
                 }
 
-                if($Owner || $Admin || $GP['stock_warehouse_supervisor'] && $inv->status == 'approved'){
+                if($Owner || $Admin || $GP['stock_pharmacist'] && $inv->status == 'approved'){
                     $opts = ['completed' => lang('completed')];
                 }
 
