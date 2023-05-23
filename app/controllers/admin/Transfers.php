@@ -47,6 +47,7 @@ class Transfers extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
+
             $to_warehouse           = $this->input->post('to_warehouse');
             $from_warehouse         = $this->input->post('from_warehouse');
             $note                   = $this->sma->clear_tags($this->input->post('note'));
@@ -82,6 +83,7 @@ class Transfers extends MY_Controller
                     $product_details = $this->transfers_model->getProductByCode($item_code);
                     // if (!$this->Settings->overselling) {
                     $warehouse_quantity = $this->transfers_model->getWarehouseProduct($from_warehouse_details->id, $product_details->id, $item_option);
+
                     if ($warehouse_quantity->quantity < $item_quantity) {
                         $this->session->set_flashdata('error', lang('no_match_found') . ' (' . lang('product_name') . ' <strong>' . $product_details->name . '</strong> ' . lang('product_code') . ' <strong>' . $product_details->code . '</strong>)');
                         admin_redirect('transfers/add');
@@ -97,9 +99,11 @@ class Transfers extends MY_Controller
                         $ctax        = $this->site->calculateTax($product_details, $tax_details, $unit_cost);
                         $item_tax    = $ctax['amount'];
                         $tax         = $ctax['tax'];
+
                         if (!empty($product_details) && $product_details->tax_method != 1) {
                             $item_net_cost = $unit_cost - $item_tax;
                         }
+
                         $pr_item_tax = $this->sma->formatDecimal(($item_tax * $item_unit_quantity), 4);
                         if ($this->Settings->indian_gst && $gst_data = $this->gst->calculateIndianGST($pr_item_tax, false, $tax_details)) {
                             $total_cgst += $gst_data['cgst'];
@@ -163,6 +167,7 @@ class Transfers extends MY_Controller
                 'shipping'                => $shipping,
                 'type'                    => 'transfer',
             ];
+
             if ($this->Settings->indian_gst) {
                 $data['cgst'] = $total_cgst;
                 $data['sgst'] = $total_sgst;
@@ -186,6 +191,7 @@ class Transfers extends MY_Controller
                 'type'                    => 'text',
                 'value'                   => $this->form_validation->set_value('name'),
             ];
+
             $this->data['quantity'] = ['name' => 'quantity',
                 'id'                          => 'quantity',
                 'type'                        => 'text',
@@ -725,7 +731,6 @@ class Transfers extends MY_Controller
     public function getTransfers()
     {
         $this->sma->checkPermissions('index');
-
         $detail_link   = anchor('admin/transfers/view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('transfer_details'), 'data-toggle="modal" data-target="#myModal"');
         $email_link    = anchor('admin/transfers/email/$1', '<i class="fa fa-envelope"></i> ' . lang('email_transfer'), 'data-toggle="modal" data-target="#myModal"');
         $edit_link     = anchor('admin/transfers/edit/$1', '<i class="fa fa-edit"></i> ' . lang('edit_transfer'));
@@ -746,7 +751,7 @@ class Transfers extends MY_Controller
             <li>' . $print_barcode . '</li>
             <li>' . $delete_link . '</li>
         </ul>
-    </div></div>';
+       </div></div>';
 
         $this->load->library('datatables');
 
@@ -757,12 +762,13 @@ class Transfers extends MY_Controller
             ->edit_column('tname', '$1 ($2)', 'tname, tcode');
 
         if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
-            $this->datatables->where('created_by', $this->session->userdata('user_id'));
-            $this->datatables->where('from_warehouse_id', $this->session->userdata('warehouse_id'));
+            // $this->datatables->where('created_by', $this->session->userdata('user_id'));
+            $this->datatables->where('to_warehouse_id', $this->session->userdata('warehouse_id'));
         }
+        
         $this->datatables->where('type', 'transfer');
 
-        $this->datatables->add_column('Actions', $action, 'id')
+            $this->datatables->add_column('Actions', $action, 'id')
             ->unset_column('fcode')
             ->unset_column('tcode');
         echo $this->datatables->generate();
@@ -770,6 +776,7 @@ class Transfers extends MY_Controller
 
     public function index()
     {
+       
         $this->sma->checkPermissions();
 
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
