@@ -191,6 +191,9 @@ class Returns extends MY_Controller
         }
 
         if ($this->form_validation->run() == true && $this->returns_model->addReturn($data, $products)) {
+            //$return_insert_id = $this->db->insert_id();
+            //$this->returns_model->convert_return_invoice($return_insert_id, $products);
+
             $this->session->set_userdata('remove_rels', 1);
             $this->session->set_flashdata('message', lang('return_added'));
             admin_redirect('returns');
@@ -204,6 +207,70 @@ class Returns extends MY_Controller
             $meta                     = ['page_title' => lang('add_return'), 'bc' => $bc];
             $this->page_construct('returns/add', $meta, $this->data);
         }
+    }
+
+    public function convert_return_invoice($rid, $inv_items){
+        $inv = $this->returns_model->getReturnByID($rid);
+
+        /*Accounts Entries*/
+        $entry = array(
+            'entrytype_id' => 4,
+            'number'       => 'PO-'.$inv->reference_no,
+            'date'         => date('Y-m-d'), 
+            'dr_total'     => $inv->grand_total,
+            'cr_total'     => $inv->grand_total,
+            'notes'        => 'Return Reference: '.$inv->reference_no.' Date: '.date('Y-m-d H:i:s'),
+            'pid'          =>  $inv->id
+            );
+        $add  = $this->db->insert('sma_accounts_entries', $entry);
+        $insert_id = $this->db->insert_id();
+
+        $entryitemdata = array();
+
+        $inv_items = $this->returns_model->getReturnItems($sid);
+        foreach ($inv_items as $item) {
+            $proid = $item->product_id;
+            $product  = $this->site->getProductByID($proid);
+            //products
+            $entryitemdata[] = array(
+                    'Entryitem' => array(
+                        'entry_id' => $insert_id,
+                        'dc' => 'D',
+                        'ledger_id' => $product->inventory_account,
+                        'amount' => $this->sma->formatDecimal($item->net_unit_price * $item->quantity, 4),
+                        'narration' => ''
+                    )
+                );
+        }
+
+        //vat on purchase
+        $entryitemdata[] = array(
+            'Entryitem' => array(
+                'entry_id' => $insert_id,
+                'dc' => 'C',
+                'ledger_id' => $this->vat_on_purchase,
+                //'amount' => $inv->order_tax,
+                'amount' => $inv->product_tax,
+                'narration' => ''
+            )
+        );
+
+        //supplier
+        $entryitemdata[] = array(
+            'Entryitem' => array(
+                'entry_id' => $insert_id,
+                'dc' => 'D',
+                'ledger_id' => $supplier->ledger_account,
+                'amount' => $inv->grand_total + $inv->product_tax,
+                'narration' => ''
+            )
+        );
+
+        foreach ($entryitemdata as $row => $itemdata)
+        {
+                $this->db->insert('sma_accounts_entryitems' ,$itemdata['Entryitem']);
+        }
+
     }
 
     public function delete($id = null)

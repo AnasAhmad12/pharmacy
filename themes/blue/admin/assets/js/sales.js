@@ -1476,6 +1476,8 @@ function loadItems() {
                 unit_price +
                 '"><input class="realuprice" name="real_unit_price[]" type="hidden" value="' +
                 item.row.real_unit_price +
+                '"><input class="net_cost" name="net_cost[]" type="hidden" value="' +
+                item_cost +
                 '"><span class="text-right sprice" id="sprice_' +
                 row_no +
                 '">' +

@@ -85,6 +85,7 @@ class Sales extends MY_Controller
                 $item_option        = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' && $_POST['product_option'][$r] != 'null' ? $_POST['product_option'][$r] : null;
                 $real_unit_price    = $this->sma->formatDecimal($_POST['real_unit_price'][$r]);
                 $unit_price         = $this->sma->formatDecimal($_POST['unit_price'][$r]);
+                $net_cost           = $this->sma->formatDecimal($_POST['net_cost'][$r]);
                 $item_unit_quantity = $_POST['quantity'][$r];
                 $item_serial        = $_POST['serial'][$r]           ?? '';
                 
@@ -119,13 +120,16 @@ class Sales extends MY_Controller
 
                     if (isset($item_tax_rate) && $item_tax_rate != 0) {
                         $tax_details = $this->site->getTaxRateByID($item_tax_rate);
-                        $ctax        = $this->site->calculateTax($product_details, $tax_details, $unit_price);
-                        $item_tax    = $this->sma->formatDecimal($ctax['amount']);
+                        //$ctax        = $this->site->calculateTax($product_details, $tax_details, $unit_price);
+                        $ctax        = $this->site->calculateTax($product_details, $tax_details, $this->sma->formatDecimal($main_net/$item_unit_quantity, 4));
+                        
+                        $item_tax    = $this->sma->formatDecimal($ctax['amount'], 4);
                         $tax         = $ctax['tax'];
                         if (!$product_details || (!empty($product_details) && $product_details->tax_method != 1)) {
                             $item_net_price = $unit_price - $item_tax;
                         }
                         $pr_item_tax = $this->sma->formatDecimal(($item_tax * $item_unit_quantity), 4);
+                        
                         if ($this->Settings->indian_gst && $gst_data = $this->gst->calculateIndianGST($pr_item_tax, ($biller_details->state == $customer_details->state), $tax_details)) {
                             $total_cgst += $gst_data['cgst'];
                             $total_sgst += $gst_data['sgst'];
@@ -144,6 +148,7 @@ class Sales extends MY_Controller
                         'product_name'      => $item_name,
                         'product_type'      => $item_type,
                         'option_id'         => $item_option,
+                        'net_cost'          => $net_cost,
                         'net_unit_price'    => $item_net_price,
                         'unit_price'        => $this->sma->formatDecimal($item_net_price + $item_tax),
                         'quantity'          => $item_quantity,
@@ -186,6 +191,7 @@ class Sales extends MY_Controller
             $total_discount = $this->sma->formatDecimal(($order_discount + $product_discount), 4);
             $order_tax      = $this->site->calculateOrderTax($this->input->post('order_tax'), ($total + $product_tax - $order_discount));
             $total_tax      = $this->sma->formatDecimal($order_tax, 4);//$this->sma->formatDecimal(($product_tax + $order_tax), 4);
+            //print_r($product_tax);exit;
             // $grand_total    = $this->sma->formatDecimal(($this->sma->formatDecimal($total) + $this->sma->formatDecimal($total_tax) + $this->sma->formatDecimal($shipping) - $this->sma->formatDecimal($order_discount)), 4);
             $grand_total = $this->sma->formatDecimal(($total + $total_tax + $this->sma->formatDecimal($shipping) - $this->sma->formatDecimal($order_discount)), 4);
             $data        = ['date'  => $date,
@@ -511,6 +517,57 @@ class Sales extends MY_Controller
         }
     }
 
+    public function convert_customer_payment_invoice($sid, $amount){
+        $inv = $this->sales_model->getSaleByID($sid);
+        $this->load->admin_model('companies_model');
+        $customer = $this->companies_model->getCompanyByID($inv->customer_id);
+
+        /*Accounts Entries*/
+        $entry = array(
+            'entrytype_id' => 4,
+            'number'       => $inv->id,
+            'date'         => date('Y-m-d'), 
+            'dr_total'     => $amount,
+            'cr_total'     => $amount,
+            'notes'        => 'Sale Reference: '.$inv->reference_no.' Date: '.date('Y-m-d H:i:s'),
+            'sid'          =>  $inv->id
+            );
+    
+        $add  = $this->db->insert('sma_accounts_entries', $entry);
+        $insert_id = $this->db->insert_id();
+
+        $entryitemdata = array();
+
+        //bank fund cash
+        $entryitemdata[] = array(
+            'Entryitem' => array(
+                'entry_id' => $insert_id,
+                'dc' => 'D',
+                'ledger_id' => $this->bank_checking_account,
+                'amount' => $amount,
+                'narration' => ''
+            )
+        );
+
+        //customer
+        $entryitemdata[] = array(
+            'Entryitem' => array(
+                'entry_id' => $insert_id,
+                'dc' => 'C',
+                'ledger_id' => $customer->ledger_account,
+                //'amount' => $inv->order_tax,
+                'amount' => $amount,
+                'narration' => ''
+            )
+        );
+
+        foreach ($entryitemdata as $row => $itemdata)
+        {
+                $this->db->insert('sma_accounts_entryitems' ,$itemdata['Entryitem']);
+        }
+
+    }
+
     public function add_payment($id = null)
     {
         $this->sma->checkPermissions('payments', true);
@@ -585,6 +642,9 @@ class Sales extends MY_Controller
         }
 
         if ($this->form_validation->run() == true && $this->sales_model->addPayment($payment, $customer_id)) {
+
+            $this->convert_customer_payment_invoice($this->input->post('sale_id'), $this->input->post('amount-paid'));
+
             if ($sale->shop) {
                 $this->load->library('sms');
                 $this->sms->paymentReceived($sale->id, $payment['reference_no'], $payment['amount']);
@@ -866,6 +926,7 @@ class Sales extends MY_Controller
                 $item_code          = $_POST['product_code'][$r];
                 $item_name          = $_POST['product_name'][$r];
                 $item_option        = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' && $_POST['product_option'][$r] != 'null' ? $_POST['product_option'][$r] : null;
+                $net_cost           = $this->sma->formatDecimal($_POST['net_cost'][$r]);
                 $real_unit_price    = $this->sma->formatDecimal($_POST['real_unit_price'][$r]);
                 $unit_price         = $this->sma->formatDecimal($_POST['unit_price'][$r]);
                 $item_unit_quantity = $_POST['quantity'][$r];
@@ -919,8 +980,9 @@ class Sales extends MY_Controller
 
                     if (isset($item_tax_rate) && $item_tax_rate != 0) {
                         $tax_details = $this->site->getTaxRateByID($item_tax_rate);
-                        $ctax        = $this->site->calculateTax($product_details, $tax_details, $unit_price);
-                        $item_tax    = $this->sma->formatDecimal($ctax['amount']);
+                        //$ctax        = $this->site->calculateTax($product_details, $tax_details, $unit_price);
+                        $ctax        = $this->site->calculateTax($product_details, $tax_details, $this->sma->formatDecimal($main_net/$item_unit_quantity, 4));
+                        $item_tax    = $this->sma->formatDecimal($ctax['amount'], 4);
                         $tax         = $ctax['tax'];
                         if (!$product_details || (!empty($product_details) && $product_details->tax_method != 1)) {
                             $item_net_price = $unit_price - $item_tax;
@@ -944,6 +1006,7 @@ class Sales extends MY_Controller
                         'product_name'      => $item_name,
                         'product_type'      => $item_type,
                         'option_id'         => $item_option,
+                        'net_cost'          => $net_cost,
                         'net_unit_price'    => $item_net_price,
                         'unit_price'        => $this->sma->formatDecimal($item_net_price + $item_tax),
                         'quantity'          => $item_quantity,
@@ -1558,7 +1621,7 @@ class Sales extends MY_Controller
             
             $add  = $this->db->insert('sma_accounts_entries', $entry);
             $insert_id = $this->db->insert_id();
-
+            //$insert_id = 999;
              $entryitemdata = array();
 
              foreach ($inv_items as $item) 
@@ -1571,7 +1634,8 @@ class Sales extends MY_Controller
                              'entry_id' => $insert_id,
                              'dc' => 'D',
                              'ledger_id' => $product->purchase_account,
-                             'amount' => $item->main_net,
+                             //'amount' => $item->main_net,
+                             'amount' => ($item->net_cost * $item->quantity),
                              'narration' => 'purchase account'
                          )
                      );
@@ -1591,7 +1655,8 @@ class Sales extends MY_Controller
                              'entry_id' => $insert_id,
                              'dc' => 'C',
                              'ledger_id' => $product->inventory_account,
-                             'amount' => $item->main_net,
+                             //'amount' => $item->main_net,
+                             'amount' => ($item->net_cost * $item->quantity),
                              'narration' => 'inventory account'
                          )
                      );
@@ -1605,7 +1670,7 @@ class Sales extends MY_Controller
                              'entry_id' => $insert_id,
                              'dc' => 'C',
                              'ledger_id' => $this->vat_on_sale,
-                             'amount' => $inv->order_tax,
+                             'amount' => $inv->product_tax,
                              'narration' => 'vat on sale'
                          )
                      );
@@ -1622,7 +1687,16 @@ class Sales extends MY_Controller
                            )
                      );
 
-
+             // //total discount
+             /*$entryitemdata[] = array(
+                    'Entryitem' => array(
+                        'entry_id' => $insert_id,
+                        'dc' => 'D',
+                        'ledger_id' => $this->vat_on_sale,
+                        'amount' => $inv->total_discount,
+                        'narration' => 'total discount'
+                    )
+             );*/
                      
             //   /*Accounts Entry Items*/
             foreach ($entryitemdata as $row => $itemdata)
