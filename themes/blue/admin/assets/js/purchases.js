@@ -999,8 +999,8 @@ function loadItems() {
             //     formatMoney(item_sale_price) +
             //     '</span></td>';
 
-                tr_html +=
-                '<td><input class="form-control scost" name="ssale[]" type="text" value="' +
+            tr_html +=
+                '<td><input class="form-control scost" name="sale_price[]" type="text" value="' +
                 formatMoney(item_sale_price) +
                 '" data-id="' +
                 row_no +

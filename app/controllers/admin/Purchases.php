@@ -62,6 +62,7 @@ class Purchases extends MY_Controller
             $due_date         = $payment_term ? date('Y-m-d', strtotime('+' . $payment_term . ' days', strtotime($date))) : null;
 
             $total            = 0;
+            $total_sale_price = 0;
             $product_tax      = 0;
             $product_discount = 0;
             $i                = sizeof($_POST['product']);
@@ -71,6 +72,7 @@ class Purchases extends MY_Controller
                 $item_code          = $_POST['product'][$r];
                 $item_net_cost      = $this->sma->formatDecimal($_POST['net_cost'][$r]);
                 $unit_cost          = $this->sma->formatDecimal($_POST['unit_cost'][$r]);
+                $item_sale_price         = $this->sma->formatDecimal($_POST['sale_price'][$r]);
                 $real_unit_cost     = $this->sma->formatDecimal($_POST['real_unit_cost'][$r]);
                 $item_unit_quantity = $_POST['quantity'][$r];
                 $item_option        = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' && $_POST['product_option'][$r] != 'undefined' ? $_POST['product_option'][$r] : null;
@@ -149,6 +151,7 @@ class Purchases extends MY_Controller
                         'subtotal'          => $this->sma->formatDecimal($subtotal),
                         'expiry'            => $item_expiry,
                         'real_unit_cost'    => $real_unit_cost,
+                        'sale_price'        => $item_sale_price, 
                         'date'              => date('Y-m-d', strtotime($date)),
                         'status'            => $status,
                         'supplier_part_no'  => $supplier_part_no,
@@ -168,6 +171,7 @@ class Purchases extends MY_Controller
                     }
 
                     $products[] = ($product + $gst_data);
+                    $total_sale_price +=  $this->sma->formatDecimal($item_sale_price, 4);
                     $total += $this->sma->formatDecimal($main_net, 4);//$this->sma->formatDecimal(($item_net_cost * $item_unit_quantity), 4);
                 }
             }
@@ -191,6 +195,7 @@ class Purchases extends MY_Controller
                 'warehouse_id'             => $warehouse_id,
                 'note'                     => $note,
                 'total'                    => $total,
+                'total_sale'               => $total_sale_price,
                 'product_discount'         => $product_discount,
                 'order_discount_id'        => $this->input->post('discount'),
                 'order_discount'           => $order_discount,
@@ -654,6 +659,7 @@ class Purchases extends MY_Controller
                 $item_net_cost      = $this->sma->formatDecimal($_POST['net_cost'][$r]);
                 $unit_cost          = $this->sma->formatDecimal($_POST['unit_cost'][$r]);
                 $real_unit_cost     = $this->sma->formatDecimal($_POST['real_unit_cost'][$r]);
+                $item_sale_price    = $this->sma->formatDecimal($_POST['sale_price'][$r]);
                 $item_unit_quantity = $_POST['quantity'][$r];
                 $quantity_received  = $_POST['received_base_quantity'][$r];
                 $item_option        = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' && $_POST['product_option'][$r] != 'undefined' ? $_POST['product_option'][$r] : null;
@@ -741,6 +747,7 @@ class Purchases extends MY_Controller
                         'subtotal'          => $this->sma->formatDecimal($subtotal),
                         'expiry'            => $item_expiry,
                         'real_unit_cost'    => $real_unit_cost,
+                        'sale_price'        => $item_sale_price,
                         'supplier_part_no'  => $supplier_part_no,
                         'date'              => date('Y-m-d', strtotime($date)),
                         'subtotal2'         => $this->sma->formatDecimal($subtotal2),
@@ -856,6 +863,7 @@ class Purchases extends MY_Controller
                 $row->base_quantity    = $item->quantity;
                 $row->base_unit        = $row->unit ? $row->unit : $item->product_unit_id;
                 $row->base_unit_cost   = $row->cost ? $row->cost : $item->unit_cost;
+                $row->sale_price        = $item->sale_price;
                 $row->unit             = $item->product_unit_id;
                 $row->qty              = $item->unit_quantity;
                 $row->oqty             = $item->quantity;

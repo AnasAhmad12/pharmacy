@@ -432,7 +432,6 @@ table#poTable td input.form-control {
                                             <th class="col-md-1">Net Purchases</th>
                                             <th class="col-md-1">Unit Cost</th>
                                             
-                                            
                                             <th style="width: 30px !important; text-align: center;"><i
                                                     class="fa fa-trash-o"
                                                     style="opacity:0.5; filter:alpha(opacity=50);"></i></th>
