@@ -1242,7 +1242,7 @@ $(document).ready(function (e) {
             }
             var new_price = parseFloat($(this).val()),
                 item_id = row.attr('data-item-id');
-            slitems[item_id].row.cost = new_price;
+            slitems[item_id].row.base_unit_price = new_price;
             localStorage.setItem('slitems', JSON.stringify(slitems));
             loadItems();
         });
@@ -1264,7 +1264,7 @@ $(document).ready(function (e) {
              }
              var new_price = parseFloat($(this).val()),
                  item_id = row.attr('data-item-id');
-             slitems[item_id].row.base_unit_price = new_price;
+             slitems[item_id].row.cost = new_price;
              localStorage.setItem('slitems', JSON.stringify(slitems));
              loadItems();
          });
