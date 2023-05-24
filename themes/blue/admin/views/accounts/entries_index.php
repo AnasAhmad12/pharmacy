@@ -54,7 +54,7 @@
                     ?>
                         <tr>
                             <td><?=  $this->functionscore->dateFromSql($entry['date']) ?></td>
-                            <td><?= ($this->functionscore->toEntryNumber($entry['id'], $entry['entrytype_id'])) ?></td>
+                            <td><?= $entry['number'] ?></td>
                             <td><?= ($this->functionscore->entryLedgers($entry['id'])) ?></td>
                             <td><?= ($entryTypeName) ?></td>
                             <td><?= $this->functionscore->showTag($entry['tag_id']) ?></td>

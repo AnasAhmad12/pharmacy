@@ -757,6 +757,25 @@ $(document).ready(function () {
             loadItems();
         });
 
+    var old_sale_price;
+    $(document)
+        .on('focus', '.scost', function() {
+            old_sale_price = $(this).val();
+        })
+        .on('change', '.scost', function () {
+            var row = $(this).closest('tr');
+            if (!is_numeric($(this).val())) {
+                $(this).val(old_sale_price);
+                bootbox.alert(lang.unexpected_value);
+                return;
+            }
+            var new_sale_price = parseFloat($(this).val()),
+                item_id = row.attr('data-item-id');
+            poitems[item_id].row.sale_price = new_sale_price;
+            localStorage.setItem('poitems', JSON.stringify(poitems));
+            loadItems();
+        });
+
     $(document).on('click', '#removeReadonly', function () {
         $('#posupplier').select2('readonly', false);
         return false;
@@ -856,7 +875,7 @@ function loadItems() {
                 item_bqty = item_qty;
                 item_oqty = item_qty;
             }
-            var unit_cost = item.row.real_unit_cost;
+            var unit_cost = item.row.cost;
             var product_unit = item.row.unit,
                 base_quantity = item.row.base_quantity;
             var supplier = localStorage.getItem('posupplier'),
@@ -1001,7 +1020,7 @@ function loadItems() {
 
             tr_html +=
                 '<td><input class="form-control scost" name="sale_price[]" type="text" value="' +
-                item_sale_price +
+                formatDecimal(item_sale_price, 2) +
                 '" data-id="' +
                 row_no +
                 '" data-item="' +
@@ -1012,14 +1031,14 @@ function loadItems() {
 
 
             tr_html +=
-                '<td class="text-right"><input class="form-control input-sm text-right rcost" name="net_cost[]" type="hidden" id="cost_' +
+                '<td class="text-right"><input class="rucost" name="unit_cost[]" type="hidden" value="' +
+                unit_cost +
+                '"><input class="form-control realucost" name="real_unit_cost[]" type="hidden" value="' +
+                item.row.real_unit_cost +
+                '"><input class="form-control input-sm text-right rcost" type="text" name="net_cost[]" type="hidden" id="cost_' +
                 row_no +
                 '" value="' +
-                item_cost +
-                '"><input class="rucost" name="unit_cost[]" type="hidden" value="' +
-                unit_cost +
-                '"><input class="form-control realucost" name="real_unit_cost[]" type="text" value="' +
-                item.row.real_unit_cost +
+                formatDecimal(item.row.cost, 2) +
                 '"></td>';
 
 {/* <span class="text-right scost" id="scost_' +
@@ -1076,7 +1095,7 @@ function loadItems() {
                 item_id +
                 '" id="bonus_' +
                 row_no +
-                '" value="'+ item_bonus
+                '" value="'+ formatDecimal(item_bonus)
                 +'"onClick="this.select();"></td>';
 
             tr_html +=
@@ -1086,7 +1105,7 @@ function loadItems() {
                 item_id +
                 '" id="dis1_' +
                 row_no +
-                '" value="'+item_dis1+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
+                '" value="'+formatDecimal(item_dis1)+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
                 formatMoney(total_after_dis1)
                 '</span></td>';
 
@@ -1097,7 +1116,7 @@ function loadItems() {
                 item_id +
                 '" id="dis2_' +
                 row_no +
-                '" value="'+item_dis2+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
+                '" value="'+formatDecimal(item_dis2)+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
                 formatMoney(total_after_dis2)
                 '</span></td>';
 
