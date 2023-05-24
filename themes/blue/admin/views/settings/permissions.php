@@ -292,6 +292,18 @@
                                             <input type="checkbox" value="1" id="transfers-pdf" class="checkbox" name="transfers-pdf" <?php echo $p->{'transfers-pdf'} ? 'checked' : ''; ?>>
                                             <label for="transfers-pdf" class="padding05"><?= lang('pdf') ?></label>
                                         </span>
+
+                                        <span style="display:inline-block;">
+                                        <input type="checkbox" value="1" class="checkbox" id="transfer_pharmacist"
+                                        name="transfer_pharmacist" <?php echo $p->transfer_pharmacist ? 'checked' : ''; ?>>
+                                        <label for="transfer_pharmacist" class="padding05"><?= lang('Pharmacist') ?></label>
+                                        </span>
+                                        <span style="display:inline-block;">
+                                        <input type="checkbox" value="1" class="checkbox" id="transfer_warehouse_supervisor"
+                                        name="transfer_warehouse_supervisor" <?php echo $p->transfer_warehouse_supervisor ? 'checked' : ''; ?>>
+                                        <label for="transfer_warehouse_supervisor" class="padding05"><?= lang('Warehouse Supervisor') ?></label>
+                                        </span>
+
                                     </td>
                                 </tr>
 

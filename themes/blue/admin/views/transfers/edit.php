@@ -167,9 +167,8 @@
                 <div class="row">
                     <div class="col-lg-12">
 
-                        <?php if ($Owner || $Admin) {
-                    ?>
-                            <div class="col-md-4">
+                <?php if ($Owner || $Admin) { ?>
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <?= lang('date', 'todate'); ?>
                                     <?php echo form_input('date', ($_POST['date'] ?? ''), 'class="form-control input-tip datetime" id="todate" required="required"'); ?>
@@ -177,44 +176,74 @@
                             </div>
                         <?php
                 } ?>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <?= lang('reference_no', 'ref'); ?>
                                 <?php echo form_input('reference_no', ($_POST['reference_no'] ?? $transfer->transfer_no), 'class="form-control input-tip" id="ref" required="required"'); ?>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6" id="toWareHouseDiv">
                             <div class="form-group">
                                 <?= lang('to_warehouse', 'to_warehouse'); ?>
+                              
+                                <?php echo form_input('to_warehouse', ($_POST['to_warehouse'] ?? $transfer->to_warehouse_id), 'class="form-control input-tip" id="ref" required="required"'); ?>
+
                                 <?php
                                 $wh[''] = '';
                                 foreach ($warehouses as $warehouse) {
                                     $wh[$warehouse->id] = $warehouse->name;
                                 }
-                                echo form_dropdown('to_warehouse', $wh, ($_POST['to_warehouse'] ?? $Settings->default_warehouse), 'id="to_warehouse" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('to_warehouse') . '" required="required" style="width:100%;" ');
-                                ?>
+                                // echo form_dropdown('to_warehouse', $wh, ($_POST['to_warehouse'] ?? $Settings->default_warehouse), 'id="to_warehouse"  class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('to_warehouse') . '" required="required" style="width:100%;" ');
+                                ?>  
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+
+                        <?php if ($GP['transfer_pharmacist']) { ?>
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <?= lang('status', 'tostatus'); ?>
                                 <?php
-                                $post = ['pending' => lang('pending'), 'sent' => lang('sent'), 'completed' => lang('completed')];
-                                echo form_dropdown('status', $post, ($_POST['status'] ?? ''), 'id="tostatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" required="required" style="width:100%;" ');
+                                 $post = ['pending' => lang('pending'),'sent' => lang('sent'), 'approved' => lang('Approved'), 'completed' => lang('completed')];
+                                 echo form_dropdown('status', $post, ($_POST['status'] ?? ''), 'id="tostatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" required="required" style="width:100%;" ');
                                 ?>
                             </div>
                         </div>
+                        <?php } ?>
 
-                        <div class="col-md-4">
+                        <?php if ($GP['transfer_warehouse_supervisor']) { ?>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <?= lang('status', 'tostatus'); ?>
+                                <?php
+                                 $post = ['pending' => lang('pending'),'sent' => lang('sent')];
+                                 echo form_dropdown('status', $post, ($_POST['status'] ?? ''), 'id="tostatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" required="required" style="width:100%;" ');
+                                ?>
+                            </div>
+                        </div>
+                        <?php } ?>
+
+                    <?php if (!$GP['transfer_pharmacist'] && !$GP['transfer_warehouse_supervisor']) { ?>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <?= lang('status', 'tostatus'); ?>
+                                <?php
+                                 $post = ['pending' => lang('pending'),'sent' => lang('sent'), 'completed' => lang('completed')];
+                                 echo form_dropdown('status', $post, ($_POST['status'] ?? ''), 'id="tostatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" required="required" style="width:100%;" ');
+                                ?>
+                            </div>
+                        </div>
+                        <?php } ?>
+
+                        <div class="col-md-6">
                             <div class="form-group" style="margin-bottom:5px;">
                                 <?= lang('shipping', 'toshipping'); ?>
                                 <?php echo form_input('shipping', '', 'class="form-control input-tip" id="toshipping"'); ?>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <?= lang('attachments', 'document') ?>
                                 <input id="document" type="file" data-browse-label="<?= lang('browse'); ?>" name="attachments[]" multiple data-show-upload="false" data-show-preview="false" class="form-control file">
@@ -388,9 +417,11 @@
     </div>
 </div>
 <?php if (!$Owner || !$Admin || $this->session->userdata('warehouse_id')) {
-                                                ?>
+            ?>
 <script>
     $(document).ready(function() {
+        // hide to warehouse
+         $("#toWareHouseDiv").hide();
         $("#to_warehouse option[value='<?= $this->session->userdata('warehouse_id'); ?>']").attr('disabled', 'disabled');
     });
 </script>

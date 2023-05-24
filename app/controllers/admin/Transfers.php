@@ -434,6 +434,7 @@ class Transfers extends MY_Controller
         if (!$this->session->userdata('edit_right')) {
             $this->sma->view_rights($transfer->created_by);
         }
+
         $this->form_validation->set_message('is_natural_no_zero', lang('no_zero_required'));
         $this->form_validation->set_rules('reference_no', lang('reference_no'), 'required');
         $this->form_validation->set_rules('to_warehouse', lang('warehouse') . ' (' . lang('to') . ')', 'required|is_natural_no_zero');
@@ -532,6 +533,8 @@ class Transfers extends MY_Controller
                     $total += $this->sma->formatDecimal(($item_net_cost * $item_unit_quantity), 4);
                 }
             }
+
+
             if (empty($products)) {
                 $this->form_validation->set_rules('product', lang('order_items'), 'required');
             } else {
@@ -594,7 +597,7 @@ class Transfers extends MY_Controller
                 $row->qty              = $item->unit_quantity;
                 $row->quantity_balance = $item->quantity_balance;
                 $row->ordered_quantity = $item->quantity;
-                $row->quantity += $item->quantity_balance;
+                $row->quantity        += $item->quantity_balance;
                 $row->cost           = $item->net_unit_cost;
                 $row->unit_cost      = $item->net_unit_cost + ($item->item_tax / $item->quantity);
                 $row->real_unit_cost = $item->real_unit_cost;
