@@ -167,8 +167,7 @@
                 <div class="row">
                     <div class="col-lg-12">
 
-                        <?php if ($Owner || $Admin) {
-                    ?>
+                <?php if ($Owner || $Admin) { ?>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <?= lang('date', 'todate'); ?>
@@ -184,7 +183,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-4" id="toWareHouseDiv">
                             <div class="form-group">
                                 <?= lang('to_warehouse', 'to_warehouse'); ?>
                                 <?php
@@ -192,7 +191,7 @@
                                 foreach ($warehouses as $warehouse) {
                                     $wh[$warehouse->id] = $warehouse->name;
                                 }
-                                echo form_dropdown('to_warehouse', $wh, ($_POST['to_warehouse'] ?? $Settings->default_warehouse), 'id="to_warehouse" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('to_warehouse') . '" required="required" style="width:100%;" ');
+                                echo form_dropdown('to_warehouse', $wh, ($_POST['to_warehouse'] ?? $Settings->default_warehouse), 'id="to_warehouse"  class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('to_warehouse') . '" required="required" style="width:100%;" ');
                                 ?>
                             </div>
                         </div>
@@ -201,8 +200,8 @@
                             <div class="form-group">
                                 <?= lang('status', 'tostatus'); ?>
                                 <?php
-                                $post = ['pending' => lang('pending'), 'sent' => lang('sent'), 'completed' => lang('completed')];
-                                echo form_dropdown('status', $post, ($_POST['status'] ?? ''), 'id="tostatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" required="required" style="width:100%;" ');
+                                 $post = ['pending' => lang('pending'),'sent' => lang('sent'), 'completed' => lang('completed')];
+                                 echo form_dropdown('status', $post, ($_POST['status'] ?? ''), 'id="tostatus" class="form-control input-tip select" data-placeholder="' . $this->lang->line('select') . ' ' . $this->lang->line('status') . '" required="required" style="width:100%;" ');
                                 ?>
                             </div>
                         </div>
@@ -388,9 +387,10 @@
     </div>
 </div>
 <?php if (!$Owner || !$Admin || $this->session->userdata('warehouse_id')) {
-                                                ?>
+            ?>
 <script>
     $(document).ready(function() {
+        $("#toWareHouseDiv").hide();
         $("#to_warehouse option[value='<?= $this->session->userdata('warehouse_id'); ?>']").attr('disabled', 'disabled');
     });
 </script>
