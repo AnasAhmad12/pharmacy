@@ -2481,6 +2481,11 @@ class system_settings extends MY_Controller
                 'accountant'        => $this->input->post('accountant'),
                 'stock_pharmacist'        => $this->input->post('stock_pharmacist'),
                 'stock_warehouse_supervisor'        => $this->input->post('stock_warehouse_supervisor'),
+                'transfer_pharmacist'        => $this->input->post('transfer_pharmacist'),
+                'transfer_warehouse_supervisor'        => $this->input->post('transfer_warehouse_supervisor'),
+
+
+                
             ];
 
             if (POS) {
