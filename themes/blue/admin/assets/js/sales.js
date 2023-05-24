@@ -1468,7 +1468,7 @@ function loadItems() {
 
 
                var total_purchases = (parseFloat(item_cost)) * parseFloat(item_qty);
-               var total_sales = (parseFloat(item_sale_price)) * parseFloat(item_qty + item_bonus);
+               var total_sales = (parseFloat(item_sale_price)) * (parseFloat(item_qty) + parseFloat(item_bonus));
                console.log(item_qty+' -- '+item_bonus+' -- '+item_sale_price+' -- '+total_sales);
                total_after_dis1 = total_sales * parseFloat((item_dis1 / 100));
                total_after_dis2 = (total_sales - total_after_dis1) * parseFloat((item_dis2 / 100));
