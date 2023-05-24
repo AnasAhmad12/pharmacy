@@ -1,12 +1,20 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <script>
     $(document).ready(function () {
+        getProductByExpiry();
+    });
+
+    function getProductByExpiry(){
+        var month = localStorage.getItem("monthDuration");
+        if(month =="" || month == undefined){
+             var month =3;
+         }
         oTable = $('#PExData').dataTable({
             "aaSorting": [[1, "desc"]],
             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?= lang('all') ?>"]],
             "iDisplayLength": <?= $Settings->rows_per_page ?>,
             'bProcessing': true, 'bServerSide': true,
-            'sAjaxSource': '<?= admin_url('reports/getExpiryAlerts' . ($warehouse_id ? '/' . $warehouse_id : '')) ?>',
+            'sAjaxSource': '<?= admin_url('reports/getExpiryAlerts' . ($warehouse_id ? '/' . $warehouse_id : '')) ?>?month='+month+'',
             'fnServerData': function (sSource, aoData, fnCallback) {
                 aoData.push({
                     "name": "<?= $this->security->get_csrf_token_name() ?>",
@@ -22,7 +30,13 @@
             {column_number: 4, filter_default_label: "[<?=lang('warehouse');?>]", filter_type: "text", data: []},
             {column_number: 5, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
         ], "footer");
-    });
+    }
+
+    function setMonthInLocalstorage(month){
+        localStorage.setItem("monthDuration", month);
+        window.location.reload();
+    }
+
 </script>
 
 <div class="box">
@@ -30,7 +44,25 @@
         <h2 class="blue"><i
                 class="fa-fw fa fa-calendar-o"></i><?= lang('product_expiry_alerts') . ' (' . ($warehouse_id ? $warehouse->name : lang('all_warehouses')) . ')'; ?>
         </h2>
-
+                       <div style="text-align:right;">
+                             <div class="col-3">
+                              <select onchange="setMonthInLocalstorage(this.value)" id="monthDuration" name="monthDuration">
+                                    <option>Change Duration</option>
+                                    <option value="1">1 Month</option>
+                                    <option value="2">2 Months</option>
+                                    <option value="3">3 Months</option>
+                                    <option value="4">4 Months</option>
+                                    <option value="5">5 Months</option>
+                                    <option value="6">6 Months</option>
+                                    <option value="7">7 Months</option>
+                                    <option value="8">8 Months</option>
+                                    <option value="9">9 Months</option>
+                                    <option value="10">10 Months</option>
+                                    <option value="11">11 Months</option>
+                                    <option value="12">12 Months</option>
+                                </select>
+                             </div>
+                       </div>
         <div class="box-icon">
             <ul class="btn-tasks">
                 <?php if (!empty($warehouses)) {
@@ -44,7 +76,7 @@
                                 <a href="<?= admin_url('reports/expiry_alerts') ?>">
                                     <i class="fa fa-building-o"></i> <?= lang('all_warehouses') ?>
                                 </a>
-                            </li>
+                               
                             <li class="divider"></li>
                             <?php
                             foreach ($warehouses as $warehouse) {
@@ -64,8 +96,10 @@
                 <p class="introtext"><?= lang('list_results'); ?></p>
 
                 <div class="table-responsive">
+                          
                     <table id="PExData" cellpadding="0" cellspacing="0" border="0"
                            class="table table-bordered table-condensed table-hover table-striped dfTable reports-table">
+                           
                         <thead>
                         <tr class="active">
                             <th style="min-width:40px; width: 40px; text-align: center;"><?php echo $this->lang->line('image'); ?></th>
