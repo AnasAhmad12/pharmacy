@@ -45,8 +45,8 @@
                 class="fa-fw fa fa-calendar-o"></i><?= lang('product_expiry_alerts') . ' (' . ($warehouse_id ? $warehouse->name : lang('all_warehouses')) . ')'; ?>
         </h2>
                        <div style="text-align:right;">
-
-                              <select class="form-control" onchange="setMonthInLocalstorage(this.value)" id="monthDuration" name="monthDuration">
+                             <div class="col-3">
+                              <select onchange="setMonthInLocalstorage(this.value)" id="monthDuration" name="monthDuration">
                                     <option>Change Duration</option>
                                     <option value="1">1 Month</option>
                                     <option value="2">2 Months</option>
@@ -61,7 +61,7 @@
                                     <option value="11">11 Months</option>
                                     <option value="12">12 Months</option>
                                 </select>
-                            </li>
+                             </div>
                        </div>
         <div class="box-icon">
             <ul class="btn-tasks">
