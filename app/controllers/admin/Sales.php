@@ -1129,6 +1129,7 @@ class Sales extends MY_Controller
                 $row->base_quantity   = $item->quantity;
                 $row->base_unit       = !empty($row->unit) ? $row->unit : $item->product_unit_id;
                 $row->base_unit_price = !empty($row->price) ? $row->price : $item->unit_price;
+                $row->cost            = $item->net_cost;
                 $row->unit            = $item->product_unit_id;
                 $row->qty             = $item->unit_quantity;
                 $row->quantity += $item->quantity;
