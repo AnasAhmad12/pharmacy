@@ -1535,28 +1535,28 @@ function loadItems() {
                     // row_no +
                     // '"></td>';
 
-            tr_html += 
+                tr_html +=
+                    '<td class="text-right"><input class="rucost" name="unit_price[]" type="hidden" value="' +
+                    unit_price +
+                    '"><input class="form-control realucost" name="real_unit_price[]" type="hidden" value="' +
+                    item.row.real_unit_price +
+                    '"><input class="form-control input-sm text-center rcost" type="text" name="net_price[]" id="cost_' +
+                    row_no +
+                    '" value="' +
+                    formatDecimal(item_sale_price, 2) +
+                    '"></td>';
+
+                tr_html += 
                     '<td><input id="ssale_' +
                     row_no +
-                    '" class="form-control scost" name="sale_price[]" type="text" value="' +
-                    formatDecimal(item_sale_price, 2) +
+                    '" class="form-control scost text-center" name="net_cost[]" type="text" value="' +
+                    formatDecimal(item.row.cost, 2) +
                     '" data-id="' +
                     row_no +
                     '" data-item="' +
                     item_id +
                     '" id="ssale_' +
                     row_no +
-                    '"></td>';
-
-            tr_html +=
-                    '<td class="text-right"><input class="rucost" name="unit_price[]" type="hidden" value="' +
-                    unit_price +
-                    '"><input class="form-control realucost" name="real_unit_price[]" type="hidden" value="' +
-                    item.row.real_unit_price +
-                    '"><input class="form-control input-sm text-right rcost" type="text" name="net_price[]" type="hidden" id="cost_' +
-                    row_no +
-                    '" value="' +
-                    formatDecimal(item.row.cost, 2) +
                     '"></td>';
                     
 

@@ -1019,7 +1019,7 @@ function loadItems() {
             //     '</span></td>';
 
             tr_html +=
-                '<td><input class="form-control scost" name="sale_price[]" type="text" value="' +
+                '<td><input class="form-control scost text-center" name="sale_price[]" type="text" value="' +
                 formatDecimal(item_sale_price, 2) +
                 '" data-id="' +
                 row_no +
@@ -1035,7 +1035,7 @@ function loadItems() {
                 unit_cost +
                 '"><input class="form-control realucost" name="real_unit_cost[]" type="hidden" value="' +
                 item.row.real_unit_cost +
-                '"><input class="form-control input-sm text-right rcost" type="text" name="net_cost[]" type="hidden" id="cost_' +
+                '"><input class="form-control input-sm text-center rcost" type="text" name="net_cost[]" type="hidden" id="cost_' +
                 row_no +
                 '" value="' +
                 formatDecimal(item.row.cost, 2) +
