@@ -102,8 +102,6 @@ class Sales extends MY_Controller
                 $totalbeforevat = $_POST['totalbeforevat'][$r];
                 $main_net = $_POST['main_net'][$r];
 
-
-
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details = $item_type != 'manual' ? $this->sales_model->getProductByCode($item_code) : null;
                     // $unit_price = $real_unit_price;
@@ -282,7 +280,7 @@ class Sales extends MY_Controller
             $data['attachment'] = !empty($attachments);
             // $this->sma->print_arrays($data, $products, $payment, $attachments);
         }
-
+        
         if ($this->form_validation->run() == true && $this->sales_model->addSale($data, $products, $payment, [], $attachments)) {
             $this->session->set_userdata('remove_slls', 1);
             if ($quote_id) {
@@ -525,7 +523,7 @@ class Sales extends MY_Controller
         /*Accounts Entries*/
         $entry = array(
             'entrytype_id' => 4,
-            'number'       => $inv->id,
+            'number'       => 'SO-'.$inv->reference_no,
             'date'         => date('Y-m-d'), 
             'dr_total'     => $amount,
             'cr_total'     => $amount,
@@ -1611,7 +1609,7 @@ class Sales extends MY_Controller
             /*Accounts Entries*/
             $entry = array(
                     'entrytype_id' => 4,
-                    'number'       => $inv->id,
+                    'number'       => 'SO-'.$inv->reference_no,
                     'date'         => date('Y-m-d'), 
                     'dr_total'     => $inv->grand_total,
                     'cr_total'     => $inv->grand_total,

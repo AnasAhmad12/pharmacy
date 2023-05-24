@@ -452,6 +452,28 @@ $(document).ready(function (e) {
         $('#slinnote').redactor('set', slinnote);
     }
 
+    $(document).on('change', '.rexpiry', function () {
+        var inputDate = $(this).val();
+        var currentDate = new Date();
+
+        var dateParts = inputDate.split("/");
+        var inputDateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+
+        var yesterdayDate = new Date();
+        yesterdayDate.setDate(currentDate.getDate() - 1);
+
+        if (inputDateObj.getTime() <= yesterdayDate.getTime()) {
+            $(this).val('');
+            bootbox.alert('Expired product are not allowed');
+            return;
+        }else{
+            var item_id = $(this).closest('tr').attr('data-item-id');
+            slitems[item_id].row.expiry = $(this).val();
+            localStorage.setItem('slitems', JSON.stringify(slitems));
+        }
+        
+    });
+
     // prevent default action usln enter
     $('body').bind('keypress', function (e) {
         if ($(e.target).hasClass('redactor_editor')) {
@@ -1083,6 +1105,28 @@ $(document).ready(function (e) {
         $('#mpro_tax').text(formatMoney(pr_tax_val));
     });
 
+    /* --------------------------
+     * Edit Row BatchNo Method rbatchno
+     -------------------------- */
+     var old_row_batchno;
+     var currTabIndex;
+     $(document)
+         .on('focus', '.rbatchno', function () {
+             old_row_batchno = $(this).val();
+             currTabIndex = $(this).prop('tabindex');
+         })
+         .on('change', '.rbatchno', function () {
+             var row = $(this).closest('tr');
+             //var new_batchno = parseFloat($(this).val()),
+             var new_batchno = $(this).val(),
+                 item_id = row.attr('data-item-id');
+             console.log(new_batchno);
+             slitems[item_id].row.batch_no = new_batchno;
+             localStorage.setItem('slitems', JSON.stringify(slitems));
+             loadItems();
+         });
+
+
                /* --------------------------
      * Edit Row Discount2 Method rdis2 rbatchno
      -------------------------- */
@@ -1186,10 +1230,10 @@ $(document).ready(function (e) {
      -------------------------- */
     var old_price;
     $(document)
-        .on('focus', '.rprice', function () {
+        .on('focus', '.rcost', function () {
             old_price = $(this).val();
         })
-        .on('change', '.rprice', function () {
+        .on('change', '.rcost', function () {
             var row = $(this).closest('tr');
             if (!is_numeric($(this).val())) {
                 $(this).val(old_price);
@@ -1198,10 +1242,32 @@ $(document).ready(function (e) {
             }
             var new_price = parseFloat($(this).val()),
                 item_id = row.attr('data-item-id');
-            slitems[item_id].row.price = new_price;
+            slitems[item_id].row.cost = new_price;
             localStorage.setItem('slitems', JSON.stringify(slitems));
             loadItems();
         });
+
+    /* --------------------------
+     * Edit Row Sale Method
+     -------------------------- */
+     var old_sale_price;
+     $(document)
+         .on('focus', '.scost', function () {
+            old_sale_price = $(this).val();
+         })
+         .on('change', '.scost', function () {
+             var row = $(this).closest('tr');
+             if (!is_numeric($(this).val())) {
+                 $(this).val(old_sale_price);
+                 bootbox.alert(lang.unexpected_value);
+                 return;
+             }
+             var new_price = parseFloat($(this).val()),
+                 item_id = row.attr('data-item-id');
+             slitems[item_id].row.base_unit_price = new_price;
+             localStorage.setItem('slitems', JSON.stringify(slitems));
+             loadItems();
+         });
 
     $(document).on('click', '#removeReadonly', function () {
         $('#slcustomer').select2('readonly', false);
@@ -1264,6 +1330,14 @@ function loadItems() {
             var item = this;
             var item_id = site.settings.item_addition == 1 ? item.item_id : item.id;
             item.order = item.order ? item.order : new Date().getTime();
+            const pattern = /^\d{2}\/\d{2}\/\d{4}$/;
+            const isFormattedDate = pattern.test(item.row.expiry);
+            var item_expiry_date;
+            if(isFormattedDate){
+                item_expiry_date = item.row.expiry;
+            }else{
+                item_expiry_date = new Date(item.row.expiry).toLocaleDateString('en-GB');
+            }
             var product_id = item.row.id,
                 item_type = item.row.type,
                 combo_items = item.combo_items,
@@ -1278,7 +1352,7 @@ function loadItems() {
                 item_option = item.row.option,
                 item_code = item.row.code,
                 item_serial = item.row.serial,
-                item_expiry = item.row.expiry,
+                item_expiry = item_expiry_date,
                 item_batchno = item.row.batch_no,
                 item_lotno = item.row.lot_no,
                 item_bonus = item.row.bonus,
@@ -1461,28 +1535,29 @@ function loadItems() {
                     // row_no +
                     // '"></td>';
 
-            tr_html += '<td><span class="text-right scost" id="ssale_' +
-                row_no +
-                '">' +
-                formatMoney(item_sale_price) +
-                '</span></td>';
+            tr_html += 
+                    '<td><input id="ssale_' +
+                    row_no +
+                    '" class="form-control scost" name="sale_price[]" type="text" value="' +
+                    formatDecimal(item_sale_price, 2) +
+                    '" data-id="' +
+                    row_no +
+                    '" data-item="' +
+                    item_id +
+                    '" id="ssale_' +
+                    row_no +
+                    '"></td>';
 
             tr_html +=
-                '<td class="text-right"><input class="form-control input-sm text-right rprice" name="net_price[]" type="hidden" id="price_' +
-                row_no +
-                '" value="' +
-                item_price +
-                '"><input class="ruprice" name="unit_price[]" type="hidden" value="' +
-                unit_price +
-                '"><input class="realuprice" name="real_unit_price[]" type="hidden" value="' +
-                item.row.real_unit_price +
-                '"><input class="net_cost" name="net_cost[]" type="hidden" value="' +
-                item_cost +
-                '"><span class="text-right sprice" id="sprice_' +
-                row_no +
-                '">' +
-                formatMoney(item_cost) +
-                '</span></td>';
+                    '<td class="text-right"><input class="rucost" name="unit_price[]" type="hidden" value="' +
+                    unit_price +
+                    '"><input class="form-control realucost" name="real_unit_price[]" type="hidden" value="' +
+                    item.row.real_unit_price +
+                    '"><input class="form-control input-sm text-right rcost" type="text" name="net_price[]" type="hidden" id="cost_' +
+                    row_no +
+                    '" value="' +
+                    formatDecimal(item.row.cost, 2) +
+                    '"></td>';
                     
 
             /*if (site.settings.product_serial == 1) {
@@ -1577,7 +1652,7 @@ function loadItems() {
                 item_id +
                 '" id="bonus_' +
                 row_no +
-                '" value="'+ item_bonus
+                '" value="'+ formatDecimal(item_bonus)
                 +'"onClick="this.select();"></td>';    
 
             /*tr_html +=
@@ -1616,7 +1691,7 @@ function loadItems() {
                 item_id +
                 '" id="dis1_' +
                 row_no +
-                '" value="'+item_dis1+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
+                '" value="'+formatDecimal(item_dis1)+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
                 formatMoney(total_after_dis1)
                 '</span></td>';
 
@@ -1627,7 +1702,7 @@ function loadItems() {
                 item_id +
                 '" id="dis2_' +
                 row_no +
-                '" value="'+item_dis2+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
+                '" value="'+formatDecimal(item_dis2)+'" onClick="this.select();"><span style="position:absolute;font-size:10px;margin-top:5px;">' +
                 formatMoney(total_after_dis2)
                 '</span></td>';
 

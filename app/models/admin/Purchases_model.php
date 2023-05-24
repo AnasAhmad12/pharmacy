@@ -656,8 +656,26 @@ class Purchases_model extends CI_Model
 
     public function puchaseToInvoice($id)
     {
-        $this->db->update('purchases', ['purchase_invoice' => 1], ['id' => $id]);
+        $invoiceNumber = $this->generateInvoiceNumber(); // Generate the invoice number
+
+        $data = array(
+            'purchase_invoice' => 1,
+            'invoice_number' => $invoiceNumber
+        );
+
+        $this->db->update('purchases', $data, array('id' => $id));
+
         return true;
+    }
+
+    public function generateInvoiceNumber()
+    {
+        $prefix = 'INV'; // Prefix for the invoice number
+        $timestamp = time(); // Current timestamp
+
+        $invoiceNumber = $prefix . '' . $timestamp;
+
+        return $invoiceNumber;
     }
 
     public function updateStatus($id, $status, $note)

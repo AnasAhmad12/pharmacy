@@ -1999,7 +1999,8 @@ class Purchases extends MY_Controller
         $inv = $this->purchases_model->getPurchaseByID($pid);
         $this->load->admin_model('companies_model');
         $supplier = $this->companies_model->getCompanyByID($inv->supplier_id);
-        $inv_items = $this->purchases_model->getAllPurchaseItems($oid);
+        $inv_items = $this->purchases_model->getAllPurchaseItems($pid);
+        
         //$inv = $this->purchases_model->getReturnByID($rid);
 
         /*Accounts Entries*/
@@ -2027,7 +2028,7 @@ class Purchases extends MY_Controller
                         'entry_id' => $insert_id,
                         'dc' => 'C',
                         'ledger_id' => $product->inventory_account,
-                        'amount' => $item->main_net,
+                        'amount' => -1*($item->subtotal),
                         'narration' => ''
                     )
                 );
