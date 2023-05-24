@@ -115,7 +115,6 @@ class Reports extends MY_Controller
             $this->session->set_flashdata('error', lang('no_customer_selected'));
             admin_redirect('reports/customers');
         }
-
         $this->data['sales']         = $this->reports_model->getSalesTotals($user_id);
         $this->data['total_sales']   = $this->reports_model->getCustomerSales($user_id);
         $this->data['total_quotes']  = $this->reports_model->getCustomerQuotes($user_id);
@@ -1243,8 +1242,11 @@ class Reports extends MY_Controller
 
     public function getExpiryAlerts($warehouse_id = null)
     {
+        $month = $this->input->get('month') ? $this->input->get('month') : null;
+        
+        $monthNumber = '+'.$month.'months';
         $this->sma->checkPermissions('expiry_alerts', true);
-        $date = date('Y-m-d', strtotime('+3 months'));
+        $date = date('Y-m-d', strtotime($monthNumber));
 
         if (!$this->Owner && !$warehouse_id) {
             $user         = $this->site->getUser();
