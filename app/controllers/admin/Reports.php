@@ -1256,7 +1256,7 @@ class Reports extends MY_Controller
         $this->load->library('datatables');
         if ($warehouse_id) {
             $this->datatables
-                ->select('image, product_code, product_name, quantity_balance, warehouses.name, expiry')
+                ->select('image, product_code,batchno,product_name, quantity_balance, warehouses.name, expiry')
                 ->from('purchase_items')
                 ->join('products', 'products.id=purchase_items.product_id', 'left')
                 ->join('warehouses', 'warehouses.id=purchase_items.warehouse_id', 'left')
@@ -1268,7 +1268,7 @@ class Reports extends MY_Controller
                 ->group_end();
         } else {
             $this->datatables
-                ->select('image, product_code, product_name, quantity_balance, warehouses.name, expiry')
+                ->select('image, product_code, batchno, product_name, quantity_balance, warehouses.name, expiry')
                 ->from('purchase_items')
                 ->join('products', 'products.id=purchase_items.product_id', 'left')
                 ->join('warehouses', 'warehouses.id=purchase_items.warehouse_id', 'left')
