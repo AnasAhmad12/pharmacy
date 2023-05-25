@@ -133,10 +133,10 @@ class MY_Controller extends CI_Controller
             $this->data['DIS'] = $this->DIS;
             //var_dump($dis);
 
-            $this->vat_on_purchase = 120;
+            $this->vat_on_purchase = 121;
             $this->data['vat_on_purchase'] = $this->vat_on_purchase; 
 
-            $this->vat_on_sale = 120;
+            $this->vat_on_sale = 122;
             $this->data['vat_on_sale'] = $this->vat_on_sale; 
 
             $this->bank_fund_cash = 4;
