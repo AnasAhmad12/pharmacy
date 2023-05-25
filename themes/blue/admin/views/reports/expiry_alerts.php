@@ -22,13 +22,14 @@
                 });
                 $.ajax({'dataType': 'json', 'type': 'POST', 'url': sSource, 'data': aoData, 'success': fnCallback});
             },
-            "aoColumns": [{"bSortable": false, "mRender": img_hl}, null, null, null, null, {"mRender": fsd}],
+            "aoColumns": [{"bSortable": false, "mRender": img_hl}, null, null, null, null, null, {"mRender": fsd}],
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('product_code');?>]", filter_type: "text", data: []},
-            {column_number: 2, filter_default_label: "[<?=lang('product_name');?>]", filter_type: "text", data: []},
-            {column_number: 3, filter_default_label: "[<?=lang('quantity');?>]", filter_type: "text", data: []},
-            {column_number: 4, filter_default_label: "[<?=lang('warehouse');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
+            {column_number: 2, filter_default_label: "[<?=lang('batch_no');?>]", filter_type: "text", data: []},
+            {column_number: 3, filter_default_label: "[<?=lang('product_name');?>]", filter_type: "text", data: []},
+            {column_number: 4, filter_default_label: "[<?=lang('quantity');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('warehouse');?>]", filter_type: "text", data: []},
+            {column_number: 6, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
         ], "footer");
     }
 
@@ -104,6 +105,7 @@
                         <tr class="active">
                             <th style="min-width:40px; width: 40px; text-align: center;"><?php echo $this->lang->line('image'); ?></th>
                             <th><?php echo $this->lang->line('product_code'); ?></th>
+                            <th><?php echo $this->lang->line('Batch_No'); ?></th>
                             <th><?php echo $this->lang->line('product_name'); ?></th>
                             <th><?php echo $this->lang->line('quantity'); ?></th>
                             <th><?php echo $this->lang->line('warehouse'); ?></th>
@@ -112,13 +114,13 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td colspan="5" class="dataTables_empty"><?= lang('loading_data_from_server'); ?></td>
+                            <td colspan="6" class="dataTables_empty"><?= lang('loading_data_from_server'); ?></td>
                         </tr>
                         </tbody>
                         <tfoot class="dtFilter">
                         <tr class="active">
                             <th style="min-width:40px; width: 40px; text-align: center;"><?php echo $this->lang->line('image'); ?></th>
-                            <th></th><th></th><th></th><th></th><th></th>
+                            <th></th><th></th><th></th><th></th><th></th><th></th>
                         </tr>
                         </tfoot>
                     </table>
