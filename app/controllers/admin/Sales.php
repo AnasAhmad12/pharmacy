@@ -1620,14 +1620,14 @@ class Sales extends MY_Controller
             
             $add  = $this->db->insert('sma_accounts_entries', $entry);
             $insert_id = $this->db->insert_id();
-            //$insert_id = 999;
+             //$insert_id = 999;
              $entryitemdata = array();
-
              foreach ($inv_items as $item) 
              {
                  $proid = $item->product_id;
                  $product  = $this->site->getProductByID($proid);
                  //products
+                 
                  $entryitemdata[] = array(
                          'Entryitem' => array(
                              'entry_id' => $insert_id,
@@ -1661,7 +1661,6 @@ class Sales extends MY_Controller
                      );
  
              }
- 
           
              // //vat on sale
              $entryitemdata[] = array(
@@ -2677,6 +2676,133 @@ class Sales extends MY_Controller
     }
 
     /* --------------------------------------------------------------------------------------------- */
+
+    public function bch_suggestions($pos = 0)
+    {
+        $term         = $this->input->get('term', true);
+        $warehouse_id = $this->input->get('warehouse_id', true);
+        $customer_id  = $this->input->get('customer_id', true);
+
+        if (strlen($term) < 1 || !$term) {
+            die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . admin_url('welcome') . "'; }, 10);</script>");
+        }
+            //01076123456789001710050310AC3453G3  34
+        $analyzed  = $this->sma->analyze_term($term);
+        $sr        = $analyzed['term'];
+        $option_id = $analyzed['option_id'];
+        $sr        = addslashes($sr);
+        $strict    = $analyzed['strict']                    ?? false;
+        $qty       = $strict ? null : $analyzed['quantity'] ?? null;
+        $bprice    = $strict ? null : $analyzed['price']    ?? null;
+
+        $warehouse      = $this->site->getWarehouseByID($warehouse_id);
+        $customer       = $this->site->getCompanyByID($customer_id);
+        $customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
+        $rows           = $this->sales_model->getProductNamesWithBatches($sr, $warehouse_id, $pos);
+
+        if ($rows) {
+            $r = 0;
+            foreach ($rows as $row) {
+                $c = uniqid(mt_rand(), true);
+                unset($row->details, $row->product_details, $row->image, $row->barcode_symbology, $row->cf1, $row->cf2, $row->cf3, $row->cf5, $row->cf6, $row->supplier1price, $row->supplier2price, $row->cfsupplier3price, $row->supplier4price, $row->supplier5price, $row->supplier1, $row->supplier2, $row->supplier3, $row->supplier4, $row->supplier5, $row->supplier1_part_no, $row->supplier2_part_no, $row->supplier3_part_no, $row->supplier4_part_no, $row->supplier5_part_no);
+                $option               = false;
+                $row->quantity        = 0;
+                $row->item_tax_method = $row->tax_method;
+                $row->qty             = 1;
+                $row->discount        = '0';
+                $row->serial          = '';
+                // $row->expiry          = '';
+                $row->batch_no        = '';
+                $row->lot_no          = '';
+
+                $options              = $this->sales_model->getProductOptions($row->id, $warehouse_id);
+                if ($options) {
+                    $opt = $option_id && $r == 0 ? $this->sales_model->getProductOptionByID($option_id) : $options[0];
+                    if (!$option_id || $r > 0) {
+                        $option_id = $opt->id;
+                    }
+                } else {
+                    $opt        = json_decode('{}');
+                    $opt->price = 0;
+                    $option_id  = false;
+                }
+                $row->option = $option_id;
+                $pis         = $this->site->getPurchasedItems($row->id, $warehouse_id, $row->option);
+
+                
+                if ($pis) {
+                    $row->expiry = "";
+                    $row->quantity = 0;
+                    foreach ($pis as $pi) {
+                        $row->quantity += $pi->quantity_balance;
+                        $row->expiry    = $pi->expiry;
+                    }
+                }
+
+
+                if ($options) {
+                    $option_quantity = 0;
+                    foreach ($options as $option) {
+                        $pis = $this->site->getPurchasedItems($row->id, $warehouse_id, $row->option);
+                        if ($pis) {
+                            foreach ($pis as $pi) {
+                                $option_quantity += $pi->quantity_balance;
+                            }
+                        }
+                        if ($option->quantity > $option_quantity) {
+                            $option->quantity = $option_quantity;
+                        }
+                    }
+                }
+
+
+                if ($this->sma->isPromo($row)) {
+                    $row->price = $row->promo_price;
+                } elseif ($customer->price_group_id) {
+                    if ($pr_group_price = $this->site->getProductGroupPrice($row->id, $customer->price_group_id)) {
+                        $row->price = $pr_group_price->price;
+                    }
+                } elseif ($warehouse->price_group_id) {
+                    if ($pr_group_price = $this->site->getProductGroupPrice($row->id, $warehouse->price_group_id)) {
+                        $row->price = $pr_group_price->price;
+                    }
+                }
+                if ($customer_group->discount && $customer_group->percent < 0) {
+                    $row->discount = (0 - $customer_group->percent) . '%';
+                } else {
+                    $row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+                }
+                $row->real_unit_price = $row->price;
+                $row->base_quantity   = 1;
+                $row->base_unit       = $row->unit;
+                $row->base_unit_price = $row->price;
+                $row->unit            = $row->sale_unit ? $row->sale_unit : $row->unit;
+                $row->comment         = '';
+                $row->bonus         = 0;
+                $row->dis1         = 0;
+                $row->dis2         = 0;
+                $combo_items          = false;
+                if ($row->type == 'combo') {
+                    $combo_items = $this->sales_model->getProductComboItems($row->id, $warehouse_id);
+                }
+                if ($qty) {
+                    $row->qty           = $qty;
+                    $row->base_quantity = $qty;
+                } else {
+                    $row->qty = ($bprice ? $bprice / $row->price : 1);
+                }
+                $units    = $this->site->getUnitsByBUID($row->base_unit);
+                $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
+                $row->batch_no = $row->batchno;
+                $pr[] = ['id' => sha1($c . $r), 'item_id' => $row->id, 'label' => $row->name . ' (' . $row->code . ') - '.$row->batch_no, 'category' => $row->category_id,
+                    'row'     => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'units' => $units, 'options' => $options, ];
+                $r++;
+            }
+            $this->sma->send_json($pr);
+        } else {
+            $this->sma->send_json([['id' => 0, 'label' => lang('no_match_found'), 'value' => $term]]);
+        }
+    }
 
     public function suggestions($pos = 0)
     {
