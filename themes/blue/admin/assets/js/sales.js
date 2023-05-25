@@ -1242,7 +1242,7 @@ $(document).ready(function (e) {
             }
             var new_price = parseFloat($(this).val()),
                 item_id = row.attr('data-item-id');
-            slitems[item_id].row.cost = new_price;
+            slitems[item_id].row.base_unit_price = new_price;
             localStorage.setItem('slitems', JSON.stringify(slitems));
             loadItems();
         });
@@ -1264,7 +1264,7 @@ $(document).ready(function (e) {
              }
              var new_price = parseFloat($(this).val()),
                  item_id = row.attr('data-item-id');
-             slitems[item_id].row.base_unit_price = new_price;
+             slitems[item_id].row.cost = new_price;
              localStorage.setItem('slitems', JSON.stringify(slitems));
              loadItems();
          });
@@ -1468,7 +1468,8 @@ function loadItems() {
 
 
                var total_purchases = (parseFloat(item_cost)) * parseFloat(item_qty);
-               var total_sales = (parseFloat(item_sale_price)) * parseFloat(item_qty + item_bonus);
+               var total_sales = (parseFloat(item_sale_price)) * (parseFloat(item_qty) + parseFloat(item_bonus));
+               //console.log(item_qty+' -- '+item_bonus+' -- '+item_sale_price+' -- '+total_sales);
                total_after_dis1 = total_sales * parseFloat((item_dis1 / 100));
                total_after_dis2 = (total_sales - total_after_dis1) * parseFloat((item_dis2 / 100));
                //main_net = net_price_a;// + net_price_b;
@@ -1535,28 +1536,28 @@ function loadItems() {
                     // row_no +
                     // '"></td>';
 
-            tr_html += 
+                tr_html +=
+                    '<td class="text-right"><input class="rucost" name="unit_price[]" type="hidden" value="' +
+                    unit_price +
+                    '"><input class="form-control realucost" name="real_unit_price[]" type="hidden" value="' +
+                    item.row.real_unit_price +
+                    '"><input class="form-control input-sm text-center rcost" type="text" name="net_price[]" id="cost_' +
+                    row_no +
+                    '" value="' +
+                    formatDecimal(item_sale_price, 2) +
+                    '"></td>';
+
+                tr_html += 
                     '<td><input id="ssale_' +
                     row_no +
-                    '" class="form-control scost" name="sale_price[]" type="text" value="' +
-                    formatDecimal(item_sale_price, 2) +
+                    '" class="form-control scost text-center" name="net_cost[]" type="text" value="' +
+                    formatDecimal(item.row.cost, 2) +
                     '" data-id="' +
                     row_no +
                     '" data-item="' +
                     item_id +
                     '" id="ssale_' +
                     row_no +
-                    '"></td>';
-
-            tr_html +=
-                    '<td class="text-right"><input class="rucost" name="unit_price[]" type="hidden" value="' +
-                    unit_price +
-                    '"><input class="form-control realucost" name="real_unit_price[]" type="hidden" value="' +
-                    item.row.real_unit_price +
-                    '"><input class="form-control input-sm text-right rcost" type="text" name="net_price[]" type="hidden" id="cost_' +
-                    row_no +
-                    '" value="' +
-                    formatDecimal(item.row.cost, 2) +
                     '"></td>';
                     
 

@@ -163,7 +163,7 @@ table#slTable td input.form-control {
                 }
                 $.ajax({
                     type: 'get',
-                    url: '<?= admin_url('sales/suggestions'); ?>',
+                    url: '<?= admin_url('sales/bch_suggestions'); ?>',
                     dataType: "json",
                     data: {
                         term: request.term,

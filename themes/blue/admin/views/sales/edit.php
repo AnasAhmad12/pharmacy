@@ -65,7 +65,7 @@ $allow_discount = ($Owner || $Admin || $this->session->userdata('allow_discount'
                 }
                 $.ajax({
                     type: 'get',
-                    url: '<?= admin_url('sales/suggestions'); ?>',
+                    url: '<?= admin_url('sales/bch_suggestions'); ?>',
                     dataType: "json",
                     data: {
                         term: request.term,
