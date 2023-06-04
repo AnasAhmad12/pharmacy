@@ -2006,7 +2006,7 @@ class Purchases extends MY_Controller
         /*Accounts Entries*/
         $entry = array(
             'entrytype_id' => 4,
-            'number'       => 'PO-'.$inv->reference_no,
+            'number'       => 'RO-'.$inv->reference_no,
             'date'         => date('Y-m-d'), 
             'dr_total'     => $inv->grand_total,
             'cr_total'     => $inv->grand_total,
